@@ -1,0 +1,13 @@
+/node_modules
+/storage/*.kpx
+/vendor
+.env
+.env.backup
+npm-debug.log
+yarn-error.log
+composer.phar
+composer.lock
+.DS_Store
+Thumbs.db
+/.idea
+/.vscode
