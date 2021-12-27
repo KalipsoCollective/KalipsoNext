@@ -1,7 +1,7 @@
 {
-    "name": "halillusion/kalipso_next",
+    "name": "halillusion/kn",
     "type": "project",
-    "description": "Kalipso Next - a simple php framework/boilerplate",
+    "description": "KalipsoNext - a simple php framework/boilerplate",
     "keywords": ["framework", "kalipso", "kalipsonext"],
     "license": "MIT",
     "require": {
@@ -12,7 +12,8 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "App\\Core\\": "app/core/"
         }
     },
     "config": {
