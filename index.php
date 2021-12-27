@@ -5,6 +5,8 @@
  * @author halillusion <halillusion@gmail.com>
  **/
 
+declare(strict_types=1);
+
 // Basic defines
 define('KN_START', microtime(true));
 define('KN_ROOT',  rtrim($_SERVER["DOCUMENT_ROOT"], '/').'/');
