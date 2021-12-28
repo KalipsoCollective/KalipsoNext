@@ -17,4 +17,3 @@ set_exception_handler( function($e) {
 });
 ini_set('display_errors', 'on');
 error_reporting(E_ALL);
-
