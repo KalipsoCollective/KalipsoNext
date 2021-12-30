@@ -7,7 +7,7 @@
 
 namespace App\Core;
 
-class Exception {
+class System {
 
 	
 
