@@ -53,6 +53,7 @@ class Route {
     public function detect() {
 
         KN::dump($this->schema);
+        KN::dump($this->request);
 
     }
 
