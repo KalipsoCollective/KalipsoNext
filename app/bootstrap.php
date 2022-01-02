@@ -1,14 +1,12 @@
 <?php
 
-use App\Core;
-
 // register_shutdown_function
 register_shutdown_function( function() {
     App\Core\Exception::fatalHandler();
 });
 // set_error_handler
 set_error_handler( function($level, $error, $file, $line) {
-	if(0 === error_reporting()){
+	if (0 === error_reporting()) {
         return false;
     }
     App\Core\Exception::errorHandler($level, $error, $file, $line);
@@ -19,3 +17,7 @@ set_exception_handler( function($e) {
 });
 ini_set('display_errors', 'on');
 error_reporting(E_ALL);
+
+// Basic defines
+define('KN_START', microtime(true));
+define('KN_ROOT',  rtrim($_SERVER["DOCUMENT_ROOT"], '/').'/');
