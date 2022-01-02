@@ -11,8 +11,8 @@ try {
     
     require __DIR__.'/vendor/autoload.php';
     require __DIR__.'/app/bootstrap.php';
-    
-    App\Core\System::start();
+
+    (new App\Core\System)->go();
 
 } catch (Exception $e) {
 

@@ -52,7 +52,7 @@ class Exception {
 	        </html>';
 
 	    $errorOutput = '    '.$file.':'.$line.' - '.$errMsg.' <strong>('.$errNo.')</strong>';
-	    // if (! config('app.dev_mode')) http(500);
+	    // if (! KN:config('app.dev_mode')) http(500);
 	    echo str_replace('[OUTPUT]', $errorOutput, $handlerInterface);
 	}
 

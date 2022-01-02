@@ -2,24 +2,32 @@
 
 /**
  * @package KN
- * @subpackage KN Core
+ * @subpackage KN System
  */
 
 declare(strict_types=1);
 
 namespace App\Core;
 
-class System extends Route   {
+use App\Helpers\KN;
 
-	public function __construct() {
+class System {
 
+    public $route = null;
+    public $lang = 'en';
 
+    public function __construct() {
+
+        $this->route = require_once KN::path('app/resources/route.php');
 
     }
 
-    public static function start () {
+    public function go () {
 
-        echo self::test();
+        
+
+        $this->route->detect();
+        
     }
 
 }
