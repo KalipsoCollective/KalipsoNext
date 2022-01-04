@@ -10,22 +10,38 @@ $route->addRoutes([
 		'middlewares'	=> [],
 		'controller'	=> ['AppController::index']
 	],
-	'/login'	=> [
+	'/account'	=> [
+		'middlewares'	=> [['Auth::with', ['auth']]],
+		'controller'	=> ['AppController::account']
+	],
+	'/account/login'	=> [
 		'middlewares'	=> [['Auth::with', ['nonAuth']]],
 		'controller'	=> ['AppController::login']
+	],
+	'/account/register'	=> [
+		'middlewares'	=> [['Auth::with', ['nonAuth']]],
+		'controller'	=> ['AppController::register']
+	],
+	'/blogs'	=> [
+		'controller'	=> ['BlogController::list']
+	],
+	'/blogs/:slug'	=> [
+		'controller'	=> ['BlogController::single']
 	],
 
 
 	// API
 	'/api'	=> [
 		'middlewares'	=> [],
-		'controller'	=> ['ApiController::index']
+		'controller'	=> ['ApiController::index'],
+		'function'		=> function() {
+			echo '<pre>API Index</pre>';
+		}
 	],
 
 ]);
 
-/*
-$route->addRoute('/example', [])
-*/
+
+$route->addRoute('/example');
 
 return $route;
