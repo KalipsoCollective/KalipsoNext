@@ -24,7 +24,7 @@ class System {
 
     public function go () {
 
-        $this->route->detect();
+        $this->route->run();
         
     }
 
