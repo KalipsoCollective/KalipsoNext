@@ -51,8 +51,9 @@ class Route {
 
             self::$schema[$path] = [
                 'middlewares'   => isset($properties['middlewares']) !== false ? $properties['middlewares'] : [],
-                'controller'   => isset($properties['controller']) !== false ? $properties['controller'] : [],
-                'function'   => isset($properties['function']) !== false ? $properties['function'] : null,
+                'controller'    => isset($properties['controller']) !== false ? $properties['controller'] : [],
+                'function'      => isset($properties['function']) !== false ? $properties['function'] : null,
+                'method'        => strtolower(isset($properties['method']) !== false ? $properties['method'] : 'GET'),  
             ];
 
         }
