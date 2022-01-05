@@ -348,4 +348,23 @@ class KN {
             echo $parameters['write'];
         }
     }
+
+
+    /**
+     * View File
+     * @param  $file   file to show
+     * @return $content    
+     */
+    public static function view($file) {
+
+        $file = KN::path('app/resources/view/' . $file);
+        if (file_exists($file)) {
+
+            return require $file;
+
+        } else {
+            return null;
+        }
+
+    }
 }

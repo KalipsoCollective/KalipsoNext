@@ -20,6 +20,7 @@ class Route {
     private static $attributes = [];
     private static $pathNotFound = null;
     private static $methodNotAllowed = null;
+    private static $matchingRoute = null;
 
     public function __construct() {
 
@@ -83,6 +84,9 @@ class Route {
     }
 
 
+    /**
+    * Method used to detect the route
+    */
     public static function run() {
 
         $matchingSchemaIndex = null;
@@ -93,7 +97,7 @@ class Route {
         } else { // dynamic compatible expression
 
             foreach(self::$schema as $path => $properties) {
-                
+
                 if (strpos($path, ':') !== false) {
 
                     $explodedPath = trim($path, '/'); 
@@ -112,12 +116,13 @@ class Route {
 
                         foreach ($explodedPath as $pathIndex => $pathBody) {
 
-                            if (in_array($pathBody, $expMatches) !== false) {
+                            if (in_array($pathBody, $expMatches) !== false) { // slug directory check
                                 self::$attributes[ltrim($pathBody, ':')] = $explodedRequest[$pathIndex];
                                 $matchingSchemaIndex = $path;
-                            } elseif ($pathBody == $explodedRequest[$pathIndex]) {
+                            } elseif ($pathBody == $explodedRequest[$pathIndex]) { // direct directory check
                                 $matchingSchemaIndex = $path;
-                            } else {
+                            } else { // Undefined
+                                $matchingSchemaIndex = null;
                                 break;
                             }
                         }
@@ -127,10 +132,28 @@ class Route {
 
         }
 
-        self::$pathNotFound = is_null(self::$pathNotFound) ? true : false;
+        self::$pathNotFound = is_null($matchingSchemaIndex) ? true : false;
+        self::extractor($matchingSchemaIndex);
 
-        KN::dump(self::$attributes);
-        KN::dump($matchingSchemaIndex);
+    }
+
+
+    /**
+    * Method used to extract the route
+    * @param null|string $index    Related route key
+    */
+    public static function extractor($index = null) {
+
+        if (self::$pathNotFound) {
+
+            KN::http(404);
+            KN::view('404.php');
+
+        } else {
+            self::$matchingRoute = self::$schema[$index];
+            KN::dump(self::$matchingRoute);
+            KN::dump(self::$attributes);
+        }
 
     }
 

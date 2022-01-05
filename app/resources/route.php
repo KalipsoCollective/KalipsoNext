@@ -29,7 +29,7 @@ $route->addRoutes([
 		'controller'	=> ['BlogController::single']
 	],
 	'/blogs/:slug/comments/:commentId'	=> [
-		'controller'	=> ['BlogController::single']
+		'controller'	=> ['BlogController::comments']
 	],
 
 
