@@ -14,11 +14,10 @@ class KN {
 
     /**
      * Dump Data
-     * @param  $value any
-     * @param  $exit boolean
+     * @param any $value
+     * @param boolean $exit
      * @return void
      */
-
     public static function dump($value, $exit = false) {
 
         echo '<pre>';
@@ -32,9 +31,8 @@ class KN {
 
     /**
      * Path
-     * @return $path main path
+     * @return string $path    main path
      */
-
     public static function path($dir = null) {
         return KN_ROOT . $dir;
     }
@@ -42,10 +40,9 @@ class KN {
 
     /**
      * Base URL
-     * @param  $body string||null
-     * @return $return string
+     * @param  string|null $body
+     * @return string $return
      */
-
     public static function base($body = null) {
 
         $url = (self::config('settings.ssl') ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . '/';
@@ -58,9 +55,8 @@ class KN {
     /**
      * Configuration Parameters
      * @param  string $setting setting value name
-     * @return string $return  setting value
+     * @return string|null|array|object $return  setting value
      */
-
     public static function config($setting) {
 
         global $configs;
@@ -114,11 +110,10 @@ class KN {
 
     /**
      * Filter Value
-     * @param  $data any
-     * @param  $parameter string
-     * @return $return any
+     * @param  any $data
+     * @param  string $parameter 
+     * @return any $return 
      */
-
     public static function filter($data = null, $parameter = 'text') {
         /*  parameters
             - text - strip_tags - trim
@@ -270,4 +265,87 @@ class KN {
 
     }
 
+
+    /**
+     * Create Header
+     * @param  int|string $code    http status code or different header definitions: powered_by, location, refresh and content_type
+     * @param  array $parameters   other parameters are sent as an array. 
+     * available keys: write(echo), url(redirect url), second (redirect second), content(content-type)
+     * @return void 
+     */
+    public static function http($code = 200, $parameters = []) {
+
+        /* reference
+        $parameters = [
+            'write' => '',
+            'url' => '',
+            'second' => '',
+            'content'  => ''
+        ]; */
+
+        $httpCodes = [
+            200 => 'OK',
+            301 => 'Moved Permanently',
+            401 => 'Unauthorized',
+            403 => 'Forbidden',
+            404 => 'Not Found',
+            500 => 'Internal Server Error'
+        ];
+
+        if (is_numeric($code) AND isset($httpCodes[(int)$code]) !== false) {
+
+            header($_SERVER["SERVER_PROTOCOL"] . ' ' . $code . ' ' . $httpCodes[(int)$code]);
+
+        } else {
+
+            switch ($code) {
+
+                case 'powered_by':
+                    header('X-Powered-By: KalipsoNext');
+                    break;
+
+                case 'location':
+                case 'refresh':
+                    if (isset($parameters['url']) === false) {
+                        $redirectUrl = isset($_SERVER['HTTP_REFERER']) !== false ? $_SERVER['HTTP_REFERER'] : self::base();
+                    } else {
+                        $redirectUrl = $parameters['url'];
+                    }
+                    if (isset($parameters['second']) === false OR (! $parameters['second'] OR ! is_numeric($parameters['second']))) {
+                        header('location: ' . $redirectUrl);
+                    } else {
+                        header('refresh: ' . $parameters['second'] . '; url=' . $redirectUrl);
+                    }
+                    
+                    break;
+
+                case 'content_type':
+                    if (isset($parameters['content']) === false) $parameters['content'] = null;
+
+                    switch ($parameters['content']) {
+                        case 'application/javascript':
+                        case 'js': $parameters['content'] = 'application/javascript'; break;
+
+                        case 'application/zip':
+                        case 'zip': $parameters['content'] = 'application/zip'; break;
+
+                        case 'text/plain':
+                        case 'txt': $parameters['content'] = 'text/plain'; break;
+
+                        case 'text/xml':
+                        case 'xml': $parameters['content'] = 'application/xml'; break;
+
+                        case 'vcf': $parameters['content'] = 'text/x-vcard'; break;
+
+                        default: $parameters['content'] = 'text/html';
+                    }
+                    header('Content-Type: '.$parameters['content'].'; Charset='.self::config('app.charset'));
+                    break;
+            }
+        }
+
+        if (isset($parameters['write']) !== false) {
+            echo $parameters['write'];
+        }
+    }
 }

@@ -28,6 +28,9 @@ $route->addRoutes([
 	'/blogs/:slug'	=> [
 		'controller'	=> ['BlogController::single']
 	],
+	'/blogs/:slug/comments/:commentId'	=> [
+		'controller'	=> ['BlogController::single']
+	],
 
 
 	// API

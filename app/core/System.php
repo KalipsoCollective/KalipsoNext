@@ -18,6 +18,7 @@ class System {
 
     public function __construct() {
 
+        KN::http('powered_by');
         $this->route = require_once KN::path('app/resources/route.php');
 
     }

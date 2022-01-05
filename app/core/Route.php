@@ -17,6 +17,7 @@ class Route {
     private static $request = null;
     private static $requestMethod = null;
     private static $params = [];
+    private static $attributes = [];
     private static $pathNotFound = null;
     private static $methodNotAllowed = null;
 
@@ -84,33 +85,52 @@ class Route {
 
     public static function run() {
 
+        $matchingSchemaIndex = null;
         if ( isset( self::$schema[self::$request] ) !== false ) { // directly compatible expression
 
-            // Middleware
+            $matchingSchemaIndex = self::$request;
 
-            if ( self::$schema[self::$request]['function'] ) {
-                self::$schema[self::$request]['function']();
-            } else {
-                KN::dump(self::$schema[self::$request]);
-            }
-
-            
-        } else {
+        } else { // dynamic compatible expression
 
             foreach(self::$schema as $path => $properties) {
                 
-                preg_match_all('@(:([a-zA-Z0-9_-]+))@m', $path, $m, PREG_SET_ORDER, 0);
-                KN::dump($m);
-                KN::dump($path);
-                KN::dump(self::$request);
-                echo '<br>----<br>';
+                if (strpos($path, ':') !== false) {
 
+                    $explodedPath = trim($path, '/'); 
+                    $explodedRequest = trim(self::$request, '/');
+
+                    $explodedPath = strpos($explodedPath, '/') !== false ? explode('/', $explodedPath) : [$explodedPath];
+                    $explodedRequest = strpos($explodedRequest, '/') !== false ? explode('/', $explodedRequest) : [$explodedRequest];
+
+                    if (count($explodedPath) === count($explodedRequest)) {
+
+                        preg_match_all('@(:([a-zA-Z0-9_-]+))@m', $path, $expMatches, PREG_SET_ORDER, 0);
+
+                        $expMatches = array_map( function($v) {
+                            return $v[0];
+                        }, $expMatches);
+
+                        foreach ($explodedPath as $pathIndex => $pathBody) {
+
+                            if (in_array($pathBody, $expMatches) !== false) {
+                                self::$attributes[ltrim($pathBody, ':')] = $explodedRequest[$pathIndex];
+                                $matchingSchemaIndex = $path;
+                            } elseif ($pathBody == $explodedRequest[$pathIndex]) {
+                                $matchingSchemaIndex = $path;
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                }
             }
 
         }
 
-        // KN::dump(self::$schema);
-        // KN::dump(self::$request);
+        self::$pathNotFound = is_null(self::$pathNotFound) ? true : false;
+
+        KN::dump(self::$attributes);
+        KN::dump($matchingSchemaIndex);
 
     }
 
