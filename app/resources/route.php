@@ -12,15 +12,15 @@ $route->addRoutes([
 	],
 	'/account'	=> [
 		'middlewares'	=> [['Auth::with', ['auth']]],
-		'controller'	=> ['AppController::account']
+		'controller'	=> ['UserController::account']
 	],
 	'/account/login'	=> [
 		'middlewares'	=> [['Auth::with', ['nonAuth']]],
-		'controller'	=> ['AppController::login']
+		'controller'	=> ['UserController::login']
 	],
 	'/account/register'	=> [
 		'middlewares'	=> [['Auth::with', ['nonAuth']]],
-		'controller'	=> ['AppController::register']
+		'controller'	=> ['UserController::register']
 	],
 	'/blogs'	=> [
 		'controller'	=> ['BlogController::list']

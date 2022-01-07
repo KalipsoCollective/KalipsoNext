@@ -150,7 +150,17 @@ class Route {
             KN::view('404.php');
 
         } else {
+
             self::$matchingRoute = self::$schema[$index];
+
+            if (count(self::$matchingRoute['middlewares'])) {
+
+
+                foreach (self::$matchingRoute['middlewares'] as $k) {
+
+                }
+            }
+
             KN::dump(self::$matchingRoute);
             KN::dump(self::$attributes);
         }
