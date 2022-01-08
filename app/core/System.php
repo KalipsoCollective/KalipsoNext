@@ -23,8 +23,6 @@ class System {
         // powered_by header - please don't remove!
         KN::http('powered_by');
 
-        echo KN_ROOT;
-        
         // route file importing
         $this->route = require KN::path('app/resources/route.php');
 
@@ -35,19 +33,17 @@ class System {
         ) {
 
             $this->lang = $_SESSION['language'];
-            $languageFile = require KN::path($path);
+            $languageFile = require $path;
 
         } elseif (file_exists($path = KN::path('app/resources/localization/'.$this->lang.'.php'))) {
 
-            $languageFile = require KN::path($path);
+            $languageFile = require $path;
 
         } else {
 
             throw new \Exception("Language file is not found!");
 
         }
-
-        echo KN_ROOT;
 
     }
 

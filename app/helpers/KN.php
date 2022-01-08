@@ -371,15 +371,20 @@ class KN {
 
     /**
      * Language Translation
-     * @param  $key
-     * @return $return translated string    
+     * @param  $key 
+     * @return $key translated string    
      */
     public static function lang($key) {
 
-        $return = '';
-        $return = $key;
+        global $languageFile;
 
-        return $return;
+        if (isset($languageFile[$key]) !== false) {
+
+            $key = $languageFile[$key];
+
+        }
+
+        return $key;
 
     }
 }
