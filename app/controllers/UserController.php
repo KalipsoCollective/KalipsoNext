@@ -28,14 +28,21 @@ class UserController {
 
     public static function login() {
 
-        return KN::view('user/login');
+        KN::layout('user/login');
 
     }
 
 
     public static function register() {
 
-        echo 'Register';
+        KN::layout('user/register');
+
+    }
+
+
+    public static function account() {
+
+        KN::layout('user/register');
 
     }
 

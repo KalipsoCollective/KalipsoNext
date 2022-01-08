@@ -353,7 +353,7 @@ class KN {
     /**
      * View File
      * @param  $file   file to show
-     * @return $content    
+     * @return void   
      */
     public static function view($file, $arguments = []) {
 
@@ -361,10 +361,32 @@ class KN {
         if (file_exists($file)) {
 
             extract($arguments);
-            return require $file;
+            require $file;
 
         } else {
             return null;
+        }
+
+    }
+
+
+    /**
+     * Layout Creator
+     * @param  $file   body file
+     * @return void    
+     */
+    public static function layout($file, $exclude = []) {
+
+        $layout = ['layout/header', 'layout/nav', '_', 'layout/footer', 'layout/end'];
+
+        foreach ($layout as $part) {
+
+            if ($part == '_') {
+                $part = $file;
+            }
+
+            self::view($part);
+
         }
 
     }
