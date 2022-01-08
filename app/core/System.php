@@ -18,8 +18,36 @@ class System {
 
     public function __construct() {
 
+        global $languageFile;
+
+        // powered_by header - please don't remove!
         KN::http('powered_by');
-        $this->route = require_once KN::path('app/resources/route.php');
+
+        echo KN_ROOT;
+        
+        // route file importing
+        $this->route = require KN::path('app/resources/route.php');
+
+        // langauge file importing
+        if (
+            isset($_SESSION['language']) !== false AND 
+            file_exists($path = KN::path('app/resources/localization/'.$_SESSION['language'].'.php'))
+        ) {
+
+            $this->lang = $_SESSION['language'];
+            $languageFile = require KN::path($path);
+
+        } elseif (file_exists($path = KN::path('app/resources/localization/'.$this->lang.'.php'))) {
+
+            $languageFile = require KN::path($path);
+
+        } else {
+
+            throw new \Exception("Language file is not found!");
+
+        }
+
+        echo KN_ROOT;
 
     }
 

@@ -6,6 +6,6 @@
  **/
 
 return [
-
-
+    'middleware_not_found'              => 'Middleware not found!',
+    'controller_not_found'              => 'Controller not found!',
 ];

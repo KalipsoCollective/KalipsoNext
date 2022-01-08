@@ -147,22 +147,66 @@ class Route {
         if (self::$pathNotFound) {
 
             KN::http(404);
-            KN::view('404.php');
+            KN::view('404');
 
         } else {
 
             self::$matchingRoute = self::$schema[$index];
 
+            $return = null;
+
+            // middleware
             if (count(self::$matchingRoute['middlewares'])) {
 
 
-                foreach (self::$matchingRoute['middlewares'] as $k) {
+                foreach (self::$matchingRoute['middlewares'] as $middleware) {
 
+                    $path = 'App\\Middlewares\\'.$middleware[0];
+
+                    try {
+
+                        $middleware = call_user_func_array(
+                            $path, $middleware[1]
+                        );
+
+                        if (! $middleware['status']) {
+                            $return = $middleware['message'];
+                            break;
+                        }
+                        
+
+                    } catch (Exception $e) {
+                        throw 'middleware_not_found';
+                    }
                 }
             }
 
-            KN::dump(self::$matchingRoute);
-            KN::dump(self::$attributes);
+
+            if (is_null($return)) {
+
+                // controller
+                if (isset(self::$matchingRoute['controller']) !== false) {
+
+
+                    $path = 'App\\Controllers\\'.self::$matchingRoute['controller'];
+
+                    try {
+
+                        call_user_func_array(
+                            $path, []
+                        );
+                        
+
+                    } catch (Exception $e) {
+                        throw 'controller_not_found';
+                    }
+                }
+
+            } else {
+
+                KN::http(404);
+                KN::view('404', ['message' => KN::lang($return)]);
+            }
         }
 
     }

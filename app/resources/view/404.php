@@ -22,6 +22,6 @@
     </head>
     <body>
         <h1>404</h1>
-        <h2>Page not found!</h2>
+        <h2><?php if (isset($message) !== false) { echo $message; } else { echo 'Page not found!'; } ?></h2>
     </body>
 </html>

@@ -8,35 +8,35 @@ $route->addRoutes([
 	// WEB
 	'/'	=> [
 		'middlewares'	=> [],
-		'controller'	=> ['AppController::index']
+		'controller'	=> 'AppController::index'
 	],
 	'/account'	=> [
 		'middlewares'	=> [['Auth::with', ['auth']]],
-		'controller'	=> ['UserController::account']
+		'controller'	=> 'UserController::account'
 	],
 	'/account/login'	=> [
 		'middlewares'	=> [['Auth::with', ['nonAuth']]],
-		'controller'	=> ['UserController::login']
+		'controller'	=> 'UserController::login'
 	],
 	'/account/register'	=> [
 		'middlewares'	=> [['Auth::with', ['nonAuth']]],
-		'controller'	=> ['UserController::register']
+		'controller'	=> 'UserController::register'
 	],
 	'/blogs'	=> [
-		'controller'	=> ['BlogController::list']
+		'controller'	=> 'BlogController::list'
 	],
 	'/blogs/:slug'	=> [
-		'controller'	=> ['BlogController::single']
+		'controller'	=> 'BlogController::single'
 	],
 	'/blogs/:slug/comments/:commentId'	=> [
-		'controller'	=> ['BlogController::comments']
+		'controller'	=> 'BlogController::comments'
 	],
 
 
 	// API
 	'/api'	=> [
 		'middlewares'	=> [],
-		'controller'	=> ['ApiController::index'],
+		'controller'	=> 'ApiController::index',
 		'function'		=> function() {
 			echo '<pre>API Index</pre>';
 		}

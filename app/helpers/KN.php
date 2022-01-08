@@ -355,16 +355,31 @@ class KN {
      * @param  $file   file to show
      * @return $content    
      */
-    public static function view($file) {
+    public static function view($file, $arguments = []) {
 
-        $file = KN::path('app/resources/view/' . $file);
+        $file = KN::path('app/resources/view/' . $file . '.php');
         if (file_exists($file)) {
 
+            extract($arguments);
             return require $file;
 
         } else {
             return null;
         }
+
+    }
+
+    /**
+     * Language Translation
+     * @param  $key
+     * @return $return translated string    
+     */
+    public static function lang($key) {
+
+        $return = '';
+        $return = $key;
+
+        return $return;
 
     }
 }

@@ -24,4 +24,10 @@ class UserController {
 
     }
 
+    public static function login() {
+
+        echo 'Login';
+
+    }
+
 }
