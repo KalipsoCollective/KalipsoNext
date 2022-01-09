@@ -386,10 +386,12 @@ class KN {
             }
 
             self::view($part);
+            echo PHP_EOL;
 
         }
 
     }
+
 
     /**
      * Language Translation
@@ -408,5 +410,55 @@ class KN {
 
         return $key;
 
+    }
+
+
+    /**
+     * Assets File Controller
+     * @param string $filename
+     * @param bool $version
+     * @param bool $tag
+     * @param bool $echo
+     * @param array $externalParameters
+     * @return string|null
+     */
+    public static function assets(string $filename, $version = true, $tag = false, $echo = false, $externalParameters = []) {
+
+        $fileDir = rtrim( self::path().'assets/'.$filename, '/' );
+        $return = trim( self::base().'assets/'.$filename, '/' );
+        if (file_exists( $fileDir )) {
+
+            $return = $version==true ? $return.'?v='.filemtime($fileDir) : $return;
+            if ( $tag==true ) // Only support for javascript and stylesheet files
+            {
+                $_externalParameters = '';
+                foreach ($externalParameters as $param => $val) {
+                    $_externalParameters = ' ' . $param . '="' . $val . '"';
+                }
+
+                $file_data = pathinfo( $fileDir );
+                if ( $file_data['extension'] == 'css' )
+                {
+                    $return = '<link'.$_externalParameters.' rel="stylesheet" href="'.$return.'" type="text/css"/>'.PHP_EOL.'       ';
+
+                } elseif ( $file_data['extension'] == 'js' )
+                {
+                    $return = '<script'.$_externalParameters.' src="'.$return.'"></script>'.PHP_EOL.'       ';
+                }
+            }
+
+        } else {
+            $return = null;
+            // new app\core\Log('sys_asset', $filename);
+        }
+
+        if ( $echo == true ) {
+
+            echo $return;
+            return null;
+
+        } else {
+            return $return;
+        }
     }
 }
