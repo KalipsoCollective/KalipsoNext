@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Helpers\KN;
+
 class AppController {
 
 
@@ -21,6 +23,14 @@ class AppController {
     public static function index() {
 
         echo 'Welcome!';
+
+    }
+
+
+    public static function dynamicJS() {
+
+        KN::http('content_type', ['content' => 'js']);
+        require KN::path('app/resources/script.php');
 
     }
 

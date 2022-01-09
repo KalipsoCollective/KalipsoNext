@@ -70,15 +70,15 @@ class KN {
 
             if (isset($configs[$setting[0]]) !== false) {
 
-                $settings = $configs[$setting[0]];
+                $settings = $configs[$setting[1]];
 
             } else {
 
-                $file = self::path('app/core/config/' . $setting[0] . '.php');
+                $file = self::path('app/config/' . $setting[0] . '.php');
                 if (file_exists($file)) {
 
                     $settings = require $file;
-                    $configs[$setting[0]] = $settings;
+                    $configs[$setting[1]] = $settings;
                     
                 }
 
@@ -294,7 +294,7 @@ class KN {
 
         if (is_numeric($code) AND isset($httpCodes[(int)$code]) !== false) {
 
-            header($_SERVER["SERVER_PROTOCOL"] . ' ' . $code . ' ' . $httpCodes[(int)$code]);
+            header($_SERVER["SERVER_PROTOCOL"] . ' ' . $code . ' ' . $httpCodes[(int) $code]);
 
         } else {
 

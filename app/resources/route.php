@@ -31,6 +31,10 @@ $route->addRoutes([
 	'/blogs/:slug/comments/:commentId'	=> [
 		'controller'	=> 'BlogController::comments'
 	],
+	/*! Base Scripts */
+	'/script'	=> [
+		'controller'	=> 'AppController::dynamicJS'
+	],
 
 
 	// API
