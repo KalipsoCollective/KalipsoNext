@@ -1,4 +1,7 @@
 <?php
+
+use App\Helpers\KN;
+
 if (defined('INLINE_JS')) {
 	?>
 	<script>
@@ -164,7 +167,7 @@ function init() {
 						"maxlenght": 50
 					},
 					"orderable": true,
-					"title": "<?php echo lang('def.username'); ?>",
+					"title": "<?php echo KN::lang('def.username'); ?>",
 					"key": "username"
 				},
 				{
@@ -173,7 +176,7 @@ function init() {
 						"maxlenght": 50
 					},
 					"orderable": true,
-					"title": "<?php echo lang('def.email'); ?>",
+					"title": "<?php echo KN::lang('def.email'); ?>",
 					"key": "email"
 				},
 				{
@@ -182,7 +185,7 @@ function init() {
 						"maxlenght": 50
 					},
 					"orderable": true,
-					"title": "<?php echo lang('def.birth_date'); ?>",
+					"title": "<?php echo KN::lang('def.birth_date'); ?>",
 					"key": "birthday"
 				},
 				{
@@ -195,13 +198,13 @@ function init() {
 						],
 					},
 					"orderable": true,
-					"title": "<?php echo lang('def.status'); ?>",
+					"title": "<?php echo KN::lang('def.status'); ?>",
 					"key": "status"
 				},
 				{
 					"searchable": false,
 					"orderable": false,
-					"title": "<?php echo lang('def.action'); ?>",
+					"title": "<?php echo KN::lang('def.action'); ?>",
 					"key": "action"
 				}
 			],
@@ -224,7 +227,7 @@ function init() {
 					"default": true
 				},
 				{
-					"name": "<?php echo lang('def.all'); ?>",
+					"name": "<?php echo KN::lang('def.all'); ?>",
 					"value": 0,
 				}
 			],
@@ -300,7 +303,7 @@ async function formSender(e, url) {
 	if (request) {
 		asyncResponse(request, formId)
 	} else {
-		alert("<?php echo lang('alert.a_problem_occurred'); ?>")
+		alert("<?php echo KN::lang('alert.a_problem_occurred'); ?>")
 	}
 	
 	setTimeout(() => {
