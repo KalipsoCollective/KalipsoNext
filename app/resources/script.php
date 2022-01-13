@@ -11,7 +11,7 @@ if (defined('INLINE_JS')) {
 NProgress.start();
 (function() {
 
-	window.vanillaPjax = new vPjax('a:not([target="_blank"])', '#wrap').form('[data-vpjax]').init()
+	window.vanillaPjax = new vPjax({selector: 'a:not([target="_blank"])', wrap: '#wrap', timeOut: 3000}).form('[data-vpjax]').init()
 	document.addEventListener("vPjax:start", (e) => {
 		NProgress.start()
 	})

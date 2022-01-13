@@ -9,4 +9,4 @@
 		<link rel="stylesheet" type="text/css" href="<?php echo self::assets('libs/kalipsotable/kalipso.table.css'); ?>">
 		<link rel="stylesheet" type="text/css" href="<?php echo self::assets('css/kn.css'); ?>">
 	</head>
-	<body>
+	<body id="wrap">
