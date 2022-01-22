@@ -22,7 +22,7 @@ class AppController {
 
     public static function index() {
 
-        echo 'Welcome!';
+        KN::layout('index');
 
     }
 

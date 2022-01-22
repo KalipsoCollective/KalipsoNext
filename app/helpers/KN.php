@@ -34,7 +34,9 @@ class KN {
      * @return string $path    main path
      */
     public static function path($dir = null) {
+
         return KN_ROOT . $dir;
+
     }
 
 
@@ -47,8 +49,8 @@ class KN {
 
         $url = (self::config('settings.ssl') ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . '/';
         if ($body) $url .= trim(strip_tags($body), '/');
-
         return $url;
+
     }
 
 
@@ -347,6 +349,7 @@ class KN {
         if (isset($parameters['write']) !== false) {
             echo $parameters['write'];
         }
+
     }
 
 
@@ -460,16 +463,547 @@ class KN {
         } else {
             return $return;
         }
+
     }
 
     /**
      * CSRF Token Generator
      * @param bool $onlyToken  Output option
-     * @return string|void
+     * @return string|null
      */
-    public static function createCSRF($onlyToken = true) {
+    public static function createCSRF($onlyToken = false) {
 
-        // $token = KN::getCookie();
+        global $requestUri;
+
+        $return = null;
+        if (isset($_COOKIE[self::config('app.session')]) !== false) {
+
+            $csrf = [
+                'cookie'        => $_COOKIE[self::config('app.session')],
+                'timeout'       => strtotime('+1 hour'),
+                'request_uri'   => $requestUri,
+                'header'        => self::getHeader(),
+                'ip'            => self::getIp()
+            ];
+
+            $return = self::encryptKey(json_encode($csrf));
+
+            if (! $onlyToken) {
+                $return = '<input type="hidden" name="_token" value="'.$return.'">';
+            }
+        }
+        return $return;
 
     }
+
+
+    /**
+     * CSRF Token Verifier
+     * @param string $token  Token
+     * @return bool
+     */
+    public static function verifyCSRF($token) {
+
+        global $requestUri;
+
+        $return = false;
+        $token = @json_decode(self::decryptKey($token), true);
+        if (is_array($token)) {
+
+            if (
+                (isset($token['cookie']) !== false AND $token['cookie'] == $_COOKIE[self::config('app.session')]) AND
+                (isset($token['timeout']) !== false AND $token['timeout'] >= time()) AND
+                (isset($token['request_uri']) !== false AND $requestUri) AND
+                (isset($token['header']) !== false AND $token['header'] == self::getHeader()) AND
+                (isset($token['ip']) !== false AND $token['ip'] == self::getIp())
+
+            ) {
+                $return = true;
+            }
+
+        }
+
+        return $return;
+
+    }
+
+    /**
+     * Current Page Class
+     * @param string|null $route  Route
+     * @return string|void
+     */
+    public static function currentPage($route = null) {
+
+        global $requestUri;
+
+        if (is_null($route) AND $requestUri == '') {
+            return ' active';
+        } elseif (! is_null($route) AND trim($route, '/') == $requestUri) {
+            return ' active';
+        }
+
+    }
+
+
+    /**
+     * Session Starter
+     * Assign to session name and start session
+     * @return void
+     */
+    public static function sessionStart() {
+
+        session_name(self::config('app.session'));
+        session_start();
+
+    }
+
+    /**
+     * Get Session
+     * Return all session information or specific data.
+     * @param string $key   specific key
+     * @return bool|string|array|null
+     */
+    public static function getSession($key = null) {
+        
+        $return = null;
+        if (isset($_SESSION) !== false) {
+
+            if (is_string($key) AND isset($_SESSION[$key]) !== false) {
+                $return = $_SESSION[$key];
+            } elseif(is_null($key)) {
+                $return = $_SESSION;
+            }
+
+        }
+        return $return;
+
+    }
+
+    /**
+     * Set Session
+     * Set to all session information or specific data.
+     * @param string $key   specific key
+     * @param any $data   data
+     * @return bool
+     */
+    public static function setSession($key = null, $data = null) {
+
+        $return = false;
+        if (isset($_SESSION) !== false) {
+
+            if (is_string($key)) {
+                $_SESSION[$key] = $data;
+            } else {
+                $_SESSION = $data;
+            }
+            $return = true;
+        }
+
+        return $return;
+
+    }
+
+
+    /**
+     * Get IP Adress
+     * @return string
+     */
+    public static function getIp() {
+
+        if (getenv("HTTP_CLIENT_IP")) { 
+            $ip = getenv("HTTP_CLIENT_IP");
+        } elseif (getenv("HTTP_X_FORWARDED_FOR")) {
+
+            $ip = getenv("HTTP_X_FORWARDED_FOR");
+            if (strpos($ip, ',')) {
+                $tmp = explode(',', $ip);
+                $ip = trim($tmp[0]);
+            }
+        } else {
+            $ip = getenv("REMOTE_ADDR");
+        }
+
+        return $ip == '::1' ? '127.0.0.1' : $ip;
+
+    }
+
+
+    /**
+     * Get Header
+     * @return string
+     */
+    public static function getHeader() {
+
+        return isset($_SERVER['HTTP_USER_AGENT']) !== false ? $_SERVER['HTTP_USER_AGENT'] : 'unknown';
+
+    }
+
+
+    /**
+     * Format File Size
+     * @param $bytes
+     * @return string
+     */
+
+    public static function formatSize($bytes) {
+
+        if ($bytes >= 1073741824) $bytes = number_format($bytes / 1073741824, 2) . ' GB';
+        elseif ($bytes >= 1048576) $bytes = number_format($bytes / 1048576, 2) . ' MB';
+        elseif ($bytes >= 1024) $bytes = number_format($bytes / 1024, 2) . ' KB';
+        elseif ($bytes > 1) $bytes = $bytes . ' ' . self::lang('byte') . lang('plural_suffix');
+        elseif ($bytes == 1) $bytes = $bytes . ' ' . self::lang('byte');
+        else $bytes = '0 ' . self::lang('byte');
+
+        return $bytes;
+
+    }
+
+
+    /**
+     * Get User Device Details
+     * @param string|null $ua
+     * @return array
+     */
+
+    public static function userAgentDetails($ua = null): array {
+
+        $ua = is_null($u) ? self::getHeader() : $ua;
+        $browser = '';
+        $platform = '';
+        $bIcon = 'mdi mdi-close-circle';
+        $pIcon = 'mdi mdi-close-circle';
+
+        $browserList = [
+            'Trident\/7.0'          => ['Internet Explorer 11','mdi mdi-internet-explorer'],
+            'MSIE'                  => ['Internet Explorer','mdi mdi-internet-explorer'],
+            'Edge'                  => ['Microsoft Edge','mdi mdi-microsoft-edge-legacy'],
+            'Edg'                   => ['Microsoft Edge','mdi mdi-microsoft-edge'],
+            'Internet Explorer'     => ['Internet Explorer','mdi mdi-internet-explorer'],
+            'Beamrise'              => ['Beamrise','mdi mdi-earth'],
+            'Opera'                 => ['Opera','mdi mdi-opera'],
+            'OPR'                   => ['Opera','mdi mdi-opera'],
+            'Vivaldi'               => ['Vivaldi','mdi mdi-earth'],
+            'Shiira'                => ['Shiira','mdi mdi-earth'],
+            'Chimera'               => ['Chimera','mdi mdi-earth'],
+            'Phoenix'               => ['Phoenix','mdi mdi-earth'],
+            'Firebird'              => ['Firebird','mdi mdi-earth'],
+            'Camino'                => ['Camino','mdi mdi-earth'],
+            'Netscape'              => ['Netscape','mdi mdi-earth'],
+            'OmniWeb'               => ['OmniWeb','mdi mdi-earth'],
+            'Konqueror'             => ['Konqueror','mdi mdi-earth'],
+            'icab'                  => ['iCab','mdi mdi-earth'],
+            'Lynx'                  => ['Lynx','mdi mdi-earth'],
+            'Links'                 => ['Links','mdi mdi-earth'],
+            'hotjava'               => ['HotJava','mdi mdi-earth'],
+            'amaya'                 => ['Amaya','mdi mdi-earth'],
+            'MiuiBrowser'           => ['MIUI Browser','mdi mdi-earth'],
+            'IBrowse'               => ['IBrowse','mdi mdi-earth'],
+            'iTunes'                => ['iTunes','mdi mdi-earth'],
+            'Silk'                  => ['Silk','mdi mdi-earth'],
+            'Dillo'                 => ['Dillo','mdi mdi-earth'],
+            'Maxthon'               => ['Maxthon','mdi mdi-earth'],
+            'Arora'                 => ['Arora','mdi mdi-earth'],
+            'Galeon'                => ['Galeon','mdi mdi-earth'],
+            'Iceape'                => ['Iceape','mdi mdi-earth'],
+            'Iceweasel'             => ['Iceweasel','mdi mdi-earth'],
+            'Midori'                => ['Midori','mdi mdi-earth'],
+            'QupZilla'              => ['QupZilla','mdi mdi-earth'],
+            'Namoroka'              => ['Namoroka','mdi mdi-earth'],
+            'NetSurf'               => ['NetSurf','mdi mdi-earth'],
+            'BOLT'                  => ['BOLT','mdi mdi-earth'],
+            'EudoraWeb'             => ['EudoraWeb','mdi mdi-earth'],
+            'shadowfox'             => ['ShadowFox','mdi mdi-earth'],
+            'Swiftfox'              => ['Swiftfox','mdi mdi-earth'],
+            'Uzbl'                  => ['Uzbl','mdi mdi-earth'],
+            'UCBrowser'             => ['UCBrowser','mdi mdi-earth'],
+            'Kindle'                => ['Kindle','mdi mdi-earth'],
+            'wOSBrowser'            => ['wOSBrowser','mdi mdi-earth'],
+            'Epiphany'              => ['Epiphany','mdi mdi-earth'],
+            'SeaMonkey'             => ['SeaMonkey','mdi mdi-earth'],
+            'Avant Browser'         => ['Avant Browser','mdi mdi-earth'],
+            'Chrome'                => ['Google Chrome','mdi mdi-google-chrome'],
+            'CriOS'                 => ['Google Chrome','mdi mdi-google-chrome'],
+            'Safari'                => ['Safari','mdi mdi-apple-safari'],
+            'Firefox'               => ['Firefox','mdi mdi-firefox'],
+            'Mozilla'               => ['Mozilla','mdi mdi-firefox']
+        ];
+
+        $platformList = [
+            'windows'               => ['Windows','mdi mdi-microsoft-windows'],
+            'iPad'                  => ['iPad','mdi mdi-apple'],
+            'iPod'                  => ['iPod','mdi mdi-apple'],
+            'iPhone'                => ['iPhone','mdi mdi-apple'],
+            'mac'                   => ['Apple MacOS','mdi mdi-apple'],
+            'android'               => ['Android','mdi mdi-android'],
+            'linux'                 => ['Linux','mdi mdi-linux'],
+            'Nokia'                 => ['Nokia','mdi mdi-microsoft'],
+            'BlackBerry'            => ['BlackBerry','mdi mdi-blackberry'],
+            'FreeBSD'               => ['FreeBSD','mdi mdi-freebsd'],
+            'OpenBSD'               => ['OpenBSD','mdi mdi-linux'],
+            'NetBSD'                => ['NetBSD','mdi mdi-linux'],
+            'UNIX'                  => ['UNIX','mdi mdi-mouse'],
+            'DragonFly'             => ['DragonFlyBSD','mdi mdi-linux'],
+            'OpenSolaris'           => ['OpenSolaris','mdi mdi-linux'],
+            'SunOS'                 => ['SunOS','mdi mdi-linux'],
+            'OS\/2'                 => ['OS/2','mdi mdi-mouse'],
+            'BeOS'                  => ['BeOS','mdi mdi-mouse'],
+            'win'                   => ['Windows','mdi mdi-windows'],
+            'Dillo'                 => ['Linux','mdi mdi-linux'],
+            'PalmOS'                => ['PalmOS','mdi mdi-mouse'],
+            'RebelMouse'            => ['RebelMouse','mdi mdi-mouse']
+        ];
+
+        foreach($browserList as $pattern => $name) {
+            if ( preg_match("/".$pattern."/i",$ua, $match)) {
+                $bIcon = $name[1];
+                $browser = $name[0];
+                $known = ['Version', $pattern, 'other'];
+                $patternVersion = '#(?<browser>' . join('|', $known).')[/ ]+(?<version>[0-9.|a-zA-Z.]*)#';
+                preg_match_all($patternVersion, $ua, $matches);
+                $i = count($matches['browser']);
+                if ($i != 1) {
+                    if (strripos($ua,"Version") < strripos($ua,$pattern)){
+                        $version = @$matches['version'][0];
+                    }
+                    else {
+                        $version = @$matches['version'][1];
+                    }
+                }
+                else {
+                    $version = @$matches['version'][0];
+                }
+                break;
+            }
+        }
+
+        foreach($platformList as $key => $platform) {
+            if (stripos($ua, $key) !== false) {
+                $pIcon = $platform[1];
+                $platform = $platform[0];
+                break;
+            }
+        }
+
+        $browser = $browser == '' ? self::lang('undetected') : $browser;
+        $platform = $platform == '' ? self::lang('undetected') : $platform;
+
+        $osPatterns = [
+            '/windows nt 10/i'      =>  'Windows 10',
+            '/windows nt 6.3/i'     =>  'Windows 8.1',
+            '/windows nt 6.2/i'     =>  'Windows 8',
+            '/windows nt 6.1/i'     =>  'Windows 7',
+            '/windows nt 6.0/i'     =>  'Windows Vista',
+            '/windows nt 5.2/i'     =>  'Windows Server 2003/XP x64',
+            '/windows nt 5.1/i'     =>  'Windows XP',
+            '/windows xp/i'         =>  'Windows XP',
+            '/windows nt 5.0/i'     =>  'Windows 2000',
+            '/windows me/i'         =>  'Windows ME',
+            '/win98/i'              =>  'Windows 98',
+            '/win95/i'              =>  'Windows 95',
+            '/win16/i'              =>  'Windows 3.11',
+            '/macintosh|mac os x/i' =>  'Mac OS X',
+            '/mac_powerpc/i'        =>  'Mac OS 9',
+            '/linux/i'              =>  'Linux',
+            '/ubuntu/i'             =>  'Ubuntu',
+            '/iphone/i'             =>  'iPhone',
+            '/ipod/i'               =>  'iPod',
+            '/ipad/i'               =>  'iPad',
+            '/android/i'            =>  'Android',
+            '/blackberry/i'         =>  'BlackBerry',
+            '/webos/i'              =>  'Mobile'
+        ];
+
+        foreach ($osPatterns as $regex => $value) {
+            if (preg_match($regex, $ua))
+            {
+                $osPlatform = $value;
+            }
+        }
+
+        $version = empty($version) ? '' : 'v'.$version;
+        $osPlatform = isset($osPlatform) === false ? self::lang('undetected') : $osPlatform;
+
+        return [
+            'user_agent'=> $ua,         // User Agent
+            'browser'   => $browser,    // Browser Name
+            'version'   => $version,    // Version
+            'platform'  => $platform,   // Platform
+            'os'        => $osPlatform, // Platform Detail
+            'b_icon'    => $bIcon,      // Browser Icon(icon class name like from Material Design Icon)
+            'p_icon'    => $pIcon       // Platform Icon(icon class name like from Material Design Icon)
+        ];
+
+    }
+
+
+    /**
+     * Get String to Slug
+     * @param string $str
+     * @param array $options
+     * @return string
+     */
+    public static function slugGenerator($str, $options=[]): string {
+
+        $str = mb_convert_encoding((string)$str, 'UTF-8', mb_list_encodings());
+        $defaults = [
+            'delimiter' => '-',
+            'limit' => null,
+            'lowercase' => true,
+            'replacements' => [],
+            'transliterate' => true
+        ];
+        $options = array_merge($defaults, $options);
+        $charMap = [
+            // Latin
+            'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'A', 'Æ' => 'AE',
+            'È' => 'E', 'É' => 'E', 'Ê' => 'E', 'Ë' => 'E', 'Ì' => 'I', 'Í' => 'I', 'Î' => 'I', 'Ï' => 'I',
+            'Ð' => 'D', 'Ñ' => 'N', 'Ò' => 'O', 'Ô' => 'O', 'Õ' => 'O', 'Ő' => 'O',
+            'Ø' => 'O', 'Ù' => 'U', 'Ú' => 'U', 'Û' => 'U', 'Ű' => 'U', 'Ý' => 'Y', 'Þ' => 'TH',
+            'ß' => 'ss',
+            'à' => 'a', 'á' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a', 'å' => 'a', 'æ' => 'ae',
+            'è' => 'e', 'é' => 'e', 'ê' => 'e', 'ë' => 'e', 'ì' => 'i', 'í' => 'i', 'î' => 'i', 'ï' => 'i',
+            'ð' => 'd', 'ñ' => 'n', 'ò' => 'o', 'ô' => 'o', 'õ' => 'o', 'ő' => 'o',
+            'ø' => 'o', 'ù' => 'u', 'ú' => 'u', 'û' => 'u', 'ű' => 'u', 'ý' => 'y', 'þ' => 'th',
+            'ÿ' => 'y',
+            // Latin symbols
+            '©' => '(c)',
+            // Greek
+            'Α' => 'A', 'Β' => 'B', 'Γ' => 'G', 'Δ' => 'D', 'Ε' => 'E', 'Ζ' => 'Z', 'Η' => 'H', 'Θ' => '8',
+            'Ι' => 'I', 'Κ' => 'K', 'Λ' => 'L', 'Μ' => 'M', 'Ν' => 'N', 'Ξ' => '3', 'Ο' => 'O', 'Π' => 'P',
+            'Ρ' => 'R', 'Σ' => 'S', 'Τ' => 'T', 'Υ' => 'Y', 'Φ' => 'F', 'Χ' => 'X', 'Ψ' => 'PS', 'Ω' => 'W',
+            'Ά' => 'A', 'Έ' => 'E', 'Ί' => 'I', 'Ό' => 'O', 'Ύ' => 'Y', 'Ή' => 'H', 'Ώ' => 'W', 'Ϊ' => 'I',
+            'Ϋ' => 'Y',
+            'α' => 'a', 'β' => 'b', 'γ' => 'g', 'δ' => 'd', 'ε' => 'e', 'ζ' => 'z', 'η' => 'h', 'θ' => '8',
+            'ι' => 'i', 'κ' => 'k', 'λ' => 'l', 'μ' => 'm', 'ν' => 'n', 'ξ' => '3', 'ο' => 'o', 'π' => 'p',
+            'ρ' => 'r', 'σ' => 's', 'τ' => 't', 'υ' => 'y', 'φ' => 'f', 'χ' => 'x', 'ψ' => 'ps', 'ω' => 'w',
+            'ά' => 'a', 'έ' => 'e', 'ί' => 'i', 'ό' => 'o', 'ύ' => 'y', 'ή' => 'h', 'ώ' => 'w', 'ς' => 's',
+            'ϊ' => 'i', 'ΰ' => 'y', 'ϋ' => 'y', 'ΐ' => 'i',
+            // Turkish
+            'Ş' => 'S', 'İ' => 'I', 'Ç' => 'C', 'Ü' => 'U', 'Ö' => 'O', 'Ğ' => 'G',
+            'ş' => 's', 'ı' => 'i', 'ç' => 'c', 'ü' => 'u', 'ö' => 'o', 'ğ' => 'g',
+            // Russian
+            'А' => 'A', 'Б' => 'B', 'В' => 'V', 'Г' => 'G', 'Д' => 'D', 'Е' => 'E', 'Ё' => 'Yo', 'Ж' => 'Zh',
+            'З' => 'Z', 'И' => 'I', 'Й' => 'J', 'К' => 'K', 'Л' => 'L', 'М' => 'M', 'Н' => 'N', 'О' => 'O',
+            'П' => 'P', 'Р' => 'R', 'С' => 'S', 'Т' => 'T', 'У' => 'U', 'Ф' => 'F', 'Х' => 'H', 'Ц' => 'C',
+            'Ч' => 'Ch', 'Ш' => 'Sh', 'Щ' => 'Sh', 'Ъ' => '', 'Ы' => 'Y', 'Ь' => '', 'Э' => 'E', 'Ю' => 'Yu',
+            'Я' => 'Ya',
+            'а' => 'a', 'б' => 'b', 'в' => 'v', 'г' => 'g', 'д' => 'd', 'е' => 'e', 'ё' => 'yo', 'ж' => 'zh',
+            'з' => 'z', 'и' => 'i', 'й' => 'j', 'к' => 'k', 'л' => 'l', 'м' => 'm', 'н' => 'n', 'о' => 'o',
+            'п' => 'p', 'р' => 'r', 'с' => 's', 'т' => 't', 'у' => 'u', 'ф' => 'f', 'х' => 'h', 'ц' => 'c',
+            'ч' => 'ch', 'ш' => 'sh', 'щ' => 'sh', 'ъ' => '', 'ы' => 'y', 'ь' => '', 'э' => 'e', 'ю' => 'yu',
+            'я' => 'ya',
+            // Ukrainian
+            'Є' => 'Ye', 'І' => 'I', 'Ї' => 'Yi', 'Ґ' => 'G',
+            'є' => 'ye', 'і' => 'i', 'ї' => 'yi', 'ґ' => 'g',
+            // Czech
+            'Ď' => 'D', 'Ě' => 'E', 'Ň' => 'N', 'Ř' => 'R', 'Ť' => 'T', 'Ů' => 'U', 'ď' => 'd', 'ě' => 'e',
+            'ň' => 'n', 'ř' => 'r', 'ť' => 't', 'ů' => 'u',
+            // Polish
+            'Ą' => 'A', 'Ć' => 'C', 'Ę' => 'e', 'Ł' => 'L', 'Ń' => 'N', 'Ó' => 'o', 'Ś' => 'S', 'Ź' => 'Z',
+            'Ż' => 'Z',
+            'ą' => 'a', 'ć' => 'c', 'ę' => 'e', 'ł' => 'l', 'ń' => 'n', 'ó' => 'o', 'ś' => 's', 'ź' => 'z',
+            'ż' => 'z',
+            // Latvian
+            'Ā' => 'A', 'Č' => 'C', 'Ē' => 'E', 'Ģ' => 'G', 'Ī' => 'i', 'Ķ' => 'k', 'Ļ' => 'L', 'Ņ' => 'N',
+            'Š' => 'S', 'Ū' => 'u', 'Ž' => 'Z',
+            'ā' => 'a', 'č' => 'c', 'ē' => 'e', 'ģ' => 'g', 'ī' => 'i', 'ķ' => 'k', 'ļ' => 'l', 'ņ' => 'n',
+            'š' => 's', 'ū' => 'u', 'ž' => 'z'
+        ];
+        $str = preg_replace(array_keys($options['replacements']), $options['replacements'], $str);
+        if ($options['transliterate']) {
+            $str = str_replace(array_keys($charMap), $charMap, $str);
+        }
+        $str = preg_replace('/[^\p{L}\p{Nd}]+/u', $options['delimiter'], $str);
+        $str = preg_replace('/(' . preg_quote($options['delimiter'], '/') . '){2,}/', '$1', $str);
+        $str = mb_substr($str, 0, ($options['limit'] ? $options['limit'] : mb_strlen($str, 'UTF-8')), 'UTF-8');
+        $str = trim($str, $options['delimiter']);
+        return $options['lowercase'] ? mb_strtolower($str, 'UTF-8') : $str;
+
+    }
+
+
+    /**
+     * String Transformator
+     * @param string $type
+     * @param string $data
+     * @return string
+     */
+    public static function stringTransform($type, $data = ''): string {
+
+        switch ($type) {
+
+            case 'uppercasewords':
+            case 'ucw':
+                $data = Transliterator::create("Any-Title")->transliterate($data);
+                break;
+
+            case 'uppercasefirst':
+            case 'ucf':
+                $data = Transliterator::create("Any-Title")->transliterate($data);
+                $data = explode(' ', $data);
+                if (count($data)>1) {
+
+                    $_data = [ 0 => $data[0] ];
+                    foreach ($data as $index => $text) {
+
+                        if ($index) {
+
+                            $_data[$index] = stringTransform('l', $text);
+
+                        }
+                    }
+                    $data = implode(' ', $_data);
+                } else {
+                    $data = implode(' ', $data);
+                }
+                break;
+
+            case 'lowercase':
+            case 'l':
+                $data = Transliterator::create("Any-Lower")->transliterate($data);
+                break;
+
+            case 'uppercase':
+            case 'u':
+                $data = Transliterator::create("Any-Upper")->transliterate($data);
+                break;
+        }
+
+        return $data;
+
+    }
+
+
+    /**
+     * Data Encrypter
+     * @param string $text
+     * @return string
+     */
+    public static function encryptKey($text): string {
+
+        $ciphering = "AES-128-CTR";
+        $encryptionIv = '1234567891011121';
+        $encryptionKey = md5(self::config('app.name'));
+        return openssl_encrypt($text, $ciphering,
+            $encryptionKey, 0, $encryptionIv);
+
+    }
+
+
+    /**
+     * Data Decrypter
+     * @param string $encryptedString
+     * @return string
+     */
+    public static function decryptKey($encryptedString): string {
+
+        $ciphering = "AES-128-CTR";
+        $decryptionIv = '1234567891011121';
+        $options = 0;
+        $decryptionKey = md5(self::config('app.name'));
+        return openssl_decrypt ($encryptedString, $ciphering,
+            $decryptionKey, 0, $decryptionIv);
+
+    }
+
 }

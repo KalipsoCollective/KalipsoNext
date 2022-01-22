@@ -109,6 +109,7 @@ body {
 /* Navigation */
 .kn-nav {
   background: var(--dark-color);
+  color: #fff;
 }
 
 .kn-nav .navbar-nav .nav-item .nav-link {
@@ -128,6 +129,12 @@ body {
 .kn-nav .navbar-nav .nav-item + .nav-item {
   margin-left: 0.4rem;
 }
+
+.kn-nav .navbar-nav .vr {
+  margin: 0 0.3rem;
+}
+
+
 
 /* Account Pages */
 .account-pages {

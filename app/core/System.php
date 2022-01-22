@@ -23,13 +23,18 @@ class System {
         // powered_by header - please don't remove!
         KN::http('powered_by');
 
+        // session and output buffer start
+        KN::sessionStart();
+        ob_start();
+
         // route file importing
         $this->route = require KN::path('app/resources/route.php');
 
         // langauge file importing
+        $sessionLanguageParam = KN::getSession('language');
         if (
-            isset($_SESSION['language']) !== false AND 
-            file_exists($path = KN::path('app/resources/localization/'.$_SESSION['language'].'.php'))
+            ! is_null($sessionLanguageParam) AND 
+            file_exists($path = KN::path('app/resources/localization/'.$sessionLanguageParam.'.php'))
         ) {
 
             $this->lang = $_SESSION['language'];
@@ -38,6 +43,7 @@ class System {
         } elseif (file_exists($path = KN::path('app/resources/localization/'.$this->lang.'.php'))) {
 
             $languageFile = require $path;
+            KN::setSession('language', $this->lang);
 
         } else {
 

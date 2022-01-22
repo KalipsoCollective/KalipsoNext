@@ -24,9 +24,13 @@ class Route {
 
     public function __construct() {
 
+        global $requestUri;
+
         $url = parse_url($_SERVER['REQUEST_URI']);
         self::$request = $url['path'] === '/' ? $url['path'] : rtrim($url['path'], '/');
         self::$requestMethod = strtoupper(empty($_SERVER['REQUEST_METHOD']) ? 'GET' : $_SERVER['REQUEST_METHOD']);
+
+        $requestUri = trim(self::$request, '/');
 
         // GET Parameters
         if (isset($_GET) !== false AND count($_GET)) {
