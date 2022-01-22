@@ -1,7 +1,7 @@
 		<div class="container account-pages">
 			<div class="row justify-content-center align-items-center">
 				<div class="col-12 col-lg-3 col-md-4 col-sm-6">
-					<div class="card">
+					<div class="card kn-card">
 						<div class="card-header">
 							<?php echo self::lang('login'); ?>
 						</div>
@@ -17,9 +17,17 @@
 									<label for="uP"><?php echo self::lang('password'); ?></label>
 								</div>
 								<div class="d-grid">
-									<button type="submit" class="btn btn-primary btn-block"><?php echo self::lang('sign_in'); ?></button>
+									<button type="submit" class="btn btn-primary btn-block">
+										<?php echo self::lang('sign_in'); ?> 
+										<span class="mdi mdi-arrow-right"></span>
+									</button>
 								</div>
 							</form>
+						</div>
+						<div class="card-footer d-flex justify-content-center align-items-center">
+							<a href="#" class="btn btn-outline-primary btn-sm"><?php echo self::lang('register'); ?></a>
+							<small class="vr mx-2"></small>
+							<a href="#" class="btn btn-outline-primary btn-sm"><?php echo self::lang('recovery_account'); ?></a>
 						</div>
 					</div>
 				</div>

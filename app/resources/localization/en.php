@@ -19,10 +19,12 @@ return [
     // VIEWS
     'login'                             => 'Login',
     'register'                          => 'Register',
+    'recovery_account'                  => 'Recovery Account',
     'account'                           => 'Account',
     'home'                              => 'Home',
     'email_or_username'                 => 'Email Adress or Username',
     'password'                          => 'Password',
     'sign_in'                           => 'Sign In',
-    'welcome'                           => 'Welcome!'
+    'welcome'                           => 'Welcome!',
+    'back_to_home'                      => 'Back to Home'
 ];

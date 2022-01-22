@@ -19,10 +19,12 @@ return [
     // VIEWS
     'login'                             => 'Giriş Yap',
     'register'                          => 'Kayıt Ol',
+    'recovery_account'                  => 'Hesabı Kurtar',
     'account'                           => 'Hesap',
     'home'                              => 'Ana Sayfa',
     'email_or_username'                 => 'Eposta Adresi ya da Kullanıcı Adı',
     'password'                          => 'Şifre',
     'sign_in'                           => 'Oturum Aç',
     'welcome'                           => 'Hoş Geldin!',
+    'back_to_home'                      => 'Ana Sayfaya Geri Dön',
 ];

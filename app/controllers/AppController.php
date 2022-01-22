@@ -27,6 +27,21 @@ class AppController {
     }
 
 
+    public static function sandbox() {
+
+        if (KN::config('app.dev_mode')) {
+            KN::layout('sandbox', [
+                'layout' => ['layout/header', '_', 'layout/end'],
+                'title' => 'Sandbox | ' . KN::config('app.name')
+            ]);
+        } else {
+            KN::http(301);
+            KN::http('location', ['url' => KN::base()]);
+        }
+
+    }
+
+
     public static function dynamicJS() {
 
         KN::http('content_type', ['content' => 'js']);

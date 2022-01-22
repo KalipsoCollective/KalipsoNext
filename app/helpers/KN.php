@@ -378,9 +378,16 @@ class KN {
      * @param  $file   body file
      * @return void    
      */
-    public static function layout($file, $exclude = []) {
+    public static function layout($file, $externalParams = []) {
 
-        $layout = ['layout/header', 'layout/nav', '_', 'layout/footer', 'layout/end'];
+        $title = isset($externalParams['title']) !== false ? $externalParams['title'] : self::config('settings.name');
+        $layout = isset($externalParams['layout']) !== false ? $externalParams['layout'] : [
+            'layout/header', 
+            'layout/nav', 
+            '_', 
+            'layout/footer', 
+            'layout/end'
+        ];
 
         foreach ($layout as $part) {
 
@@ -388,7 +395,9 @@ class KN {
                 $part = $file;
             }
 
-            self::view($part);
+            self::view($part, [
+                'title' => $title,
+            ]);
             echo PHP_EOL;
 
         }
