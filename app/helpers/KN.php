@@ -461,4 +461,15 @@ class KN {
             return $return;
         }
     }
+
+    /**
+     * CSRF Token Generator
+     * @param bool $onlyToken  Output option
+     * @return string|void
+     */
+    public static function createCSRF($onlyToken = true) {
+
+        // $token = KN::getCookie();
+
+    }
 }

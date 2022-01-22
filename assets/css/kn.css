@@ -93,6 +93,47 @@
        url('../fonts/manrope/manrope-v8-latin-ext_latin-800.svg#Manrope') format('svg'); /* Legacy iOS */
 }
 
+:root {
+  --main-color: #4FACFE;
+  --main-color-2: #00F2FE;
+  --dark-color: #151515;
+}
+
 body {
   font-family: 'Manrope', sans-serif;
+}
+
+/* Basics */
+
+
+/* Navigation */
+.kn-nav {
+  background: var(--dark-color);
+}
+
+.kn-nav .navbar-nav .nav-item .nav-link {
+  border-radius: 0.2rem;
+  background: rgba(255,255,255,0);
+}
+
+.kn-nav .navbar-nav .nav-item .nav-link:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.kn-nav .navbar-nav .nav-item .nav-link:focus,
+.kn-nav .navbar-nav .nav-item .nav-link.active {
+  background: rgba(255,255,255,0.2);
+}
+
+.kn-nav .navbar-nav .nav-item + .nav-item {
+  margin-left: 0.4rem;
+}
+
+/* Account Pages */
+.account-pages {
+  min-height: 80vh;
+}
+
+.account-pages .card {
+  margin: 5rem 0;
 }
