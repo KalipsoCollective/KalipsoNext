@@ -1,10 +1,23 @@
 # ROADMAP
 
+- Core
+	- JS Cache
+	- HTML Cache
+	- SQL Cache
+	- Route Cache(maybe one day)
+	- Cron Jobs (queue mechanism)
+
 - DB Layout
 	- User
-	- User Group
+	- User Roles
 	- Content
 	- Media
+	- Contact
+	- Logs
+	- Email Logs
+	- Environments
+	- Sessions
+	- Views
 
 - Sandbox
 	- DB Init
@@ -22,4 +35,7 @@
 	- User Groups
 	- Contents
 	- Settings
-
+	- Reports
+		- Logs
+		- Views
+		- Statistics
