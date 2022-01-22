@@ -39,6 +39,9 @@ $route->addRoutes([
 	'/sandbox'	=> [
 		'controller'	=> 'AppController::sandbox'
 	],
+	'/sandbox/:action'	=> [
+		'controller'	=> 'AppController::sandbox'
+	],
 
 
 	// API

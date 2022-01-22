@@ -389,15 +389,21 @@ class KN {
             'layout/end'
         ];
 
+        $arguments = [
+            'title' => $title,
+        ];
+
+        if (isset($externalParams['arguments']) !== false AND is_array($externalParams['arguments'])) {
+            $arguments = array_merge($arguments, $externalParams['arguments']);
+        }
+
         foreach ($layout as $part) {
 
             if ($part == '_') {
                 $part = $file;
             }
 
-            self::view($part, [
-                'title' => $title,
-            ]);
+            self::view($part, $arguments);
             echo PHP_EOL;
 
         }

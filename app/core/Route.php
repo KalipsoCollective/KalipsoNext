@@ -197,7 +197,14 @@ class Route {
                     try {
 
                         call_user_func_array(
-                            $path, []
+                            $path, [
+                                [
+                                'request'           => self::$request,
+                                'request_method'    => self::$requestMethod,
+                                'parameters'        => self::$params,
+                                'attributes'        => self::$attributes
+                                ]
+                            ]
                         );
                         
 

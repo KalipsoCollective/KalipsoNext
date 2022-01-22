@@ -11,14 +11,7 @@ namespace App\Controllers;
 
 use App\Helpers\KN;
 
-class UserController {
-
-
-	public function __construct() {
-
-        
-
-    }
+final class UserController {
 
     public static function index() {
 

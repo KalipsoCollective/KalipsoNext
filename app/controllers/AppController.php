@@ -11,14 +11,8 @@ namespace App\Controllers;
 
 use App\Helpers\KN;
 
-class AppController {
+final class AppController {
 
-
-	public function __construct() {
-
-        
-
-    }
 
     public static function index() {
 
@@ -27,12 +21,13 @@ class AppController {
     }
 
 
-    public static function sandbox() {
+    public static function sandbox($args) {
 
         if (KN::config('app.dev_mode')) {
             KN::layout('sandbox', [
-                'layout' => ['layout/header', '_', 'layout/end'],
-                'title' => 'Sandbox | ' . KN::config('app.name')
+                'layout'    => ['layout/header', '_', 'layout/end'],
+                'title'     => 'Sandbox | ' . KN::config('app.name'),
+                'arguments' => $args
             ]);
         } else {
             KN::http(301);

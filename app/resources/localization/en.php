@@ -26,5 +26,8 @@ return [
     'password'                          => 'Password',
     'sign_in'                           => 'Sign In',
     'welcome'                           => 'Welcome!',
-    'back_to_home'                      => 'Back to Home'
+    'back_to_home'                      => 'Back to Home',
+    'prepare_database'                  => 'Prepare DB',
+    'seed_database'                     => 'Seed DB',
+    'php_info'                          => 'PHP Info',
 ];

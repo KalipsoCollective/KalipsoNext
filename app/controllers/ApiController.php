@@ -11,14 +11,7 @@ namespace App\Controllers;
 
 use App\Helpers\KN;
 
-class ApiController {
-
-
-	public function __construct() {
-
-        
-
-    }
+final class ApiController {
 
     public static function index() {
 

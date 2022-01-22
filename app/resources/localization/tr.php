@@ -27,4 +27,7 @@ return [
     'sign_in'                           => 'Oturum Aç',
     'welcome'                           => 'Hoş Geldin!',
     'back_to_home'                      => 'Ana Sayfaya Geri Dön',
+    'prepare_database'                  => 'Veri Tabanını Hazırla',
+    'seed_database'                     => 'Veri Tabanını Doldur',
+    'php_info'                          => 'PHP Bilgileri',
 ];

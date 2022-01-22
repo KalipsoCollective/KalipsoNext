@@ -1,4 +1,4 @@
-		<nav class="navbar navbar-expand-lg navbar-dark kn-nav">
+		<nav class="navbar navbar-expand-lg navbar-dark kn-nav fixed-top">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">Sandbox</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -8,7 +8,22 @@
                     <ul class="navbar-nav">
                         <li class="nav-item">
                             <a class="nav-link<?php echo self::currentPage('sandbox'); ?>" href="<?php echo self::base('sandbox'); ?>">
-                                <?php echo self::lang('home'); ?>
+                                <?php echo self::lang('welcome'); ?>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link<?php echo self::currentPage('sandbox/db-init'); ?>" href="<?php echo self::base('sandbox/db-init'); ?>">
+                                <?php echo self::lang('prepare_database'); ?>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link<?php echo self::currentPage('sandbox/db-seed'); ?>" href="<?php echo self::base('sandbox/db-seed'); ?>">
+                                <?php echo self::lang('seed_database'); ?>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link<?php echo self::currentPage('sandbox/php-info'); ?>" href="<?php echo self::base('sandbox/php-info'); ?>">
+                                <?php echo self::lang('php_info'); ?>
                             </a>
                         </li>
                     </ul>
@@ -23,10 +38,30 @@
                 </div>
             </div>
         </nav>
-		<div class="container account-pages">
-			<div class="row justify-content-center align-items-center">
+		<div class="container sandbox">
+			<div class="row">
+				<?php
+				$section = isset($attributes['action']) !== false ? $attributes['action'] : 'welcome';
+				switch ($section) {
+					case 'db-init':
+						$pageTitle = self::lang('prepare_database');
+						break;
+
+					case 'db-seed':
+						$pageTitle = self::lang('seed_database');
+						break;
+
+					case 'php-info':
+						$pageTitle = self::lang('php_info');
+						break;
+					
+					default:
+						$pageTitle = self::lang('welcome');
+						break;
+				}
+				?>
 				<div class="col-12 col-lg-3 col-md-4 col-sm-6">
-					<?php echo self::lang('welcome'); ?>
+					<h2><?php echo $pageTitle; ?></h2>
 				</div>
 			</div>
 		</div>

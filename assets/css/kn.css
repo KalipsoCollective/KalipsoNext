@@ -95,7 +95,7 @@
 
 :root {
   --transition:  0.2s ease-out;
-  
+
   --main-color: #4FACFE;
   --main-color-2: #00F2FE;
   --dark-color: #151515;
@@ -122,6 +122,7 @@ body {
   font-family: 'Manrope', sans-serif;
   background: var(--kn-white-color);
   color: var(--dark-color);
+  margin-top: 4rem;
 }
 
 a {
