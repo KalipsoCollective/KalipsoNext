@@ -8,4 +8,4 @@
 ## Front-end
 - twbs/bootstrap [on Github](https://github.com/verot/class.upload.php).
 - sharanda/manrope [on Github](https://github.com/sharanda/manrope).
-- halillusion/vpjax [on Github](halillusion/vpjax).
+- halillusion/vpjax [on Github](https://github.com/halillusion/vpjax).
