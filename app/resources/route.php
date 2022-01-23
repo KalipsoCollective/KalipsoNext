@@ -32,7 +32,7 @@ $route->addRoutes([
 		'controller'	=> 'BlogController::comments'
 	],
 
-	/*! Base Routes */
+	/*! Base Routes - please don't remove! */
 	'/script'	=> [
 		'controller'	=> 'AppController::dynamicJS'
 	],

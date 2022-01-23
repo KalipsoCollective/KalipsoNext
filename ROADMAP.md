@@ -21,7 +21,8 @@
 
 - Sandbox
 	- ~DB Init~
-	- DB Seed
+	- ~DB Seed~
+	- ~PHP Info~
 
 - User Module
 	- Login

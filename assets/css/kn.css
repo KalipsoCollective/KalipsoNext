@@ -210,6 +210,7 @@ a {
 
 .kn-nav .navbar-nav .nav-item .nav-link {
   border-radius: 0.2rem;
+  padding: 0.2rem 1rem;
   background: var(--rgb-white-0);
 }
 
@@ -247,12 +248,12 @@ a {
 
 .kn-card .card-header {
   background: var(--kn-white-color);
-  border-bottom: 1px solid var(--kn-white-color-2);
+  border-bottom: 1px solid transparent;
 }
 
 .kn-card .card-footer {
   background: var(--kn-white-color);
-  border-top: 1px solid var(--kn-white-color-2);
+  border-top: 1px solid transparent;
   opacity: 0.4;
   transition: var(--transition);
 }

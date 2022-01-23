@@ -9,11 +9,11 @@
 							<form method="post" action="<?php echo self::base('account/login'); ?>">
 								<?php echo self::createCSRF(); ?>
 								<div class="form-floating mb-3">
-									<input type="text" class="form-control" id="uN" placeholder="<?php echo self::lang('email_or_username'); ?>" required>
+									<input type="text" name="username" class="form-control" id="uN" placeholder="<?php echo self::lang('email_or_username'); ?>" required>
 									<label for="uN"><?php echo self::lang('email_or_username'); ?></label>
 								</div>
 								<div class="form-floating mb-3">
-									<input type="password" class="form-control" id="uP" placeholder="<?php echo self::lang('password'); ?>" required>
+									<input type="password" name="password" class="form-control" id="uP" placeholder="<?php echo self::lang('password'); ?>" required>
 									<label for="uP"><?php echo self::lang('password'); ?></label>
 								</div>
 								<div class="d-grid">

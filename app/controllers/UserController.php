@@ -19,9 +19,15 @@ final class UserController {
 
     }
 
-    public static function login() {
+    public static function login($args) {
 
-        KN::layout('user/login');
+
+        KN::dump($args);
+        
+        KN::layout('user/login', [
+            'title'     => KN::lang('login') . ' | ' . KN::config('app.name'),
+            'arguments' => $args
+        ]);
 
     }
 
