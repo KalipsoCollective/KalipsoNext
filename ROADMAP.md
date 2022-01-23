@@ -20,7 +20,7 @@
 	- Views
 
 - Sandbox
-	- DB Init
+	- ~DB Init~
 	- DB Seed
 
 - User Module
