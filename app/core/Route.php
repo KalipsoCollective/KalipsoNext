@@ -170,7 +170,15 @@ class Route {
                     try {
 
                         $middleware = call_user_func_array(
-                            $path, $middleware[1]
+                            $path, [
+                                $middleware[1][0],
+                                [
+                                    'request'           => self::$request,
+                                    'request_method'    => self::$requestMethod,
+                                    'parameters'        => self::$params,
+                                    'attributes'        => self::$attributes
+                                ]
+                            ]
                         );
 
                         if (! $middleware['status']) {

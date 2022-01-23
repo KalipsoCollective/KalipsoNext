@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Middlewares;
-
 /**
  * Auth Middleware
  * 
  **/
+
+namespace App\Middlewares;
+
+use App\Helpers\KN;
 
 class Auth {
 
@@ -15,7 +17,7 @@ class Auth {
 
     }
 
-    public static function with($type = 'auth') {
+    public static function with($type = 'auth', $args = null) {
 
         if ($type == 'auth' AND isset($_SESSION['auth']) !== false AND $_SESSION['auth']) {
 

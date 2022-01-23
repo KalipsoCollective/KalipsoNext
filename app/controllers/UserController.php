@@ -22,8 +22,12 @@ final class UserController {
     public static function login($args) {
 
 
-        KN::dump($args);
-        
+        if ($args['request_method'] == 'POST') {
+
+            $username = $args['parameters']['username'];
+            $password = $args['parameters']['username'];
+        }
+
         KN::layout('user/login', [
             'title'     => KN::lang('login') . ' | ' . KN::config('app.name'),
             'arguments' => $args

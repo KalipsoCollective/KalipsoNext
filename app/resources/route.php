@@ -15,7 +15,7 @@ $route->addRoutes([
 		'controller'	=> 'UserController::account'
 	],
 	'/account/login'	=> [
-		'middlewares'	=> [['Auth::with', ['nonAuth']]],
+		'middlewares'	=> [['Auth::with', ['nonAuth']], ['CSRF::validate', ['POST']]],
 		'controller'	=> 'UserController::login'
 	],
 	'/account/register'	=> [
