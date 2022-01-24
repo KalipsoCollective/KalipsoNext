@@ -13,24 +13,32 @@ use App\Helpers\KN;
 
 final class UserController {
 
-    public static function index() {
+    public $request = [];
+
+    public function __construct($request = []) {
+
+        $this->request = $request;
+
+    }
+
+    public function index() {
 
         echo 'Welcome!';
 
     }
 
-    public static function login($args) {
+    public function login() {
 
 
-        if ($args['request_method'] == 'POST') {
+        if ($this->request['request_method'] == 'POST') {
 
-            $username = $args['parameters']['username'];
-            $password = $args['parameters']['username'];
+            $username = $this->request['parameters']['username'];
+            $password = $this->request['parameters']['username'];
         }
 
         KN::layout('user/login', [
             'title'     => KN::lang('login') . ' | ' . KN::config('app.name'),
-            'arguments' => $args
+            'request'   => $this->request
         ]);
 
     }

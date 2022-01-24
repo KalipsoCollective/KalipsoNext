@@ -157,74 +157,97 @@ class Route {
 
             self::$matchingRoute = self::$schema[$index];
 
-            $return = null;
+            $request = [
+                'request'           => self::$request,
+                'request_method'    => self::$requestMethod,
+                'parameters'        => self::$params,
+                'attributes'        => self::$attributes
+            ];
 
+            $middlewareMessages = [];
             // middleware
             if (count(self::$matchingRoute['middlewares'])) {
 
 
-                foreach (self::$matchingRoute['middlewares'] as $middleware) {
-
-                    $path = 'App\\Middlewares\\'.$middleware[0];
+                foreach (self::$matchingRoute['middlewares'] as $class => $arguments) {
 
                     try {
 
-                        $middleware = call_user_func_array(
-                            $path, [
-                                $middleware[1][0],
-                                [
-                                    'request'           => self::$request,
-                                    'request_method'    => self::$requestMethod,
-                                    'parameters'        => self::$params,
-                                    'attributes'        => self::$attributes
-                                ]
-                            ]
-                        );
+                        // call class and method
+                        if (strpos($class, '@') !== false) {
+
+                            $class = explode('@', $class, 2);
+                            $method = $class[1];
+                            $class = 'App\\Middlewares\\' . $class[0];
+
+                            $middleware = (new $class(
+                                $request
+                            ))->$method(...$arguments);
+
+                        } else { // call class with construct
+
+                            $class = 'App\\Middlewares\\' . $class;
+                            $middleware = (new $class(
+                                $request, 
+                                ...$arguments
+                            ));
+
+                        }
 
                         if (! $middleware['status']) {
-                            $return = $middleware['message'];
+                            $middlewareMessages[] = $middleware['message'];
                             break;
                         }
                         
 
                     } catch (Exception $e) {
-                        throw 'middleware_not_found';
+                        throw $e;
                     }
                 }
             }
 
 
-            if (is_null($return)) {
+            if (! count($middlewareMessages)) {
 
                 // controller
                 if (isset(self::$matchingRoute['controller']) !== false) {
 
 
-                    $path = 'App\\Controllers\\'.self::$matchingRoute['controller'];
+                    $class = self::$matchingRoute['controller'];
 
                     try {
 
-                        call_user_func_array(
-                            $path, [
-                                [
-                                'request'           => self::$request,
-                                'request_method'    => self::$requestMethod,
-                                'parameters'        => self::$params,
-                                'attributes'        => self::$attributes
-                                ]
-                            ]
-                        );
+                        // call class and method
+                        if (strpos($class, '@') !== false) {
+
+                            $class = explode('@', $class, 2);
+                            $method = $class[1];
+                            $class = 'App\\Controllers\\' . $class[0];
+
+                            $middleware = (new $class(
+                                $request
+                            ))->$method(...$arguments);
+
+                        } else { // call class with construct
+
+                            $class = 'App\\Controllers\\' . $class;
+                            $middleware = (new $class(
+                                $request, 
+                                ...$arguments
+                            ));
+
+                        }
                         
 
                     } catch (Exception $e) {
-                        throw 'controller_not_found';
+                        throw $e;
                     }
                 }
 
             } else {
 
                 KN::http(404);
-                KN::view('404', ['message' => KN::lang($return)]);
+                KN::view('404', ['messages' => $middlewareMessages]);
             }
         }
 

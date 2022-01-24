@@ -10,6 +10,8 @@ return [
     'middleware_not_found'              => 'Ara katman sınıfı bulunamadı!',
     'controller_not_found'              => 'Kontrolcü sınıfı bulunamadı!',
     'you_have_not_an_session'           => 'Oturumunuz yok!',
+    'csrf_token_incorrect'              => 'Form anahtarı doğrulanamadı!',
+    'csrf_token_mismatch'               => 'Form anahtarı uyumsuz!',
 
     // HELPER
     'byte'                              => 'bayt',

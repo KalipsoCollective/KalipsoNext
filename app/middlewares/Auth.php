@@ -1,48 +1,53 @@
 <?php
 
 /**
- * Auth Middleware
- * 
- **/
+ * @package KN
+ * @subpackage Auth Middleware
+ */
+
+declare(strict_types=1);
 
 namespace App\Middlewares;
 
 use App\Helpers\KN;
 
-class Auth {
+final class Auth {
 
+    public $request = [];
 
-    public function __construct()
-    {
+    public function __construct($request = []) {
+
+        $this->request = $request;
 
     }
 
-    public static function with($type = 'auth', $args = null) {
+    public function with($type = 'auth') {
 
         if ($type == 'auth' AND isset($_SESSION['auth']) !== false AND $_SESSION['auth']) {
 
             return [
-                'status'    => true,
+                'status' => true,
             ];
 
         } elseif ($type == 'nonAuth' AND (isset($_SESSION['auth']) === false OR ! $_SESSION['auth'])) {
 
             return [
-                'status'    => true,
+                'status' => true,
             ];
 
         } else {
 
             return [
-                'status'    => false,
-                'message'   => ($type == 'nonAuth' ? 'you_have_an_session' : 'you_have_not_an_session')
+                'status' => false,
+                'message' => ($type == 'nonAuth' ? 'you_have_an_session' : 'you_have_not_an_session')
             ];
         }
 
     }
 
-    public static function view($point) {
+    public function view($point) {
 
+        /* (soon)
         $return = false;
         if (
             isset($_SESSION['user']->role->view_points) !== false AND 
@@ -51,6 +56,7 @@ class Auth {
             $return = true;
         }
         return $return;
+        */
 
     }
 }

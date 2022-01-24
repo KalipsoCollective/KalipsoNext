@@ -10,6 +10,8 @@ return [
     'middleware_not_found'              => 'Middleware not found!',
     'controller_not_found'              => 'Controller not found!',
     'you_have_not_an_session'           => 'You have not an session!',
+    'csrf_token_incorrect'              => 'The form token is incorrect!',
+    'csrf_token_mismatch'               => 'The form token is mismatch!',
 
     // HELPER
     'byte'                              => 'byte',

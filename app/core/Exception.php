@@ -36,7 +36,7 @@ class Exception {
 	                }
 	                h1 {
 	                    margin: 0;
-	                    color: #fff;
+	                    color: #bebebe;
 	                }
 	                h2 {
 	                    margin: 0;

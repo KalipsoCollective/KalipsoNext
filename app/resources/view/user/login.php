@@ -9,7 +9,7 @@
 							<form method="post" action="<?php echo self::base('account/login'); ?>">
 								<?php echo self::createCSRF(); ?>
 								<div class="form-floating mb-3">
-									<input type="text" name="username" class="form-control" id="uN" placeholder="<?php echo self::lang('email_or_username'); ?>" required>
+									<input type="text" name="username" class="form-control" id="uN" placeholder="<?php echo self::lang('email_or_username'); ?>" required <?php echo self::inputValue('username'); ?>>
 									<label for="uN"><?php echo self::lang('email_or_username'); ?></label>
 								</div>
 								<div class="form-floating mb-3">
@@ -25,9 +25,13 @@
 							</form>
 						</div>
 						<div class="card-footer d-flex justify-content-center align-items-center">
-							<a href="#" class="btn btn-outline-primary btn-sm"><?php echo self::lang('register'); ?></a>
+							<a href="<?php echo self::base('account/register'); ?>" class="btn btn-outline-primary btn-sm">
+								<?php echo self::lang('register'); ?>
+							</a>
 							<small class="vr mx-2"></small>
-							<a href="#" class="btn btn-outline-primary btn-sm"><?php echo self::lang('recovery_account'); ?></a>
+							<a href="<?php echo self::base('account/recovery'); ?>" class="btn btn-outline-primary btn-sm">
+								<?php echo self::lang('recovery_account'); ?>
+							</a>
 						</div>
 					</div>
 				</div>

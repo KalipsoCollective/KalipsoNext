@@ -12,6 +12,8 @@ namespace App\Helpers;
 class KN {
 
 
+    protected static $request = [];
+
     /**
      * Dump Data
      * @param any $value
@@ -392,6 +394,8 @@ class KN {
         $arguments = [
             'title' => $title,
         ];
+
+        self::$request = $externalParams['request'];
 
         if (isset($externalParams['arguments']) !== false AND is_array($externalParams['arguments'])) {
             $arguments = array_merge($arguments, $externalParams['arguments']);
@@ -1018,6 +1022,21 @@ class KN {
         $decryptionKey = md5(self::config('app.name'));
         return openssl_decrypt ($encryptedString, $ciphering,
             $decryptionKey, 0, $decryptionIv);
+
+    }
+
+    /**
+     * Write the value of the submitted field.
+     * @param string $name
+     * @return string
+     */
+    public static function inputValue($name) {
+
+        $return = '';
+        if (isset(self::$request['parameters'][$name]) !== false) {
+            $return = 'value="' . self::$request['parameters'][$name] . '"';
+        }
+        return $return;
 
     }
 

@@ -1,44 +1,54 @@
 <?php
 
 /**
- * CSRF Middleware
- * 
- **/
+ * @package KN
+ * @subpackage CSRF Middleware
+ */
+
+declare(strict_types=1);
 
 namespace App\Middlewares;
 
 use App\Helpers\KN;
 
-class CSRF {
+final class CSRF {
 
+    public $request = [];
 
-    public function __construct()
-    {
+    public function __construct($request = []) {
+
+        $this->request = $request;
 
     }
 
-    public static function validate($method = 'POST', $args = []) {
+    public function validate($method = 'POST') {
 
-        KN::dump($method);
-        KN::dump($args, true);
+        if ($this->request['request_method'] == $method) {
 
-        if ($type == 'auth' AND isset($_SESSION['auth']) !== false AND $_SESSION['auth']) {
+            if (isset($this->request['parameters']['_token']) === false) {
 
-            return [
-                'status'    => true,
-            ];
+                return [
+                    'status'    => false,
+                    'message'   => 'csrf_token_mismatch'
+                ];
 
-        } elseif ($type == 'nonAuth' AND (isset($_SESSION['auth']) === false OR ! $_SESSION['auth'])) {
+            } elseif (! KN::verifyCSRF($this->request['parameters']['_token'])) {
 
-            return [
-                'status'    => true,
-            ];
+                return [
+                    'status'    => false,
+                    'message'   => 'csrf_token_incorrect'
+                ];
 
+            } else {
+
+                return [
+                    'status' => true,
+                ];
+            }
         } else {
 
             return [
-                'status'    => false,
-                'message'   => ($type == 'nonAuth' ? 'you_have_an_session' : 'you_have_not_an_session')
+                'status' => true,
             ];
         }
 

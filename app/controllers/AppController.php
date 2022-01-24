@@ -13,6 +13,7 @@ use App\Helpers\KN;
 
 final class AppController {
 
+    public $request = [];
 
     public static function index() {
 
