@@ -168,7 +168,6 @@ class Route {
             // middleware
             if (count(self::$matchingRoute['middlewares'])) {
 
-
                 foreach (self::$matchingRoute['middlewares'] as $class => $arguments) {
 
                     try {
@@ -226,14 +225,13 @@ class Route {
 
                             $middleware = (new $class(
                                 $request
-                            ))->$method(...$arguments);
+                            ))->$method();
 
                         } else { // call class with construct
 
                             $class = 'App\\Controllers\\' . $class;
                             $middleware = (new $class(
-                                $request, 
-                                ...$arguments
+                                $request
                             ));
 
                         }

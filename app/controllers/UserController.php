@@ -44,14 +44,21 @@ final class UserController {
     }
 
 
-    public static function register() {
+    public function register() {
 
         KN::layout('user/register');
 
     }
 
 
-    public static function account() {
+    public function recovery() {
+
+        KN::layout('user/recovery');
+
+    }
+
+
+    public function account() {
 
         KN::layout('user/register');
 

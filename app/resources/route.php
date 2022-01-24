@@ -24,14 +24,9 @@ $route->addRoutes([
 		'middlewares'	=> ['Auth@with' => ['nonAuth']],
 		'controller'	=> 'UserController@register'
 	],
-	'/blogs'	=> [
-		'controller'	=> 'BlogController@list'
-	],
-	'/blogs/:slug'	=> [
-		'controller'	=> 'BlogController@single'
-	],
-	'/blogs/:slug/comments/:commentId'	=> [
-		'controller'	=> 'BlogController@comments'
+	'/account/recovery'	=> [
+		'middlewares'	=> ['Auth@with' => ['nonAuth']],
+		'controller'	=> 'UserController@recovery'
 	],
 
 	/*! Base Routes - please don't remove! */

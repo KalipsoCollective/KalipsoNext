@@ -15,20 +15,26 @@ final class AppController {
 
     public $request = [];
 
-    public static function index() {
+    public function __construct($request = []) {
+
+        $this->request = $request;
+
+    }
+
+    public function index() {
 
         KN::layout('index');
 
     }
 
 
-    public static function sandbox($args) {
+    public function sandbox() {
 
         if (KN::config('app.dev_mode')) {
             KN::layout('sandbox', [
                 'layout'    => ['layout/header', '_', 'layout/end'],
                 'title'     => 'Sandbox | ' . KN::config('app.name'),
-                'arguments' => $args
+                'request'   => $this->request
             ]);
         } else {
             KN::http(301);
@@ -38,7 +44,7 @@ final class AppController {
     }
 
 
-    public static function dynamicJS() {
+    public function dynamicJS() {
 
         KN::http('content_type', ['content' => 'js']);
         require KN::path('app/resources/script.php');

@@ -41,7 +41,7 @@
 		<div class="container sandbox">
 			<div class="row">
 				<?php
-				$section = isset($attributes['action']) !== false ? $attributes['action'] : 'welcome';
+				$section = self::getAttribute('action') ? self::getAttribute('action') : 'welcome';
 				switch ($section) {
 					case 'db-init':
 						$pageTitle = self::lang('prepare_database');

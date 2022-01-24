@@ -395,7 +395,7 @@ class KN {
             'title' => $title,
         ];
 
-        self::$request = $externalParams['request'];
+        if (isset($externalParams['request']) !== false) self::$request = $externalParams['request'];
 
         if (isset($externalParams['arguments']) !== false AND is_array($externalParams['arguments'])) {
             $arguments = array_merge($arguments, $externalParams['arguments']);
@@ -1035,6 +1035,21 @@ class KN {
         $return = '';
         if (isset(self::$request['parameters'][$name]) !== false) {
             $return = 'value="' . self::$request['parameters'][$name] . '"';
+        }
+        return $return;
+
+    }
+
+    /**
+     * Get URL attribute
+     * @param string $name
+     * @return string
+     */
+    public static function getAttribute($name) {
+
+        $return = null;
+        if (isset(self::$request['attributes'][$name]) !== false) {
+            $return = self::$request['attributes'][$name];
         }
         return $return;
 
