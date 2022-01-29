@@ -14,6 +14,7 @@ use App\Helpers\KN;
 final class AppController {
 
     public $request = [];
+    public $response = [];
 
     public function __construct($request = []) {
 
