@@ -40,3 +40,7 @@
 		- Logs
 		- Views
 		- Statistics
+
+---
+
+**First Release: v1.0**
