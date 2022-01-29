@@ -13,6 +13,7 @@ class KN {
 
 
     protected static $request = [];
+    protected static $response = [];
 
     /**
      * Dump Data
@@ -410,6 +411,92 @@ class KN {
 
     }
 
+    /**
+     * User Alert Generator
+     * @return string    
+     */
+    public static function alert() {
+
+        /**
+         *   types:
+         *   - default
+         *   - success
+         *   - warning
+         *   - error
+         **/
+
+        $alert = '';
+
+        if (isset(self::$response['messages']) !== false AND count(self::$response['messages'])) {
+
+            $iconComponent = require KN::path('app/resources/view/components/icons.php');
+
+            if (file_exists($file = KN::path('app/resources/view/components/alert.php'))) {
+                $alertComponent = require $file;
+            } else {
+                $alertComponent = [
+                    'component' => '<div class="kn--message [CLASS]">[ICON] [TITLE] [MESSAGE]</div>',
+                    'classes'   => [
+                        'default'   => '', 
+                        'success'   => 'kn--message-success', 
+                        'warning'   => 'kn--message-warning', 
+                        'error'     => 'kn--message-error'
+                    ]
+                ];
+            }
+
+            $component = $alertComponent['component'];
+            $classes = $alertComponent['classes'];
+            
+            foreach (self::$response['messages'] as $m) {
+
+                $title = isset($m['title']) !== false ? '<strong>' . $m['title'] . '</strong>' : '';
+                $message = isset($m['message']) !== false ? $m['message'] : '';
+                $icon = isset($m['icon']) !== false ? $m['icon'] : '';
+                $status = in_array($m['status'], ['success', 'error', 'warning']) !== false ? $m['status'] : 'default';
+
+
+                $class = $classes[$status];
+
+                // Material Design Icons
+                if ($icon == '') {
+
+                    switch ($status) {
+                        case 'success':
+                            $icon = $iconComponent[$status];
+                            break;
+
+                        case 'error':
+                             $icon = $iconComponent[$status];
+                            break;
+
+                         case 'warning':
+                             $icon = $iconComponent[$status];
+                            break;
+                        
+                        default:
+                            $icon = $iconComponent['info'];
+                            break;
+                    }
+
+                }
+
+                $icon = '<span class="'.$icon.'"></span>';
+
+                $alert .= str_replace(
+                    ['[CLASS]', '[ICON]', '[TITLE]', '[MESSAGE]'], 
+                    [$class, $icon, $title, $message],
+                    $component
+                );
+
+            }
+
+
+        }
+
+        return $alert;
+
+    }
 
     /**
      * Layout Creator
@@ -432,6 +519,7 @@ class KN {
         ];
 
         if (isset($externalParams['request']) !== false) self::$request = $externalParams['request'];
+        if (isset($externalParams['response']) !== false) self::$response = $externalParams['response'];
 
         if (isset($externalParams['arguments']) !== false AND is_array($externalParams['arguments'])) {
             $arguments = array_merge($arguments, $externalParams['arguments']);
