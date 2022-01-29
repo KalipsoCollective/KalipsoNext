@@ -111,6 +111,25 @@ class KN {
 
     }
 
+    /**
+     * Returns Multi-dimensional Form Input Data
+     * @param  array $extract    -> variable name => format parameter
+     * @param  array $parameter  -> POST, GET or any input resource
+     * @return array $return 
+     */
+    public static function in($extract, $from): array {
+        $return = [];
+        if (is_array($extract) AND is_array($from))
+        {
+            foreach ($extract as $key => $value)
+            {
+                if (isset($from[$key])) $return[$key] = self::filter($from[$key], $value);
+                else $return[$key] = self::filter(null, $value);
+            }
+        }
+        return $return;
+    }
+
 
     /**
      * Filter Value
@@ -119,23 +138,37 @@ class KN {
      * @return any $return 
      */
     public static function filter($data = null, $parameter = 'text') {
-        /*  parameters
-            - text - strip_tags - trim
-            - html- htmlspecialchars - trim
-            - check - strip_tags - trim ? on : off
-            - pass - password_hash - trim
-        */
-        if (is_array($data))
-        {   
+
+        /**
+         *  Available Parameters
+         *  
+         *     html             ->  trim + htmlspecialchars
+         *     nulled_html      ->  trim + htmlspecialchars + if empty string, save as null
+         *     check            ->  if empty, save as "off", not "on"
+         *     check_as_boolean ->  if empty, save as false, not true
+         *     int              ->  convert to integer value (int)
+         *     nulled_int       ->  convert to integer value (int) if value is 0 then convert to null
+         *     float            ->  convert to float value (floatval())
+         *     password         ->  trim + password_hash
+         *     nulled_password  ->  trim + password_hash, assign null if empty string
+         *     date             ->  strtotime ~ input 12.00(mid day)
+         *     nulled_text      ->  strip_tags + trim + if empty string, save as null
+         *     slug             ->  strip_tags + trim + slugGenerator
+         *     text (default)   ->  strip_tags + trim
+         **/
+
+        if (is_array($data)) {
+
             $_value = [];
-            foreach ($data as $key => $value)
-            {
+
+            foreach ($data as $key => $value) {
+
                 if (is_array($value)) {
                     $_value[$key] = self::filter($value, $parameter);
                 } else {
                     $value = str_replace('<p><br></p>', '<br>', $value);
-                    switch ($parameter)
-                    {
+                    switch ($parameter) {
+
                         case 'html': 
                             $_value[$key] = htmlspecialchars(trim($value)); 
                             break;
@@ -149,11 +182,11 @@ class KN {
                             break;
 
                         case 'check': 
-                            $_value[$key] = !is_null($value) ? 'on' : 'off'; 
+                            $_value[$key] = ! is_null($value) ? 'on' : 'off'; 
                             break;
 
                         case 'check_as_boolean': 
-                            $_value[$key] = !is_null($value) ? true : false; 
+                            $_value[$key] = ! is_null($value) ? true : false; 
                             break;
 
                         case 'int': 
@@ -168,11 +201,11 @@ class KN {
                             $_value[$key] = floatval($value); 
                             break;
 
-                        case 'pass': 
+                        case 'password': 
                             $_value[$key] = password_hash(trim($value), PASSWORD_DEFAULT); 
                             break;
 
-                        case 'nulled_pass': 
+                        case 'nulled_password': 
                             $_value[$key] = trim($value) != '' ? password_hash(trim($value), PASSWORD_DEFAULT) : null;
                              break;
 
@@ -181,15 +214,15 @@ class KN {
                             break;
 
                         case 'nulled_text': 
-                            $_value[$key] = strip_tags(trim($value)) == '' ? null : strip_tags(trim($value)); 
+                            $_value[$key] = trim(strip_tags($value)) == '' ? null : trim(strip_tags($value)); 
                             break;
 
                         case 'slug': 
-                            $_value[$key] = strip_tags(trim($value)) == '' ? null : slugGenerator(strip_tags(trim($value))); 
+                            $_value[$key] = trim(strip_tags($value)) == '' ? null : self::slugGenerator(trim(strip_tags($value))); 
                             break;
 
                         default: 
-                            $_value[$key] = strip_tags(trim($value));
+                            $_value[$key] = trim(strip_tags($value));
 
                     }
                 }
@@ -198,12 +231,15 @@ class KN {
                     $_value[$key] = null;
                 }
             }
+
             $data = $_value;
-        }
-        else
-        {
+
+        } else {
+
             $data = str_replace('<p><br></p>', '<br>', $data);
+
             switch ($parameter) {
+
                 case 'html': 
                     $data = htmlspecialchars(trim($data)); 
                     break;
@@ -217,11 +253,11 @@ class KN {
                     break;
 
                 case 'check': 
-                    $data = !is_null($data) ? 'on' : 'off'; 
+                    $data = ! is_null($data) ? 'on' : 'off'; 
                     break;
 
                 case 'check_as_boolean': 
-                    $data = !is_null($data) ? true : false; 
+                    $data = ! is_null($data) ? true : false; 
                     break;
 
                 case 'int': 
@@ -236,11 +272,11 @@ class KN {
                     $data = (float)$data; 
                     break;
 
-                case 'pass': 
+                case 'password': 
                     $data = password_hash(trim($data), PASSWORD_DEFAULT); 
                     break;
 
-                case 'nulled_pass': 
+                case 'nulled_password': 
                     $data = trim($data) != '' ? password_hash(trim($data), PASSWORD_DEFAULT) : null; 
                     break;
 
@@ -253,7 +289,7 @@ class KN {
                     break;
 
                 case 'slug': 
-                    $data = strip_tags(trim($data)) == '' ? null : slugGenerator(strip_tags(trim($data))); 
+                    $data = strip_tags(trim($data)) == '' ? null : self::slugGenerator(strip_tags(trim($data))); 
                     break;
 
                 default: 
