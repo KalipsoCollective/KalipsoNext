@@ -117,7 +117,7 @@ class KN {
      * @param  array $parameter  -> POST, GET or any input resource
      * @return array $return 
      */
-    public static function in($extract, $from): array {
+    public static function input($extract, $from): array {
         $return = [];
         if (is_array($extract) AND is_array($from))
         {
