@@ -13,6 +13,15 @@ use App\Helpers\KN;
 
 final class ApiController {
 
+    public $request = [];
+    public $response = [];
+
+    public function __construct($request = []) {
+
+        $this->request = $request;
+
+    }
+
     public static function index() {
 
         echo 'Welcome!';
