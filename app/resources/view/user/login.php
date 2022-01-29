@@ -6,6 +6,7 @@
 							<?php echo self::lang('login'); ?>
 						</div>
 						<div class="card-body">
+							<?php echo self::alert(); ?>
 							<form method="post" action="<?php echo self::base('account/login'); ?>" data-vpjax>
 								<?php echo self::createCSRF(); ?>
 								<div class="form-floating mb-3">
