@@ -32,4 +32,6 @@ return [
     'prepare_database'                  => 'Veri Tabanını Hazırla',
     'seed_database'                     => 'Veri Tabanını Doldur',
     'php_info'                          => 'PHP Bilgileri',
+    'alert'                             => 'Uyarı!',
+    'form_cannot_empty'                 => 'Form boş olamaz!',
 ];

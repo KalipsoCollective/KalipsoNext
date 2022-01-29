@@ -32,4 +32,6 @@ return [
     'prepare_database'                  => 'Prepare DB',
     'seed_database'                     => 'Seed DB',
     'php_info'                          => 'PHP Info',
+    'alert'                             => 'Alert!',
+    'form_cannot_empty'                 => 'Form cannot empty!',
 ];
