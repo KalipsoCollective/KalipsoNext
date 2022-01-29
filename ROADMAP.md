@@ -7,7 +7,7 @@
 	- Route Cache(maybe one day)
 	- Cron Jobs (queue mechanism)
 
-- DB Layout
+- DB Layout ``(10/8)``
 	+ ~User~
 	+ ~User Roles~
 	- Content -> next step
@@ -19,10 +19,10 @@
 	+ ~Sessions~
 	+ ~Views~
 
-- Sandbox
-	+ DB Init
-	+ DB Seed
-	+ PHP Info
+- ~Sandbox ``(3/3)``~
+	+ ~DB Init~
+	+ ~DB Seed~
+	+ ~PHP Info~
 
 - User Module
 	- Login
