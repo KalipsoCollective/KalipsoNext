@@ -8,21 +8,21 @@
 	- Cron Jobs (queue mechanism)
 
 - DB Layout
-	+ User
-	+ User Roles
+	+ ~User~
+	+ ~User Roles~
 	- Content -> next step
 	- Media -> next step
-	+ Contact
-	+ Logs
-	+ Email Logs
-	+ Environments
-	+ Sessions
-	+ Views
+	+ ~Contact~
+	+ ~Logs~
+	+ ~Email Logs~
+	+ ~Environments~
+	+ ~Sessions~
+	+ ~Views~
 
 - Sandbox
-	- ~DB Init~
-	- ~DB Seed~
-	- ~PHP Info~
+	+ DB Init
+	+ DB Seed
+	+ PHP Info
 
 - User Module
 	- Login
