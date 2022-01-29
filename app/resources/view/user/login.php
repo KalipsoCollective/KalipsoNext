@@ -6,7 +6,7 @@
 							<?php echo self::lang('login'); ?>
 						</div>
 						<div class="card-body">
-							<form method="post" action="<?php echo self::base('account/login'); ?>">
+							<form method="post" action="<?php echo self::base('account/login'); ?>" data-vpjax>
 								<?php echo self::createCSRF(); ?>
 								<div class="form-floating mb-3">
 									<input type="text" name="username" class="form-control" id="uN" placeholder="<?php echo self::lang('email_or_username'); ?>" required <?php echo self::inputValue('username'); ?>>
