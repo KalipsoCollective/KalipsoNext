@@ -8,16 +8,16 @@
 	- Cron Jobs (queue mechanism)
 
 - DB Layout
-	- User
-	- User Roles
-	- Content
-	- Media
-	- Contact
-	- Logs
-	- Email Logs
-	- Environments
-	- Sessions
-	- Views
+	+ User
+	+ User Roles
+	- Content -> next step
+	- Media -> next step
+	+ Contact
+	+ Logs
+	+ Email Logs
+	+ Environments
+	+ Sessions
+	+ Views
 
 - Sandbox
 	- ~DB Init~
