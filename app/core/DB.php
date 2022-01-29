@@ -11,6 +11,7 @@ namespace App\Core;
 
 use \Buki\Pdox;
 use App\Helpers\KN;
+use PDO;
 
 class DB extends Pdox {
 
@@ -28,6 +29,21 @@ class DB extends Pdox {
     }
 
     public function dbInit($schema) {
+
+        // delete other tables
+        $sql = "SELECT CONCAT(`TABLE_NAME`) FROM information_schema.TABLES WHERE TABLE_SCHEMA = \"" . KN::config('database.name') . "\"";
+        $allTables = $this->pdo->prepare($sql);
+        $allTables->execute();
+        $allTables = $allTables->fetchAll(PDO::FETCH_COLUMN);
+        
+        if (is_array($allTables) AND count($allTables)) {
+
+            foreach ($allTables as $table) {
+                $this->pdo->exec("DROP TABLE IF EXISTS `" . $table . "`;");
+            }
+
+        }
+
 
         $sql = '';
         foreach ($schema['tables'] as $table => $columns) {

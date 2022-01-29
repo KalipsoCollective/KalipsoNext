@@ -209,6 +209,7 @@ return [
 		],
 
 		/* Pages Table */
+		/*
 		'pages' => [
 			'cols' => [
 				'id' => [
@@ -278,8 +279,10 @@ return [
 				],
 			]
 		],
+		*/
 
 		/* Contents Table */
+		/*
 		'contents' => [
 			'cols' => [
 				'id' => [
@@ -345,8 +348,10 @@ return [
 				],
 			]
 		],
+		*/
 
 		/* Categories Table */
+		/*
 		'categories' => [
 			'cols' => [
 				'id' => [
@@ -412,8 +417,10 @@ return [
 				],
 			]
 		],
+		*/
 
 		/* Medias Table */
+		/*
 		'medias' => [
 			'cols' => [
 				'id' => [
@@ -474,6 +481,7 @@ return [
 				],
 			]
 		],
+		*/
 
 		/* Environments Table */
 		'environments' => [
