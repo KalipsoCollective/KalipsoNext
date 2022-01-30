@@ -24,9 +24,21 @@ class User {
 
     }
 
+    public function setter($data) {
+
+        if (is_null($this->row)) $this->row = (object)[];
+
+        foreach ($data as $columnName => $columnValue) {
+            
+            $this->row->{$columnName} = $columnValue;
+
+        }
+
+    }
+
     public function getUserWithUnameOrEmail($data) {
 
-        $get = $this->base->select('id, u_name, f_name, l_name, email, password, role_id, b_date')
+        $get = $this->base->select('id, u_name, f_name, l_name, email, password, role_id, b_date, status')
                     ->where('u_name', $data)
                     ->orWhere('email', $data)
                     ->get();
@@ -38,18 +50,6 @@ class User {
         }
 
         return $this->row;
-
-    }
-
-    public function setter($data) {
-
-        if (is_null($this->row)) $this->row = (object)[];
-
-        foreach ($data as $columnName => $columnValue) {
-            
-            $this->row->{$columnName} = $columnValue;
-
-        }
 
     }
 
