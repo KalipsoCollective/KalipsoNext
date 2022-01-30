@@ -115,6 +115,13 @@
   --rgb-black-01: rgba(0,0,0,0.1);
   --rgb-black-02: rgba(0,0,0,0.2);
 
+  --success-color: rgba(114,155,98);
+  --success-color-04: rgba(114,155,98,0.4);
+  --warning-color: rgba(209,154,19);
+  --warning-color-04: rgba(209,154,19,0.4);
+  --error-color: rgba(177,70,70);
+  --error-color-04: rgba(177,70,70,0.4);
+
   --rgb-main-color-025: rgba(79,172,254,0.25);
 }
 
@@ -260,4 +267,32 @@ a {
 
 .kn-card .card-footer:hover {
   opacity: 1;
+}
+
+/* Alert */
+.kn--message {
+  padding: 0.4rem;
+  background: var(--main-color);
+  color: #fff;
+  border-radius: 0.2rem;
+  margin: 0.4rem 0rem 1rem;
+  box-shadow: 0px 4px 11px 0px var(--main-dark-color-04);
+}
+
+.kn--message.kn--message-success {
+  background: var(--success-color);
+  color: #fff;
+  box-shadow: 0px 4px 11px 0px var(--success-color-04);
+}
+
+.kn--message.kn--message-warning {
+  background: var(--warning-color);
+  color: #fff;
+  box-shadow: 0px 4px 11px 0px var(--warning-color-04);
+}
+
+.kn--message.kn--message-error {
+  background: var(--error-color);
+  color: #fff;
+  box-shadow: 0px 4px 11px 0px var(--error-color-04);
 }
