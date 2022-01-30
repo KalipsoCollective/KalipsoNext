@@ -234,8 +234,8 @@ a {
   margin-left: 0.4rem;
 }
 
-.kn-nav .navbar-nav .vr {
-  margin: 0 0.3rem;
+.vr {
+  margin: 0.4rem !important;
 }
 
 /* Account Pages */
@@ -272,7 +272,7 @@ a {
 /* Alert */
 .kn--message {
   padding: 0.4rem;
-  background: var(--main-color);
+  background: var(--main-dark-color);
   color: #fff;
   border-radius: 0.2rem;
   margin: 0.4rem 0rem 1rem;
