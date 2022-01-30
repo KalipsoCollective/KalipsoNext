@@ -16,6 +16,7 @@ use PDO;
 class DB extends Pdox {
 
     public function __construct () {
+
         parent::__construct([
             'host'      => KN::config('database.host'),
             'driver'    => KN::config('database.driver'),
@@ -26,6 +27,8 @@ class DB extends Pdox {
             'collation' => KN::config('database.collation'),
             'prefix'    => KN::config('database.prefix'),
         ]);
+
+        return $this;
     }
 
     public function dbInit($schema) {
