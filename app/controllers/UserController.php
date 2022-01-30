@@ -10,11 +10,13 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Helpers\KN;
+use App\Model\User;
 
 final class UserController {
 
     public $request = [];
     public $response = [];
+    protected $model = [];
 
     public function __construct($request = []) {
 
@@ -40,11 +42,54 @@ final class UserController {
 
             if (! is_null($username) AND ! is_null($password)) {
 
-                $this->response['messages'][] = [
-                    'status' => 'success',
-                    'title'  => KN::lang('alert'),
-                    'message'=> KN::lang('good')
-                ];
+                $this->model = (new User());
+
+                $get = $this->model->getUserWithUnameOrEmail($username);
+
+                if ($get) {
+
+                    if ($get->status == 'deleted') {
+
+                        $this->response['messages'][] = [
+                            'status' => 'error',
+                            'title'  => KN::lang('error'),
+                            'message'=> KN::lang('your_account_has_been_blocked')
+                        ];
+
+                    } else {
+
+                        if (password_verify($password, $get->password)) {
+
+                            $this->response['redirect'] = [4, KN::base()];
+                            $this->response['messages'][] = [
+                                'status' => 'success',
+                                'title'  => KN::lang('success'),
+                                'message'=> KN::lang('logging_in'),
+                            ];
+
+                        } else {
+
+                            $this->response['messages'][] = [
+                                'status' => 'alert',
+                                'title'  => KN::lang('warning'),
+                                'message'=> KN::lang('your_login_info_incorrect')
+                            ];
+
+                        }
+
+                    }
+
+                    
+
+                } else {
+
+                    $this->response['messages'][] = [
+                        'status' => 'alert',
+                        'title'  => KN::lang('warning'),
+                        'message'=> KN::lang('account_not_found')
+                    ];
+
+                }
 
             } else {
 
