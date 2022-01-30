@@ -34,4 +34,11 @@ return [
     'php_info'                          => 'PHP Bilgileri',
     'alert'                             => 'Uyarı!',
     'form_cannot_empty'                 => 'Form boş olamaz!',
+    'account_not_found'                 => 'Böyle bir hesap bulunamadı.',
+    'warning'                           => 'Uyarı!',
+    'success'                           => 'Başarılı!',
+    'logging_in'                        => 'Oturum başlatılıyor...',
+    'your_account_has_been_blocked'     => 'Hesabınız engellenmiş, iletişime geçin.',
+    'error'                             => 'Hata!',
+    'your_login_info_incorrect'         => 'Giriş bilgileriniz yanlış.',
 ];

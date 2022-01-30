@@ -34,4 +34,11 @@ return [
     'php_info'                          => 'PHP Info',
     'alert'                             => 'Alert!',
     'form_cannot_empty'                 => 'Form cannot empty!',
+    'account_not_found'                 => 'No such account was found.',
+    'warning'                           => 'Warning!',
+    'success'                           => 'Successful!',
+    'logging_in'                        => 'Starting your session...',
+    'your_account_has_been_blocked'     => 'Your account has been blocked, contact us.',
+    'error'                             => 'Error!',
+    'your_login_info_incorrect'         => 'Your login information is incorrect.',
 ];
