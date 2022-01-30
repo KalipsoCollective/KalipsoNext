@@ -14,8 +14,8 @@ return [
 	'classes'	=> [
 		'default'	=> 'alert-primary',
 		'success'	=> 'alert-success',
-		'warning'	=> 'alert-warning',
-		'error'		=> 'alert-error'
+		'alert'		=> 'alert-warning',
+		'error'		=> 'alert-danger'
 	]
 
 ];
