@@ -439,7 +439,7 @@ class KN {
                     'classes'   => [
                         'default'   => '', 
                         'success'   => 'kn--message-success', 
-                        'warning'   => 'kn--message-warning', 
+                        'alert'   => 'kn--message-warning', 
                         'error'     => 'kn--message-error'
                     ]
                 ];
@@ -453,7 +453,7 @@ class KN {
                 $title = isset($m['title']) !== false ? '<strong>' . $m['title'] . '</strong>' : '';
                 $message = isset($m['message']) !== false ? $m['message'] : '';
                 $icon = isset($m['icon']) !== false ? $m['icon'] : '';
-                $status = in_array($m['status'], ['success', 'error', 'warning']) !== false ? $m['status'] : 'default';
+                $status = in_array($m['status'], ['success', 'error', 'alert']) !== false ? $m['status'] : 'default';
 
 
                 $class = $classes[$status];
@@ -470,7 +470,7 @@ class KN {
                              $icon = $iconComponent[$status];
                             break;
 
-                         case 'warning':
+                         case 'alert':
                              $icon = $iconComponent[$status];
                             break;
                         
@@ -523,6 +523,15 @@ class KN {
 
         if (isset($externalParams['arguments']) !== false AND is_array($externalParams['arguments'])) {
             $arguments = array_merge($arguments, $externalParams['arguments']);
+        }
+
+        if (isset(self::$response['redirect']) !== false) {
+
+            self::http('refresh', [
+                'second'    => self::$response['redirect'][0],
+                'url'       => self::$response['redirect'][1]
+            ]);
+
         }
 
         foreach ($layout as $part) {
