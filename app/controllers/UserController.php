@@ -60,12 +60,34 @@ final class UserController {
 
                         if (password_verify($password, $get->password)) {
 
-                            $this->response['redirect'] = [4, KN::base()];
-                            $this->response['messages'][] = [
-                                'status' => 'success',
-                                'title'  => KN::lang('success'),
-                                'message'=> KN::lang('logging_in'),
-                            ];
+                            $logged = KN::sessionStart($get);
+
+                            $get->view_points = (object) explode(',', $get->view_points);
+                            $get->action_points = (object) explode(',', $get->action_points);
+
+                            if ($logged) {
+                                $logged = $this->model->setSession($get);
+                            }
+                            
+
+                            if ($logged) {
+
+                                $this->response['redirect'] = [4, KN::base()];
+                                $this->response['messages'][] = [
+                                    'status' => 'success',
+                                    'title'  => KN::lang('success'),
+                                    'message'=> KN::lang('logging_in'),
+                                ];
+
+                            } else {
+
+                                $this->response['messages'][] = [
+                                    'status' => 'alert',
+                                    'title'  => KN::lang('warning'),
+                                    'message'=> KN::lang('start_session_problem')
+                                ];
+
+                            }
 
                         } else {
 
