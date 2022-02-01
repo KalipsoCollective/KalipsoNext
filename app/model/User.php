@@ -14,6 +14,8 @@ use App\Core\DB;
 class User {
 
     public $table = 'users';
+    public $sessionTable = 'sessions';
+    public $roleTable = 'user_roles';
     public $base = null;
     public $row = null;
 
@@ -38,18 +40,39 @@ class User {
 
     public function getUserWithUnameOrEmail($data) {
 
-        $get = $this->base->select('id, u_name, f_name, l_name, email, password, role_id, b_date, status')
+        // single user data
+        $get = $this->base->table($this->table)->select('id, u_name, f_name, l_name, email, password, role_id, b_date, status')
                     ->where('u_name', $data)
                     ->orWhere('email', $data)
                     ->get();
 
         if ($get) {
 
+            // role data
+            $role = $this->base->table($this->roleTable)->select('name, view_points, action_points')
+                ->where('id', $get->role_id)
+                ->where('status', 'active')
+                ->get();
+
+            if ($role) {
+
+                $get->role_name = $role->name;
+                $get->view_points = $role->view_points;
+                $get->action_points = $role->action_points;
+
+            }
+
             $this->setter($get);
 
         }
 
         return $this->row;
+
+    }
+
+    public function setSession($data) {
+
+        return false;
 
     }
 
