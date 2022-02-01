@@ -41,4 +41,5 @@ return [
     'your_account_has_been_blocked'     => 'Hesabınız engellenmiş, iletişime geçin.',
     'error'                             => 'Hata!',
     'your_login_info_incorrect'         => 'Giriş bilgileriniz yanlış.',
+    'start_session_problem'             => 'Oturum açılırken bir sorun oluştu!',
 ];

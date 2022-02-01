@@ -41,4 +41,5 @@ return [
     'your_account_has_been_blocked'     => 'Your account has been blocked, contact us.',
     'error'                             => 'Error!',
     'your_login_info_incorrect'         => 'Your login information is incorrect.',
+    'start_session_problem'             => 'There was a problem signing in!',
 ];
