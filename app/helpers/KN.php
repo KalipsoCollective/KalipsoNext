@@ -734,24 +734,24 @@ class KN {
     /**
      * Set Session
      * Set to all session information or specific data.
-     * @param string $key   specific key
      * @param any $data   data
+     * @param string $key   specific key
      * @return bool
      */
-    public static function setSession($key = null, $data = null) {
+    public static function setSession($data = null, $key = null) {
 
-        $return = false;
-        if (isset($_SESSION) !== false) {
+        if (is_string($key)) {
+            $_SESSION[$key] = $data;
+        } else {
 
-            if (is_string($key)) {
-                $_SESSION[$key] = $data;
-            } else {
-                $_SESSION = $data;
+            if (isset($data->password) !== false) {
+                unset($data->password);
             }
-            $return = true;
+
+            $_SESSION = $data;
         }
 
-        return $return;
+        return $_SESSION;
 
     }
 
