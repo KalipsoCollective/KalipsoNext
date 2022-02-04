@@ -26,6 +26,11 @@
                                 <?php echo self::lang('php_info'); ?>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link<?php echo self::currentPage('sandbox/session'); ?>" href="<?php echo self::base('sandbox/session'); ?>">
+                                <?php echo self::lang('session'); ?>
+                            </a>
+                        </li>
                     </ul>
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
@@ -213,6 +218,13 @@
 						$output = ob_get_clean();
 						$output = preg_replace('/(<script[^>]*>.+?<\/script>|<style[^>]*>.+?<\/style>|<meta[^>]*>|<title[^>]*>.+?<\/title>)/is', "", $output);
 						$output = '<pre>'.trim(strip_tags($output)).'</pre>';
+						break;
+
+					case 'session':
+						$pageTitle = self::lang('session');
+						ob_start ();
+						self::dump($_SESSION);
+						$output = ob_get_clean();
 						break;
 					
 					default:

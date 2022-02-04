@@ -42,4 +42,5 @@ return [
     'error'                             => 'Error!',
     'your_login_info_incorrect'         => 'Your login information is incorrect.',
     'start_session_problem'             => 'There was a problem signing in!',
+    'session'                           => 'Session',
 ];

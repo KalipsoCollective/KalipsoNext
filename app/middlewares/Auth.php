@@ -23,7 +23,9 @@ final class Auth {
 
     public function with($type = 'auth') {
 
-        if ($type == 'auth' AND isset($_SESSION['auth']) !== false AND $_SESSION['auth']) {
+        KN::dump($_SESSION);
+
+        if ($type == 'auth' AND isset($_SESSION->id) !== false AND $_SESSION['auth']) {
 
             return [
                 'status' => true,

@@ -39,13 +39,13 @@ class System {
             file_exists($path = KN::path('app/resources/localization/'.$sessionLanguageParam.'.php'))
         ) {
 
-            $this->lang = $_SESSION['language'];
+            $this->lang = $sessionLanguageParam;
             $languageFile = require $path;
 
         } elseif (file_exists($path = KN::path('app/resources/localization/'.$this->lang.'.php'))) {
 
             $languageFile = require $path;
-            KN::setSession('language', $this->lang);
+            KN::setSession($this->lang, 'language');
 
         } else {
 

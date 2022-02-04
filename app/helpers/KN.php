@@ -718,14 +718,10 @@ class KN {
     public static function getSession($key = null) {
         
         $return = null;
-        if (isset($_SESSION) !== false) {
-
-            if (is_string($key) AND isset($_SESSION[$key]) !== false) {
-                $return = $_SESSION[$key];
-            } elseif(is_null($key)) {
-                $return = $_SESSION;
-            }
-
+        if (is_string($key) AND isset($_SESSION->{$key}) !== false) {
+            $return = $_SESSION->{$key};
+        } elseif (is_null($key)) {
+            $return = $_SESSION;
         }
         return $return;
 
@@ -748,7 +744,7 @@ class KN {
                 unset($data->password);
             }
 
-            $_SESSION = $data;
+            $_SESSION['user'] = $data;
         }
 
         return $_SESSION;

@@ -42,4 +42,5 @@ return [
     'error'                             => 'Hata!',
     'your_login_info_incorrect'         => 'Giriş bilgileriniz yanlış.',
     'start_session_problem'             => 'Oturum açılırken bir sorun oluştu!',
+    'session'                           => 'Oturum',
 ];
