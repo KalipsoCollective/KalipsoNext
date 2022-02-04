@@ -23,15 +23,13 @@ final class Auth {
 
     public function with($type = 'auth') {
 
-        KN::dump($_SESSION);
-
-        if ($type == 'auth' AND isset($_SESSION->id) !== false AND $_SESSION['auth']) {
+        if ($type == 'auth' AND isset($_SESSION['user']->id) !== false AND $_SESSION['user']->id) {
 
             return [
                 'status' => true,
             ];
 
-        } elseif ($type == 'nonAuth' AND (isset($_SESSION['auth']) === false OR ! $_SESSION['auth'])) {
+        } elseif ($type == 'nonAuth' AND isset($_SESSION['user']->id) === false) {
 
             return [
                 'status' => true,
@@ -41,7 +39,7 @@ final class Auth {
 
             return [
                 'status' => false,
-                'message' => ($type == 'nonAuth' ? 'you_have_an_session' : 'you_have_not_an_session')
+                'message' => ($type == 'nonAuth' ? 'you_have_a_session' : 'you_have_not_a_session')
             ];
         }
 
