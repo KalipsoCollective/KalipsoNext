@@ -101,8 +101,6 @@ final class UserController {
 
                     }
 
-                    
-
                 } else {
 
                     $this->response['messages'][] = [
@@ -122,9 +120,7 @@ final class UserController {
                 ];
 
             }
-
-            // KN::dump($username);
-            // KN::dump($password);
+            
         }
 
         KN::layout('user/login', [
