@@ -148,21 +148,31 @@ class Route {
     */
     public static function extractor($index = null) {
 
+        $request = [
+            'request'           => self::$request,
+            'request_method'    => self::$requestMethod,
+            'parameters'        => self::$params,
+            'attributes'        => self::$attributes
+        ];
+
         if (self::$pathNotFound) {
 
             KN::http(404);
-            KN::view('404');
+            $messages[] = [
+                'status' => 'alert',
+                'title'  => KN::lang('alert'),
+                'message'=> KN::lang('page_not_found')
+            ];
+
+            KN::layout('404', [
+                'title'     => KN::lang('page_not_found') . ' | ' . KN::config('app.name'),
+                'request'   => $request,
+                'response'  => ['messages' => $messages]
+            ]);
 
         } else {
 
             self::$matchingRoute = self::$schema[$index];
-
-            $request = [
-                'request'           => self::$request,
-                'request_method'    => self::$requestMethod,
-                'parameters'        => self::$params,
-                'attributes'        => self::$attributes
-            ];
 
             $middlewareMessages = [];
             // middleware
@@ -244,8 +254,20 @@ class Route {
 
             } else {
 
-                KN::http(404);
-                KN::view('404', ['messages' => $middlewareMessages]);
+                foreach ($middlewareMessages as $message) {
+                    $messages[] = [
+                        'status' => 'alert',
+                        'title'  => KN::lang('alert'),
+                        'message'=> KN::lang($message)
+                    ];
+                }
+                $response = ['messages' => $messages];
+
+                KN::layout('404', [
+                    'title'     => KN::lang('a_problem_occurred') . ' | ' . KN::config('app.name'),
+                    'request'   => $request,
+                    'response'  => $response
+                ]);
             }
         }
 
