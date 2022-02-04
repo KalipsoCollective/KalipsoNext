@@ -60,13 +60,13 @@ final class UserController {
 
                         if (password_verify($password, $get->password)) {
 
-                            $logged = KN::sessionStart($get);
+                            $logged = KN::setSession($get);
 
                             $get->view_points = (object) explode(',', $get->view_points);
                             $get->action_points = (object) explode(',', $get->action_points);
 
                             if ($logged) {
-                                $logged = $this->model->setSession($get);
+                                $logged = $this->model->saveSession($get, $this->request['request']);
                             }
                             
 
