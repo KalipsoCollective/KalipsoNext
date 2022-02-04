@@ -73,16 +73,39 @@ class User {
 
     public function saveSession($data, $lastActionPoint = null) {
 
-        return $this->base->table($this->sessionTable)
-            ->insert([
-                'auth_code'         => $_COOKIE[KN::config('app.session')],
-                'user_id'           => $data->id,
-                'header'            => KN::getHeader(),
-                'ip'                => KN::getIp(),
-                'role_id'           => $data->role_id,
-                'last_action_date'  => time(),
-                'last_action_point' => $lastActionPoint
-            ]);
+        $getSession = $this->base->table($this->sessionTable)
+            ->select('auth_code, id')
+            ->where('auth_code', $_COOKIE[KN_SESSION_NAME])
+            ->get();
+
+        if ($getSession) {
+
+            // update
+            return $this->base->table($this->sessionTable)
+                ->where('id', $getSession->id)
+                ->update([
+                    'user_id'           => $data->id,
+                    'header'            => KN::getHeader(),
+                    'ip'                => KN::getIp(),
+                    'role_id'           => $data->role_id,
+                    'last_action_date'  => time(),
+                    'last_action_point' => $lastActionPoint
+                ]);
+
+        } else {
+
+            // insert
+            return $this->base->table($this->sessionTable)
+                ->insert([
+                    'auth_code'         => $_COOKIE[KN_SESSION_NAME],
+                    'user_id'           => $data->id,
+                    'header'            => KN::getHeader(),
+                    'ip'                => KN::getIp(),
+                    'role_id'           => $data->role_id,
+                    'last_action_date'  => time(),
+                    'last_action_point' => $lastActionPoint
+                ]);
+        }
 
     }
 
