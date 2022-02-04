@@ -171,7 +171,7 @@ return [
 				'auth_code' => [
 					'type'          => 'varchar',
 					'type_values'   => 50,
-					'index'         => 'INDEX',
+					'index'         => 'UNIQUE',
 				],
 				'user_id' => [
 					'type'          => 'int',
