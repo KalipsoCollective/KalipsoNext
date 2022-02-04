@@ -23,6 +23,8 @@ class System {
         // powered_by header - please don't remove!
         KN::http('powered_by');
 
+        define('KN_SESSION_NAME', KN::config('app.session'));
+
         // session and output buffer start
         KN::sessionStart();
         ob_start();
