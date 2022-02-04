@@ -43,4 +43,9 @@ return [
     'your_login_info_incorrect'         => 'Your login information is incorrect.',
     'start_session_problem'             => 'There was a problem signing in!',
     'session'                           => 'Session',
+    'a_problem_occurred'                => 'A problem occurred!',
+    'you_have_a_session'                => 'You already have a session!',
+    'you_have_not_a_session'            => 'You do not have a login yet!',
+    'go_to_home'                        => 'Go to Home',
+    'page_not_found'                    => 'Page not found!',
 ];

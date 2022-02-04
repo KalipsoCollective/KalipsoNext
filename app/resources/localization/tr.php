@@ -43,4 +43,9 @@ return [
     'your_login_info_incorrect'         => 'Giriş bilgileriniz yanlış.',
     'start_session_problem'             => 'Oturum açılırken bir sorun oluştu!',
     'session'                           => 'Oturum',
+    'a_problem_occurred'                => 'Bir sorun oluştu!',
+    'you_have_a_session'                => 'Zaten bir oturuma sahipsiniz!',
+    'you_have_not_a_session'            => 'Henüz giriş yapılmamış!',
+    'go_to_home'                        => 'Ana Sayfaya Dön',
+    'page_not_found'                    => 'Sayfa bulunamadı!',
 ];
