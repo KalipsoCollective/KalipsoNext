@@ -628,10 +628,10 @@ class KN {
         global $requestUri;
 
         $return = null;
-        if (isset($_COOKIE[self::config('app.session')]) !== false) {
+        if (isset($_COOKIE[KN_SESSION_NAME]) !== false) {
 
             $csrf = [
-                'cookie'        => $_COOKIE[self::config('app.session')],
+                'cookie'        => $_COOKIE[KN_SESSION_NAME],
                 'timeout'       => strtotime('+1 hour'),
                 'request_uri'   => $requestUri,
                 'header'        => self::getHeader(),
@@ -663,7 +663,7 @@ class KN {
         if (is_array($token)) {
 
             if (
-                (isset($token['cookie']) !== false AND $token['cookie'] == $_COOKIE[self::config('app.session')]) AND
+                (isset($token['cookie']) !== false AND $token['cookie'] == $_COOKIE[KN_SESSION_NAME]) AND
                 (isset($token['timeout']) !== false AND $token['timeout'] >= time()) AND
                 (isset($token['request_uri']) !== false AND $requestUri) AND
                 (isset($token['header']) !== false AND $token['header'] == self::getHeader()) AND
@@ -704,7 +704,7 @@ class KN {
      */
     public static function sessionStart() {
 
-        session_name(self::config('app.session'));
+        session_name(KN_SESSION_NAME);
         session_start();
 
     }
