@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace App\Model;
 
 use App\Core\DB;
+use App\Helpers\KN;
 
 class User {
 
@@ -70,9 +71,18 @@ class User {
 
     }
 
-    public function setSession($data) {
+    public function saveSession($data, $lastActionPoint = null) {
 
-        return false;
+        return $this->base->table($this->sessionTable)
+            ->insert([
+                'auth_code'         => $_COOKIE[KN::config('app.session')],
+                'user_id'           => $data->id,
+                'header'            => KN::getHeader(),
+                'ip'                => KN::getIp(),
+                'role_id'           => $data->role_id,
+                'last_action_date'  => time(),
+                'last_action_point' => $lastActionPoint
+            ]);
 
     }
 
