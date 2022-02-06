@@ -13,24 +13,34 @@
                         </li>
                     </ul>
                     <ul class="navbar-nav ms-auto">
-                        <!--
-                        <li class="nav-item">
-                            <a class="nav-link<?php echo self::currentPage('/account'); ?>" href="<?php echo self::base('/account'); ?>">
-                                <?php echo self::lang('account'); ?>
-                            </a>
-                        </li>
-                        -->
-                        <li class="nav-item">
-                            <a class="nav-link<?php echo self::currentPage('/account/login'); ?>" href="<?php echo self::base('/account/login'); ?>">
-                                <?php echo self::lang('login'); ?>
-                            </a>
-                        </li>
-                        <div class="vr"></div>
-                        <li class="nav-item">
-                            <a class="nav-link<?php echo self::currentPage('/account/register'); ?>" href="<?php echo self::base('/account/register'); ?>">
-                                <?php echo self::lang('register'); ?>
-                            </a>
-                        </li>
+                        <?php
+                        if (! self::isAuth()) {
+                        ?>
+                            <li class="nav-item">
+                                <a class="nav-link<?php echo self::currentPage('/account/login'); ?>" href="<?php echo self::base('/account/login'); ?>">
+                                    <?php echo self::lang('login'); ?>
+                                </a>
+                            </li>
+                            <div class="vr"></div>
+                            <li class="nav-item">
+                                <a class="nav-link<?php echo self::currentPage('/account/register'); ?>" href="<?php echo self::base('/account/register'); ?>">
+                                    <?php echo self::lang('register'); ?>
+                                </a>
+                            </li>
+                        <?php 
+                        } else { ?>
+                            <li class="nav-item">
+                                <a class="nav-link<?php echo self::currentPage('/account'); ?>" href="<?php echo self::base('/account'); ?>">
+                                    <?php echo self::lang('account'); ?>
+                                </a>
+                            </li>
+                            <div class="vr"></div>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo self::base('/account?logout'); ?>">
+                                    <i class="mdi mdi-power"></i> <?php echo self::lang('logout'); ?>
+                                </a>
+                            </li>
+                        <?php } ?>
                     </ul>
                 </div>
             </div>
