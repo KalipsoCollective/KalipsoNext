@@ -277,6 +277,10 @@ a {
   border-radius: 0.2rem;
   margin: 0.4rem 0rem 1rem;
   box-shadow: 0px 4px 11px 0px var(--main-dark-color-04);
+  font-size: 0.9rem;
+  display: table;
+  vertical-align: middle;
+  width: 100%;
 }
 
 .kn--message.kn--message-success {
