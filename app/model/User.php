@@ -109,4 +109,12 @@ class User {
 
     }
 
+    public function clearSession() {
+
+        return $this->base->table($this->sessionTable)
+            ->where('auth_code', $_COOKIE[KN_SESSION_NAME])
+            ->delete();
+
+    }
+
 }
