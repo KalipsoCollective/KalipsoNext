@@ -24,8 +24,9 @@
 	+ ~DB Seed~
 	+ ~PHP Info~
 
-- User Module
-	- Login
+- User Module ``(5/2)``
+	- ~Login~
+	- ~Logout~
 	- Register
 	- Recovery
 	- Profile Update
