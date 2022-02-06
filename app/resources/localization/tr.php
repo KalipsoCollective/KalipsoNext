@@ -38,6 +38,7 @@ return [
     'warning'                           => 'Uyarı!',
     'success'                           => 'Başarılı!',
     'logging_in'                        => 'Oturum başlatılıyor...',
+    'logging_out'                       => 'Oturum sonlandırılıyor...',
     'your_account_has_been_blocked'     => 'Hesabınız engellenmiş, iletişime geçin.',
     'error'                             => 'Hata!',
     'your_login_info_incorrect'         => 'Giriş bilgileriniz yanlış.',
@@ -48,4 +49,5 @@ return [
     'you_have_not_a_session'            => 'Henüz giriş yapılmamış!',
     'go_to_home'                        => 'Ana Sayfaya Dön',
     'page_not_found'                    => 'Sayfa bulunamadı!',
+    'logout'                            => 'Çıkış Yap',
 ];

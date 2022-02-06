@@ -38,6 +38,7 @@ return [
     'warning'                           => 'Warning!',
     'success'                           => 'Successful!',
     'logging_in'                        => 'Starting your session...',
+    'logging_out'                       => 'Ending your session...',
     'your_account_has_been_blocked'     => 'Your account has been blocked, contact us.',
     'error'                             => 'Error!',
     'your_login_info_incorrect'         => 'Your login information is incorrect.',
@@ -48,4 +49,5 @@ return [
     'you_have_not_a_session'            => 'You do not have a login yet!',
     'go_to_home'                        => 'Go to Home',
     'page_not_found'                    => 'Page not found!',
+    'logout'                            => 'Logout',
 ];
