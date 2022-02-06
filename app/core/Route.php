@@ -256,9 +256,11 @@ class Route {
 
                 foreach ($middlewareMessages as $message) {
                     $messages[] = [
-                        'status' => 'alert',
+                        'status' => 'default',
                         'title'  => KN::lang('alert'),
-                        'message'=> KN::lang($message)
+                        'message'=> KN::lang($message),
+                        'link'   => [KN::lang('go_to_home'), KN::base()],
+                        'close'  => false
                     ];
                 }
                 $response = ['messages' => $messages];
