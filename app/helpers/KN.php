@@ -435,13 +435,14 @@ class KN {
                 $alertComponent = require $file;
             } else {
                 $alertComponent = [
-                    'component' => '<div class="kn--message [CLASS]">[ICON] [TITLE] [MESSAGE]</div>',
+                    'component' => '<div class="kn--message [CLASS]">[ICON] [TITLE] [MESSAGE] [LINK]</div>',
                     'classes'   => [
                         'default'   => '', 
                         'success'   => 'kn--message-success', 
                         'alert'   => 'kn--message-warning', 
                         'error'     => 'kn--message-error'
-                    ]
+                    ],
+                    'close' => false
                 ];
             }
 
@@ -454,6 +455,11 @@ class KN {
                 $message = isset($m['message']) !== false ? $m['message'] : '';
                 $icon = isset($m['icon']) !== false ? $m['icon'] : '';
                 $status = in_array($m['status'], ['success', 'error', 'alert']) !== false ? $m['status'] : 'default';
+                $link = isset($m['link']) !== false ? '<a class="btn btn-primary" href="'.$m['link'][1].'">'.$m['link'][0].'</a>' : '';
+                $close = isset($component['close']) !== false ? $component['close'] : null;
+                if (isset($m['close']) !== false AND ! $m['close']) {
+                    $close = null;
+                }
 
 
                 $class = $classes[$status];
@@ -484,8 +490,8 @@ class KN {
                 $icon = '<span class="'.$icon.'"></span>';
 
                 $alert .= str_replace(
-                    ['[CLASS]', '[ICON]', '[TITLE]', '[MESSAGE]'], 
-                    [$class, $icon, $title, $message],
+                    ['[CLASS]', '[ICON]', '[TITLE]', '[MESSAGE]', '[LINK]', '[CLOSE]'], 
+                    [$class, $icon, $title, $message, $link, $close],
                     $component
                 );
 
@@ -748,6 +754,19 @@ class KN {
         }
 
         return $_SESSION;
+
+    }
+
+    /**
+     * Clear Session
+     * Clear session data
+     * @return void
+     */
+    public static function clearSession() {
+
+        if (isset($_SESSION['user']) !== false) {
+            unset($_SESSION['user']);
+        }
 
     }
 
@@ -1181,6 +1200,16 @@ class KN {
             $return = self::$request['attributes'][$name];
         }
         return $return;
+
+    }
+
+    /**
+     * Get auth status
+     * @return bool
+     */
+    public static function isAuth() {
+
+        return isset($_SESSION['user']->id) !== false ? true : false;
 
     }
 
