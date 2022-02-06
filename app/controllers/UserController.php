@@ -148,7 +148,33 @@ final class UserController {
 
     public function account() {
 
-        KN::layout('user/register');
+        if (isset($this->request['parameters']['logout']) !== false) {
+            $this->response['redirect'] = [4, KN::base()];
+            $this->response['messages'][] = [
+                'status' => 'success',
+                'title'  => KN::lang('success'),
+                'message'=> KN::lang('logging_out'),
+            ];
+
+        }
+
+        KN::layout('user/account', [
+            'title'     => KN::lang('account') . ' | ' . KN::config('app.name'),
+            'request'   => $this->request,
+            'response'  => $this->response
+        ]);
+
+        if (isset($this->request['parameters']['logout']) !== false) {
+            $this->logout();
+        }
+
+    }
+
+    public function logout() {
+
+        $this->model = (new User());
+        $this->model->clearSession();
+        KN::clearSession();
 
     }
 
