@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace App\Middlewares;
 
 use App\Helpers\KN;
+use App\Controllers\UserController;
 
 final class Auth {
 
@@ -23,25 +24,32 @@ final class Auth {
 
     public function with($type = 'auth') {
 
+        $return = [];
+
         if ($type == 'auth' AND isset($_SESSION['user']->id) !== false AND $_SESSION['user']->id) {
 
-            return [
-                'status' => true,
+            $return = [
+                'status' => true
             ];
 
         } elseif ($type == 'nonAuth' AND isset($_SESSION['user']->id) === false) {
 
-            return [
+            $return = [
                 'status' => true,
             ];
 
         } else {
 
-            return [
+            $return = [
                 'status' => false,
-                'message' => ($type == 'nonAuth' ? 'you_have_a_session' : 'you_have_not_a_session')
             ];
         }
+
+        if (! $return['status']) {
+            $return['message'] = ($type == 'nonAuth' ? 'you_have_a_session' : 'you_have_not_a_session');
+        }
+
+        return $return;
 
     }
 
