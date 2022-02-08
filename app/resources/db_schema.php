@@ -578,16 +578,6 @@ return [
 					'type_values'   => 80,
 					'index'         => 'INDEX'
 				],
-				'action' => [
-					'type'          => 'varchar',
-					'type_values'   => 250,
-					'index'         => 'INDEX'
-				],
-				'route' => [
-					'type'          => 'varchar',
-					'type_values'   => 150,
-					'index'         => 'INDEX'
-				],
 				'endpoint' => [
 					'type'          => 'text',
 					'index'         => 'FULLTEXT'
@@ -622,7 +612,12 @@ return [
 					'nullable'      => true,
 					'default'       => 'NULL',
 				],
-				'external_data' => [
+				'request' => [
+					'type'          => 'text',
+					'nullable'      => true,
+					'default'       => 'NULL'
+				],
+				'response' => [
 					'type'          => 'text',
 					'nullable'      => true,
 					'default'       => 'NULL'
