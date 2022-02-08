@@ -39,18 +39,35 @@ class User {
 
     }
 
-    public function getUserWithUnameOrEmail($data) {
+    public function getUser($with, $data) {
 
         // single user data
-        $get = $this->base->table($this->table)->select('id, u_name, f_name, l_name, email, password, role_id, b_date, status')
-                    ->where('u_name', $data)
-                    ->orWhere('email', $data)
-                    ->get();
+        $get = $this->base->table($this->table)->select(
+            'id, u_name, f_name, l_name, email, password, role_id, b_date, status'
+        );
+
+        if ($with == 'email_or_username') {
+
+            $get->where('u_name', $data)->orWhere('email', $data);
+
+        } elseif ($with == 'email') {
+
+            $get->where('email', $data);
+
+        } else {
+
+            $get->where('id', $data);
+
+        }
+
+        $get = $get->get();
 
         if ($get) {
 
             // role data
-            $role = $this->base->table($this->roleTable)->select('name, view_points, action_points')
+            $role = $this->base->table($this->roleTable)->select(
+                'name, view_points, action_points'
+            )
                 ->where('id', $get->role_id)
                 ->where('status', 'active')
                 ->get();
@@ -109,11 +126,53 @@ class User {
 
     }
 
-    public function clearSession() {
+    public function clearSession($authCode = null) {
+
+        if (is_null($authCode)) $authCode = $_COOKIE[KN_SESSION_NAME];
 
         return $this->base->table($this->sessionTable)
-            ->where('auth_code', $_COOKIE[KN_SESSION_NAME])
+            ->where('auth_code', $authCode)
             ->delete();
+
+    }
+
+    public function getSession($authCode, $request = null) {
+
+        $getSession = $this->base->table($this->sessionTable)
+            ->select('id, auth_code, user_id, update_session, role_id')
+            ->where('auth_code', $authCode)
+            ->get();
+
+        $return = null;
+        if ($getSession) {
+
+            if ($request) {
+
+                // user data update
+                if ($getSession->update_session == 'true') {
+                    $return = $this->getUser('id', $getSession->user_id);
+                } else {
+                    $return = true;
+                }
+
+                // update
+                $this->base->table($this->sessionTable)
+                    ->where('id', $getSession->id)
+                    ->update([
+                        'role_id'           => isset($return->role_id) !== false ? $return->role_id : $getSession->role_id,
+                        'ip'                => KN::getIp(),
+                        'header'            => KN::getHeader(),
+                        'last_action_date'  => time(),
+                        'last_action_point' => $request
+                    ]);
+
+            } else {
+
+                $return = $getSession;
+            }
+        }
+
+        return $return;
 
     }
 
