@@ -44,7 +44,7 @@ final class UserController {
 
                 $this->model = (new User());
 
-                $get = $this->model->getUserWithUnameOrEmail($username);
+                $get = $this->model->getUser('email_or_username', $username);
 
                 if ($get) {
 
@@ -123,7 +123,7 @@ final class UserController {
             
         }
 
-        KN::layout('user/login', [
+        return KN::layout('user/login', [
             'title'     => KN::lang('login') . ' | ' . KN::config('app.name'),
             'request'   => $this->request,
             'response'  => $this->response
@@ -170,11 +170,34 @@ final class UserController {
 
     }
 
-    public function logout() {
+    public function logout($authCode = null) {
 
         $this->model = (new User());
-        $this->model->clearSession();
+        $this->model->clearSession($authCode);
         KN::clearSession();
+
+    }
+
+    public function checkSession() {
+
+        $return = null;
+        if (isset($_COOKIE[KN_SESSION_NAME]) !== false) {
+
+            $authCode = $_COOKIE[KN_SESSION_NAME];
+            $this->model = (new User());
+            $get = $this->model->getSession($authCode, $this->request['request']);
+
+            if (is_null($get) OR ! $get) {
+                $this->logout($authCode);
+            } elseif (is_object($get)) {
+                KN::setSession($get);
+                $return = true;
+            } else {
+                $return = true;
+            }
+
+        }
+        return $return;
 
     }
 
