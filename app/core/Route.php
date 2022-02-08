@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace App\Core;
 
 use App\Helpers\KN;
+use App\Controllers\UserController;
+use App\Core\Log;
 
 class Route {
 
@@ -21,6 +23,7 @@ class Route {
     private static $pathNotFound = null;
     private static $methodNotAllowed = null;
     private static $matchingRoute = null;
+    private static $status = 200;
 
     public function __construct() {
 
@@ -63,6 +66,8 @@ class Route {
                 'controller'    => isset($properties['controller']) !== false ? $properties['controller'] : [],
                 'function'      => isset($properties['function']) !== false ? $properties['function'] : null,
                 'method'        => strtolower(isset($properties['method']) !== false ? $properties['method'] : 'GET'),  
+                'session_check' => isset($properties['session_check']) !== false ? $properties['session_check'] : true,
+                'log'           => isset($properties['log']) !== false ? $properties['log'] : true,
             ];
 
         }
@@ -82,7 +87,8 @@ class Route {
             'middlewares'   => isset($properties['middlewares']) !== false ? $properties['middlewares'] : [],
             'controller'    => isset($properties['controller']) !== false ? $properties['controller'] : [],
             'function'      => isset($properties['function']) !== false ? $properties['function'] : null,
-            'method'        => strtolower(isset($method) !== false ? $method : 'GET'),  
+            'session_check' => isset($properties['session_check']) !== false ? $properties['session_check'] : true,
+            'log'           => isset($properties['log']) !== false ? $properties['log'] : true,
         ];
 
     }
@@ -154,10 +160,12 @@ class Route {
             'parameters'        => self::$params,
             'attributes'        => self::$attributes
         ];
+        $addLog = true;
 
         if (self::$pathNotFound) {
 
-            KN::http(404);
+            self::$status = 404;
+            KN::http(self::$status);
             $messages[] = [
                 'status' => 'alert',
                 'title'  => KN::lang('alert'),
@@ -170,11 +178,19 @@ class Route {
                 'response'  => ['messages' => $messages]
             ]);
 
+            (new UserController($request))->checkSession();
+
         } else {
 
             self::$matchingRoute = self::$schema[$index];
+            $addLog = self::$matchingRoute['log'];
 
             $middlewareMessages = [];
+
+            if (self::$matchingRoute['session_check']) {
+                (new UserController($request))->checkSession();
+            }
+
             // middleware
             if (count(self::$matchingRoute['middlewares'])) {
 
@@ -233,16 +249,22 @@ class Route {
                             $method = $class[1];
                             $class = 'App\\Controllers\\' . $class[0];
 
-                            $middleware = (new $class(
+                            $controller = (new $class(
                                 $request
                             ))->$method();
 
                         } else { // call class with construct
 
                             $class = 'App\\Controllers\\' . $class;
-                            $middleware = (new $class(
+                            $controller = (new $class(
                                 $request
                             ));
+
+                        }
+
+                        if ($controller) {
+
+                            $response = $controller;
 
                         }
                         
@@ -253,6 +275,8 @@ class Route {
                 }
 
             } else {
+
+                self::$status = 401;
 
                 foreach ($middlewareMessages as $message) {
                     $messages[] = [
@@ -265,12 +289,22 @@ class Route {
                 }
                 $response = ['messages' => $messages];
 
-                KN::layout('404', [
+                KN::layout(self::$status, [
                     'title'     => KN::lang('a_problem_occurred') . ' | ' . KN::config('app.name'),
                     'request'   => $request,
                     'response'  => $response
                 ]);
             }
+
+            
+        }
+
+        if ($addLog) {
+            (new Log())->add([
+                'request'       => $request,
+                'http_status'   => self::$status,
+                'response'      => isset($response) !== false ? $response : null
+            ]);
         }
 
     }
