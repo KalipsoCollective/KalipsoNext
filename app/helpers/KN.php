@@ -551,6 +551,8 @@ class KN {
 
         }
 
+        return self::$response;
+
     }
 
 
@@ -1211,6 +1213,26 @@ class KN {
 
         return isset($_SESSION['user']->id) !== false ? true : false;
 
+    }
+
+    /**
+     * Private data cleaner
+     * @param array $data
+     * @return array
+     */
+    public static function privateDataCleaner($data) {
+
+        $return = [];
+        foreach ($data as $k => $v) {
+
+            if (is_array($v)) {
+                $return[$k] = self::privateDataCleaner($v);
+            } else {
+                $return[$k] = in_array($k, ['password', '_token']) !== false ? '***' : $v;
+            }
+
+        }
+        return $return;
     }
 
 }
