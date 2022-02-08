@@ -31,13 +31,19 @@ $route->addRoutes([
 
 	/*! Base Routes - please don't remove! */
 	'/script'	=> [
-		'controller'	=> 'AppController@dynamicJS'
+		'controller'	=> 'AppController@dynamicJS',
+		'session_check' => false,
+		'log'			=> false,
 	],
 	'/sandbox'	=> [
-		'controller'	=> 'AppController@sandbox'
+		'controller'	=> 'AppController@sandbox',
+		'session_check' => false,
+		'log'			=> false,
 	],
 	'/sandbox/:action'	=> [
-		'controller'	=> 'AppController@sandbox'
+		'controller'	=> 'AppController@sandbox',
+		'session_check' => false,
+		'log'			=> false,
 	],
 
 
