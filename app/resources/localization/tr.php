@@ -53,4 +53,10 @@ return [
     'go_to_home'                        => 'Ana Sayfaya Dön',
     'page_not_found'                    => 'Sayfa bulunamadı!',
     'logout'                            => 'Çıkış Yap',
+    'username_is_already_used'          => 'Kullanıcı adı zaten kullanımda.',
+    'email_is_already_used'             => 'Eposta adresi zaten kullanımda.',
+    'name'                              => 'İsim',
+    'surname'                           => 'Soyisim',
+    'registration_problem'              => 'Bilgiler kaydedilirken bir sorun oluştu!',
+    'registration_successful'           => 'Kayıt başarılı!',
 ];

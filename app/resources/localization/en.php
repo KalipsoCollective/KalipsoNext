@@ -53,4 +53,10 @@ return [
     'go_to_home'                        => 'Go to Home',
     'page_not_found'                    => 'Page not found!',
     'logout'                            => 'Logout',
+    'username_is_already_used'          => 'Username is already in use.',
+    'email_is_already_used'             => 'Email address is already in use.',
+    'name'                              => 'Name',
+    'surname'                           => 'Surname',
+    'registration_problem'              => 'There was a problem saving information!',
+    'registration_successful'           => 'Registration successful!',
 ];
