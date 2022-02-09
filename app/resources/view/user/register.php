@@ -18,6 +18,14 @@
 									<label for="uN"><?php echo self::lang('username'); ?></label>
 								</div>
 								<div class="form-floating mb-3">
+									<input type="text" name="name" class="form-control" id="fN" placeholder="<?php echo self::lang('name'); ?>" required <?php echo self::inputValue('name'); ?>>
+									<label for="fN"><?php echo self::lang('name'); ?></label>
+								</div>
+								<div class="form-floating mb-3">
+									<input type="text" name="surname" class="form-control" id="lN" placeholder="<?php echo self::lang('surname'); ?>" required <?php echo self::inputValue('surname'); ?>>
+									<label for="lN"><?php echo self::lang('surname'); ?></label>
+								</div>
+								<div class="form-floating mb-3">
 									<input type="password" name="password" class="form-control" id="uP" placeholder="<?php echo self::lang('password'); ?>" required>
 									<label for="uP"><?php echo self::lang('password'); ?></label>
 								</div>
