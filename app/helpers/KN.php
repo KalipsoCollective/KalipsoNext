@@ -154,6 +154,7 @@ class KN {
          *     nulled_password  ->  trim + password_hash, assign null if empty string
          *     date             ->  strtotime ~ input 12.00(mid day)
          *     nulled_text      ->  strip_tags + trim + if empty string, save as null
+         *     nulled_email     ->  strip_tags + trim + filter_var@FILTER_VALIDATE_EMAIL + if empty string, save as null
          *     slug             ->  strip_tags + trim + slugGenerator
          *     text (default)   ->  strip_tags + trim
          **/
@@ -287,6 +288,11 @@ class KN {
 
                 case 'nulled_text': 
                     $data = strip_tags(trim($data)) == '' ? null : strip_tags(trim($data)); 
+                    break;
+
+                case 'nulled_email': 
+                    $data = strip_tags(trim($data)) == '' ? null : strip_tags(trim($data));
+                    if ($data) $data = filter_var($data, FILTER_VALIDATE_EMAIL) ? $data : null; 
                     break;
 
                 case 'slug': 
@@ -1233,6 +1239,28 @@ class KN {
 
         }
         return $return;
+    }
+
+    /**
+     * Generate a Token
+     * @param int $length
+     * @return string
+     */
+
+    function tokenGenerator($length = 80): string {
+
+        $key = '';
+        list($usec, $sec) = explode(' ', microtime());
+        mt_srand((float) $sec + ((float) $usec * 100000));
+
+        $inputs = array_merge(range('z','a'), range(0,9), range('A','Z'));
+
+        for ($i=0; $i<$length; $i++) {
+            $key .= $inputs[mt_rand(0, count($inputs))];
+        }
+
+        return $key;
+
     }
 
 }
