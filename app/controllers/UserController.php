@@ -134,7 +134,98 @@ final class UserController {
 
     public function register() {
 
-        KN::layout('user/register');
+        if ($this->request['request_method'] == 'POST') {
+
+            extract(KN::input([
+                'username'  => 'nulled_text',
+                'email'     => 'nulled_email',
+                'name'      => 'nulled_text',
+                'surname'   => 'nulled_text',
+                'password'  => 'nulled_password',
+            ], $this->request['parameters']));
+
+            if (! is_null($username) AND ! is_null($email) AND ! is_null($password)) {
+
+                $this->model = (new User());
+
+                $getWithEmail = $this->model->getUser('email', $email);
+                if ( !$getWithEmail) {
+
+                    $getWithUsername = $this->model->getUser('username', $username);
+                    if ( !$getWithUsername) {
+
+                        $row = [
+                            'u_name'    => $username,
+                            'f_name'    => $name,
+                            'l_name'    => $surname,
+                            'email'     => $email,
+                            'password'  => $password,
+                            'token'     => KN::tokenGenerator(80),
+                            'role_id'   => KN::config('settings.default_user_role'),
+                            'created_at'=> time(),
+                            'status'    => 'passive'
+                        ];
+
+                        $insert = $this->model->addUser($row);
+
+                        if ($insert) {
+
+                            (new Notification)->add('registration', $row);
+
+                            $this->response['redirect'] = [4, KN::base('account/login')];
+                            $this->response['messages'][] = [
+                                'status' => 'success',
+                                'title'  => KN::lang('success'),
+                                'message'=> KN::lang('registration_successful'),
+                            ];
+
+                        } else {
+
+                            $this->response['messages'][] = [
+                                'status' => 'alert',
+                                'title'  => KN::lang('warning'),
+                                'message'=> KN::lang('registration_problem')
+                            ];
+
+                        }
+
+                    } else {
+
+                        $this->response['messages'][] = [
+                            'status' => 'alert',
+                            'title'  => KN::lang('warning'),
+                            'message'=> KN::lang('username_is_already_used')
+                        ];
+
+                    }
+
+                } else {
+
+                    $this->response['messages'][] = [
+                        'status' => 'alert',
+                        'title'  => KN::lang('warning'),
+                        'message'=> KN::lang('email_is_already_used')
+                    ];
+
+                }
+
+            } else {
+
+                $this->response['messages'][] = [
+                    'status' => 'error',
+                    'title'  => KN::lang('alert'),
+                    'message'=> KN::lang('form_cannot_empty')
+                ];
+
+            }
+            
+        }
+
+        return KN::layout('user/register', [
+            'title'     => KN::lang('register') . ' | ' . KN::config('app.name'),
+            'request'   => $this->request,
+            'response'  => $this->response
+        ]);
 
     }
 
