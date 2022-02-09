@@ -1228,7 +1228,7 @@ class KN {
             if (is_array($v)) {
                 $return[$k] = self::privateDataCleaner($v);
             } else {
-                $return[$k] = in_array($k, ['password', '_token']) !== false ? '***' : $v;
+                $return[$k] = in_array($k, ['password']) !== false ? '***' : $v;
             }
 
         }
