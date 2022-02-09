@@ -54,6 +54,10 @@ class User {
 
             $get->where('email', $data);
 
+        } elseif ($with == 'username') {
+
+            $get->where('username', $data);
+
         } else {
 
             $get->where('id', $data);
@@ -173,6 +177,14 @@ class User {
         }
 
         return $return;
+
+    }
+
+
+    public function addUser($data) {
+
+        return $this->base->table($this->table)
+            ->insert($data);
 
     }
 
