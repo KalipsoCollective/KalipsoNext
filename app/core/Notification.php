@@ -24,7 +24,7 @@ class Notification {
         $this->types = [
             'registration' => [
                 'email' => [
-                    ''
+                    'body'
                 ]
 
             ]
