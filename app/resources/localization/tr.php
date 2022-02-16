@@ -18,6 +18,12 @@ return [
     'plural_suffix'                     => '',
     'undetected'                        => 'Algılanamadı',
 
+    // NOTIFICATIONS
+    'noti_email_register_email_title'   => 'Hesabınız Oluşturuldu',
+    'noti_email_register_email_body'    => 'Selam [USER], <br>Hesabınız oluşturuldu, aramıza hoş geldiniz. Lütfen aşağıdaki bağlantı ile eposta adresinizi doğrulayın. <br> [VERIFY]',
+    'noti_sys_register_email_title'     => 'Hoşgeldin!',
+    'noti_sys_register_email_body'      => 'Hesabın oluşturuldu.',
+
     // VIEWS
     'login'                             => 'Giriş Yap',
     'register'                          => 'Kayıt Ol',
