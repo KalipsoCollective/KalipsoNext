@@ -57,7 +57,6 @@ class Notification {
                 'header'        => KN::getHeader(),
                 'request'       => json_encode($args['request']),
                 'response'      => is_array($args['response']) ? json_encode($args['response']) : $args['response'],
-
             ]);
 
     }
