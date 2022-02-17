@@ -18,14 +18,20 @@ return [
     'plural_suffix'                     => 's',
     'undetected'                        => 'Undetected',
 
+    // NOTIFICATIONS
+    'noti_email_register_title'         => 'Your Account Has Been Created',
+    'noti_email_register_body'          => 'Hi [USER], <br> your account has been created, welcome aboard. Please verify your email address with the link below. <br>[VERIFY_LINK]',
+    'noti_sys_register_title'           => 'Welcome!',
+    'noti_sys_register_body'            => 'Your account has been created.',
+
     // VIEWS
     'login'                             => 'Login',
     'register'                          => 'Register',
     'recovery_account'                  => 'Recovery Account',
     'account'                           => 'Account',
     'home'                              => 'Home',
-    'email_or_username'                 => 'Email Adress or Username',
-    'email'                             => 'Email Adress',
+    'email_or_username'                 => 'Email Address or Username',
+    'email'                             => 'Email Address',
     'username'                          => 'Username',
     'password'                          => 'Password',
     'sign_in'                           => 'Sign In',
@@ -59,4 +65,5 @@ return [
     'surname'                           => 'Surname',
     'registration_problem'              => 'There was a problem saving information!',
     'registration_successful'           => 'Registration successful!',
+    'verify_email'                      => 'Verify Email Address',
 ];

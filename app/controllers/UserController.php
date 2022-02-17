@@ -170,7 +170,7 @@ final class UserController {
 
                         if ($insert) {
 
-                            (new Notification)->add('registration', $row);
+                            (new Notification)->add('registration', ['users_id' => $insert]);
 
                             $this->response['redirect'] = [4, KN::base('account/login')];
                             $this->response['messages'][] = [

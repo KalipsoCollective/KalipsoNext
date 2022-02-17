@@ -19,10 +19,10 @@ return [
     'undetected'                        => 'Algılanamadı',
 
     // NOTIFICATIONS
-    'noti_email_register_email_title'   => 'Hesabınız Oluşturuldu',
-    'noti_email_register_email_body'    => 'Selam [USER], <br>Hesabınız oluşturuldu, aramıza hoş geldiniz. Lütfen aşağıdaki bağlantı ile eposta adresinizi doğrulayın. <br> [VERIFY]',
-    'noti_sys_register_email_title'     => 'Hoşgeldin!',
-    'noti_sys_register_email_body'      => 'Hesabın oluşturuldu.',
+    'noti_email_register_title'         => 'Hesabınız Oluşturuldu',
+    'noti_email_register_body'          => 'Selam [USER], <br>Hesabınız oluşturuldu, aramıza hoş geldiniz. Lütfen aşağıdaki bağlantı ile eposta adresinizi doğrulayın. <br> [VERIFY_LINK]',
+    'noti_sys_register_title'           => 'Hoşgeldin!',
+    'noti_sys_register_body'            => 'Hesabın oluşturuldu.',
 
     // VIEWS
     'login'                             => 'Giriş Yap',
@@ -65,4 +65,5 @@ return [
     'surname'                           => 'Soyisim',
     'registration_problem'              => 'Bilgiler kaydedilirken bir sorun oluştu!',
     'registration_successful'           => 'Kayıt başarılı!',
+    'verify_email'                      => 'Eposta Adresini Doğrula',
 ];
