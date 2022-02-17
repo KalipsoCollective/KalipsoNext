@@ -40,9 +40,7 @@ class Notification {
                 ],
                 'sys'   => ['title' => 'noti_sys_register_title', 'body' => 'noti_sys_register_body'],
             ]
-
         ];
-       
     }
 
     public function add($type, $args) {
