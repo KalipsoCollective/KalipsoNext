@@ -4,6 +4,13 @@
     "description": "KalipsoNext - a simple php framework/boilerplate",
     "keywords": ["framework", "kalipso", "kalipsonext"],
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Halil Ibrahim Ercelik",
+            "email": "halillusion@gmail.com",
+            "homepage": "https://koalapix.com"
+        }
+    ],
     "require": {
         "php": "^7.1|^8.0",
         "verot/class.upload.php": "^2.1",
@@ -13,8 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/",
-            "App\\Core\\": "app/core/"
+            "App\\": "app"
         }
     },
     "config": {
