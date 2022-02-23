@@ -12,6 +12,9 @@ namespace App\Core;
 use App\Core\DB;
 use App\Helpers\KN;
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 class Notification {
 
     public $types;
@@ -60,7 +63,7 @@ class Notification {
                             $body = $this->dynamicReplacer($body, $args);
                         }
 
-                        $this->sendEmail([
+                        $this->emailLogger([
                             'title' => $title,
                             'body' => $body,
                             'recipient' => $args['u_name'],
@@ -164,21 +167,21 @@ class Notification {
     }
 
 
-    public function sendEmail($arguments) {
+    public function emailLogger($arguments) {
 
         $subTitle = $arguments['title'];
         $appName = KN::config('settings.name');
         $title = $subTitle . ' - ' . $appName;
         $content = $arguments['body'];
 
-        if (file_exists($template = KN::path('app/resources/template/email.html'))) {
+        if (file_exists($template = KN::path('app/resources/template/email.html'))) { // with template
 
             $unsubscribe = str_replace(['[LINK]'], KN::base('account').'?unsubscribe=' , KN::lang('noti_unsubscribe_footer'))
 
             $footer = $appName . ' (c) ' . date('Y')
             $footer .= isset($arguments['unsubscribe']) !== false ? ' | ' . $unsubscribe : '';
 
-            $template = str_replace([
+            $content = str_replace([
                 '{{TITLE}}',
                 '{{ALT_CONTENT}}',
                 '{{APP}}',
@@ -194,12 +197,84 @@ class Notification {
                 $footer
             ], file_get_contents($template));
 
-
-            
-
-        } else {
-            $content = $arguments['body'];
         }
 
+        $status = 'pending';
+        if (! KN::config('settings.mail_queue')) { // Direct sending
+
+
+
+        } else {
+
+        }
+
+    }
+
+    public function sendEmail($recipientMail, $recipientName = '', string $content = '', string $title = '') {
+
+        $return = false;
+
+        if (config('app.dev_mode')) $recipientMail = config('settings.contact_email');
+        
+        $sendingType = config('settings.mail_send_type');
+
+        if (config('settings.dev_mode')) {
+            $sendingType = 'server';
+        }
+
+        switch ($sendingType) {
+
+            case 'smtp':
+                $mail = new PHPMailer(true);
+                $mail->setLanguage(lang('lang_code'));
+
+                try {
+                    $mail->SMTPDebug = 0;
+                    $mail->isSMTP();
+                    $mail->Host         = config('settings.smtp_address');
+                    $mail->SMTPAuth     = true;
+                    $mail->Username     = config('settings.smtp_email_address');
+                    $mail->Password     = config('settings.smtp_email_pass');
+                    $mail->SMTPSecure   = PHPMailer::ENCRYPTION_STARTTLS;
+                    $mail->Port         = config('settings.smtp_port');
+                    $mail->CharSet      = config('app.charset');
+
+                    $reply = config('settings.contact_email');
+                    if (! $reply OR $reply == '') {
+                        $reply = config('settings.smtp_email_address');
+                    }
+                    //Recipients
+                    $mail->setFrom(config('settings.smtp_email_address'), config('app.name'));
+                    $mail->addAddress($recipientMail, $recipientName);      // Add a recipient
+                    $mail->addReplyTo($reply, config('app.name') );
+
+                    // Content
+                    $mail->isHTML(true);                                    // Set email format to HTML
+                    $mail->Subject = $title;
+                    $mail->Body    = $content;
+                    $mail->AltBody = trim(strip_tags($content));
+
+                    if ($mail->send()) {
+                        $return = true;
+                    } else {
+                        $return = false;
+                    }
+
+                } catch (PHPMailerException $e) {
+
+                    $return = false; // $e->errorMessage();
+                }
+                break;
+            
+            default:
+                $headers = "Reply-To: ". config('settings.contact_email') . "\r\n";
+                $headers .= "MIME-Version: 1.0\r\n";
+                $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+                $return = mail($recipientMail, $title, $content, $headers);
+                break;
+        }
+        
+
+        return $return;
     }
 }

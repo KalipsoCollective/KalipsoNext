@@ -3,7 +3,7 @@
 return [
 	'name'					=> 'Kalipso Next',
 	'description'			=> 'A basic php framework/boilerplate.',
-	'contact_email'			=> 'hi@example.com',
+	'contact_email'			=> 'halillusion@gmail.com',
 	'separator'				=> '-',
 	'language'				=> 'tr',
 	'ssl'					=> false,
