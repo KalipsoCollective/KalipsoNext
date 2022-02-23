@@ -20,7 +20,7 @@ return [
 
     // NOTIFICATIONS 
     'noti_unsubscribe_footer'           => 'If you want to unsubscribe from the e-mail newsletter, please <a href="[LINK]">click</a>.',
-    'noti_email_register_title'         => 'Your Account Has Been Created',
+    'noti_email_register_title'         => 'Your Account Has Been Created!',
     'noti_email_register_body'          => 'Hi [USER], <br> your account has been created, welcome aboard. Please verify your email address with the link below. <br>[VERIFY_LINK]',
     'noti_sys_register_title'           => 'Welcome!',
     'noti_sys_register_body'            => 'Your account has been created.',

@@ -11,6 +11,7 @@ namespace App\Controllers;
 
 use App\Helpers\KN;
 use App\Model\User;
+use App\Core\Notification;
 
 final class UserController {
 
@@ -151,7 +152,7 @@ final class UserController {
                 $getWithEmail = $this->model->getUser('email', $email);
                 if ( !$getWithEmail) {
 
-                    $getWithUsername = $this->model->getUser('username', $username);
+                    $getWithUsername = $this->model->getUser('u_name', $username);
                     if ( !$getWithUsername) {
 
                         $row = [

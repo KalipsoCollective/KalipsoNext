@@ -548,6 +548,8 @@ return [
 				'sender_id' => [
 					'type'          => 'int',
 					'index'         => 'INDEX',
+					'nullable'      => true,
+					'default'       => 'NULL',
 				],
 				'file' => [
 					'type'          => 'varchar',
@@ -559,6 +561,53 @@ return [
 					'type_values'   => ['pending', 'uncompleted', 'completed'],
 					'default'       => 'pending',
 					'index'         => 'INDEX'
+				],
+			]
+		],
+
+		/* Notifications Table */
+		'notifications' => [
+			'cols' => [
+				'id' => [
+					'type'          => 'int',
+					'auto_inc'      => true,
+					'attr'          => 'unsigned',
+					'type_values'   => 11,
+					'index'         => 'PRIMARY'
+				],
+				'user_id' => [
+					'type'          => 'int',
+					'index'         => 'INDEX',
+				],
+				'type' => [
+					'type'          => 'varchar',
+					'type_values'   => 140,
+					'index'         => 'INDEX',
+				],
+				'external_datas' => [
+					'type'          => 'text',
+					'index'         => 'FULLTEXT',
+					'nullable'      => true,
+					'default'       => 'NULL',
+				],
+				'created_at' => [
+					'type'          => 'varchar',
+					'type_values'   => 80,
+					'index'         => 'INDEX'
+				],
+				'viewed_at' => [
+					'type'          => 'varchar',
+					'type_values'   => 80,
+					'index'         => 'INDEX',
+					'nullable'      => true,
+					'default'       => 'NULL',
+				],
+				'deleted_at' => [
+					'type'          => 'varchar',
+					'type_values'   => 80,
+					'index'         => 'INDEX',
+					'nullable'      => true,
+					'default'       => 'NULL',
 				],
 			]
 		],

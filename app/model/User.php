@@ -54,9 +54,9 @@ class User {
 
             $get->where('email', $data);
 
-        } elseif ($with == 'username') {
+        } elseif ($with == 'u_name') {
 
-            $get->where('username', $data);
+            $get->where('u_name', $data);
 
         } else {
 

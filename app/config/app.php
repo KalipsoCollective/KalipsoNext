@@ -12,4 +12,5 @@ return [
 	'name'		=> 'KalipsoNext',
 	'dev_mode'	=> true,
 	'session'	=> 'kn',
+	'charset'	=> 'utf-8',
 ];
