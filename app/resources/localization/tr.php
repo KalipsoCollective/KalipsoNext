@@ -19,6 +19,7 @@ return [
     'undetected'                        => 'Algılanamadı',
 
     // NOTIFICATIONS
+    'noti_unsubscribe_footer'           => 'E-posta aboneliğinden ayrılmak istiyorsanız lütfen <a href="[LINK]">tıklayın</a>.',
     'noti_email_register_title'         => 'Hesabınız Oluşturuldu',
     'noti_email_register_body'          => 'Selam [USER], <br>Hesabınız oluşturuldu, aramıza hoş geldiniz. Lütfen aşağıdaki bağlantı ile eposta adresinizi doğrulayın. <br> [VERIFY_LINK]',
     'noti_sys_register_title'           => 'Hoşgeldin!',
