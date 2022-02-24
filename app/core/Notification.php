@@ -44,60 +44,48 @@ class Notification {
 
     public function add($type, $args) {
 
-        $args = (array) $args;
-        if (isset($this->types[$type]) !== false) {
+        switch ($type) {
+            case 'registration':
+                
+                $title = KN::lang($parameters['title']);
+                $body = KN::lang($parameters['body']);
 
-            foreach ($this->types[$type] as $method => $parameters) {
-            
-                switch ($method) {
-                    case 'email': // email notifications
-                        
-                        $title = KN::lang($parameters['title']);
-                        $body = KN::lang($parameters['body']);
+                if (isset($parameters['args']) !== false) { // dynamic text
 
-                        if (isset($parameters['args']) !== false) { // dynamic text
-
-                            $title = $this->dynamicReplacer($title, $parameters['args'], $args);
-                            $body = $this->dynamicReplacer($body, $parameters['args'], $args);
-                            KN::dump($body);
-                        }
-
-                        $this->emailLogger([
-                            'title' => $title,
-                            'body' => $body,
-                            'recipient' => $args['u_name'],
-                            'recipient_email' => $args['email'],
-                            'recipient_id' => $args['id'],
-                            'token' => $args['token']
-                        ]);
-
-                        break;
-                    
-                    case 'sys': // system notifications
-
-                        $externalDatas = null;
-
-                        if (isset($parameters['external']) !== false) {
-
-                            $externalDatas = [];
-                            foreach ($parameters['external'] as $key) {
-                                $externalDatas[$key] = $args[$key];
-                            }
-                            $externalDatas = json_encode($externalDatas);
-                        }
-                            
-                        (new DB())->table('notifications')
-                            ->insert([
-                                'user_id'       => $args['id'],
-                                'type'          => $parameters['type'],
-                                'external_datas'=> $externalDatas,
-                                'created_at'    => time()
-                            ]);
-
-                        break;
+                    $title = $this->dynamicReplacer($title, $parameters['args'], $args);
+                    $body = $this->dynamicReplacer($body, $parameters['args'], $args);
+                    KN::dump($body);
                 }
-            }
 
+                $this->emailLogger([
+                    'title' => $title,
+                    'body' => $body,
+                    'recipient' => $args['u_name'],
+                    'recipient_email' => $args['email'],
+                    'recipient_id' => $args['id'],
+                    'token' => $args['token']
+                ]);
+
+                $externalDatas = null;
+
+                if (isset($parameters['external']) !== false) {
+
+                    $externalDatas = [];
+                    foreach ($parameters['external'] as $key) {
+                        $externalDatas[$key] = $args[$key];
+                    }
+                    $externalDatas = json_encode($externalDatas);
+                }
+                    
+                (new DB())->table('notifications')
+                    ->insert([
+                        'user_id'       => $args['id'],
+                        'type'          => $parameters['type'],
+                        'external_datas'=> $externalDatas,
+                        'created_at'    => time()
+                    ]);
+
+                break;
         }
         
     }
