@@ -33,7 +33,8 @@ class Notification {
                     'body' => 'noti_email_register_body', 
                     'args' => [
                         '[USER]' => '{f_name|u_name}',
-                        '[VERIFY_LINK]' => '<a href="' . $baseUrl . '/?verify={token}">' . KN::lang('verify_email') . '</a>'
+                        '[VERIFY_LINK]' => 
+                        '<a href="' . $baseUrl . '/?verify={token}">' . KN::lang('verify_email') . '</a>'
                     ],
                 ],
                 'sys'   => ['type' => 'registration', 'icon' => 'mdi mdi-hand-wave'],
@@ -56,8 +57,8 @@ class Notification {
 
                         if (isset($parameters['args']) !== false) { // dynamic text
 
-                            $title = $this->dynamicReplacer($title, $args);
-                            $body = $this->dynamicReplacer($body, $args);
+                            $title = $this->dynamicReplacer($title, $parameters['args'], $args);
+                            $body = $this->dynamicReplacer($body, $parameters['args'], $args);
                             KN::dump($body);
                         }
 
@@ -111,7 +112,11 @@ class Notification {
 
         if (file_exists($template = KN::path('app/resources/template/email.html'))) { // with template
 
-            $unsubscribe = str_replace(['[LINK]'], KN::base('account') . '?unsubscribe=' . $arguments['token'], KN::lang('noti_unsubscribe_footer'));
+            $unsubscribe = str_replace(
+                ['[LINK]'], 
+                KN::base('account') . '?unsubscribe=' . $arguments['token'], 
+                KN::lang('noti_unsubscribe_footer')
+            );
 
             $footer = $appName . ' (c) ' . date('Y');
             $footer .= isset($arguments['unsubscribe']) !== false ? ' | ' . $unsubscribe : '';
@@ -137,7 +142,8 @@ class Notification {
         $status = 'pending';
         if (! KN::config('settings.mail_queue')) { // Direct sending
 
-            $status = $this->sendEmail($arguments['recipient_email'], $arguments['recipient'], $content, $title) ? 'completed' : 'uncompleted';
+            $status = $this->sendEmail($arguments['recipient_email'], $arguments['recipient'], $content, $title) ? 
+                'completed' : 'uncompleted';
 
         }
 
@@ -233,60 +239,68 @@ class Notification {
         return $return;
     }
 
-    public function dynamicReplacer($string, $arguments) {
+    public function dynamicReplacer($string, $arguments, $variables) {
 
-        $arguments = (array) $arguments;
+        foreach ($arguments as $pattern => $content) {
+            
+            preg_match_all('/{((?:[^{}]*|(?R))*)}/m', $content, $matches, PREG_SET_ORDER, 0);
+            $replace = '';
+            if (is_array($matches) AND count($matches)) {
 
-        preg_match_all('/{((?:[^{}]*|(?R))*)}/m', $string, $matches, PREG_SET_ORDER, 0);
+                foreach ($matches as $match) {
+                    $operator = '';
+                    if (strpos($match[1], '|')) {
 
-        if (is_array($matches) AND count($matches)) {
+                        $operator = '|';
+                        $blocks = explode('|', $match[1]);
 
-            foreach ($matches as $match) {
+                    } elseif (strpos($match[1], '&')) {
 
-                $operator = '';
-                if (strpos($match[1], '|')) {
-
-                    $operator = '|';
-                    $blocks = explode('|', $match[1]);
-
-                } elseif (strpos($match[1], '&')) {
-
-                    $operator = '&';
-                    $blocks = explode('&', $match[1]);
-
-                } else {
-
-                    $blocks = [$match[1]];
-
-                }
-
-                $extract = [];
-                foreach ($blocks as $block) {
-                    
-                    if (isset($arguments[$block]) !== false AND ! empty($arguments[$block])) {
-
-                        $extract[] = $arguments[$block];
-
-                    }
-
-                }
-                
-                if (count($extract)) {
-
-                    if ($operator == '&') {
-
-                        $replace = implode(' ', $extract);
+                        $operator = '&';
+                        $blocks = explode('&', $match[1]);
 
                     } else {
 
-                        $replace = $extract[0];
+                        $blocks = [$match[1]];
+
                     }
 
+                    $extract = [];
+                    foreach ($blocks as $block) {
+                    
+                        if (isset($variables[$block]) !== false AND ! empty($variables[$block])) {
 
-                    $string = str_replace($match[0], $replace, $string);
+                            $extract[$block][] = $variables[$block];
+
+                        }
+
+                    }
+                    if (count($extract)) {
+
+                        foreach ($extract as $search => $replace) {
+                            
+                            if ($operator == '&') {
+
+                                $replace = implode(' ', $extract);
+
+                            } else {
+
+                                $replace = $replace[0];
+                            }
+                            KN::dump($search);
+                            KN::dump($replace);
+                            KN::dump('-----------');
+                            $string = str_replace($pattern, $replace, $string);
+                        }
+                        
+
+                    }
 
                 }
 
+            } else {
+
+                $string = str_replace($pattern, $replace, $string);
             }
 
         }
