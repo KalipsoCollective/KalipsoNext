@@ -20,76 +20,44 @@ class Notification {
     public $types;
 
     public function __construct () {
-
-
-        // type -> process(email or notification) -> process requirements
-
-        $baseUrl = KN::base();
-
-        $this->types = [
-            'registration' => [
-                'email' => [
-                    'title' => 'noti_email_register_title', 
-                    'body' => 'noti_email_register_body', 
-                    'args' => [
-                        '[USER]' => '{f_name|u_name}',
-                        '[VERIFY_LINK]' => 
-                        '<a href="' . $baseUrl . '/?verify={token}">' . KN::lang('verify_email') . '</a>'
-                    ],
-                ],
-                'sys'   => ['type' => 'registration', 'icon' => 'mdi mdi-hand-wave'],
-            ]
-        ];
     }
 
-    public function add($type, $args) {
+    public function add($type, $data) {
 
         switch ($type) {
+
             case 'registration':
-                
-                $title = KN::lang($parameters['title']);
-                $body = KN::lang($parameters['body']);
 
-                if (isset($parameters['args']) !== false) { // dynamic text
-
-                    $title = $this->dynamicReplacer($title, $parameters['args'], $args);
-                    $body = $this->dynamicReplacer($body, $parameters['args'], $args);
-                    KN::dump($body);
-                }
+                $title = KN::lang('noti_email_register_title');
+                $name = (empty($data['f_name']) ? $data['u_name'] : $data['f_name']);
+                $link = '<a href="' . KN::base('account/?verify-account=' . $data['token']) . '">
+                    ' . KN::lang('verify_email') . '
+                </a>';
+                $body = str_replace(
+                    ['[USER]', '[VERIFY_LINK]'], 
+                    [$name, $link], 
+                    KN::lang('noti_email_register_body')
+                );
 
                 $this->emailLogger([
                     'title' => $title,
                     'body' => $body,
-                    'recipient' => $args['u_name'],
-                    'recipient_email' => $args['email'],
-                    'recipient_id' => $args['id'],
-                    'token' => $args['token']
+                    'recipient' => $data['u_name'],
+                    'recipient_email' => $data['email'],
+                    'recipient_id' => $data['id'],
+                    'token' => $data['token']
                 ]);
-
-                $externalDatas = null;
-
-                if (isset($parameters['external']) !== false) {
-
-                    $externalDatas = [];
-                    foreach ($parameters['external'] as $key) {
-                        $externalDatas[$key] = $args[$key];
-                    }
-                    $externalDatas = json_encode($externalDatas);
-                }
                     
                 (new DB())->table('notifications')
                     ->insert([
-                        'user_id'       => $args['id'],
-                        'type'          => $parameters['type'],
-                        'external_datas'=> $externalDatas,
+                        'user_id'       => $data['id'],
+                        'type'          => $type,
                         'created_at'    => time()
                     ]);
-
                 break;
         }
         
     }
-
 
     public function emailLogger($arguments) {
 
@@ -222,78 +190,8 @@ class Notification {
                 $return = mail($recipientMail, $title, $content, $headers);
                 break;
         }
-        
 
         return $return;
-    }
-
-    public function dynamicReplacer($string, $arguments, $variables) {
-
-        foreach ($arguments as $pattern => $content) {
-            
-            preg_match_all('/{((?:[^{}]*|(?R))*)}/m', $content, $matches, PREG_SET_ORDER, 0);
-            $replace = '';
-            if (is_array($matches) AND count($matches)) {
-
-                foreach ($matches as $match) {
-                    $operator = '';
-                    if (strpos($match[1], '|')) {
-
-                        $operator = '|';
-                        $blocks = explode('|', $match[1]);
-
-                    } elseif (strpos($match[1], '&')) {
-
-                        $operator = '&';
-                        $blocks = explode('&', $match[1]);
-
-                    } else {
-
-                        $blocks = [$match[1]];
-
-                    }
-
-                    $extract = [];
-                    foreach ($blocks as $block) {
-                    
-                        if (isset($variables[$block]) !== false AND ! empty($variables[$block])) {
-
-                            $extract[$block][] = $variables[$block];
-
-                        }
-
-                    }
-                    if (count($extract)) {
-
-                        foreach ($extract as $search => $replace) {
-                            
-                            if ($operator == '&') {
-
-                                $replace = implode(' ', $extract);
-
-                            } else {
-
-                                $replace = $replace[0];
-                            }
-                            KN::dump($search);
-                            KN::dump($replace);
-                            KN::dump('-----------');
-                            $string = str_replace($pattern, $replace, $string);
-                        }
-                        
-
-                    }
-
-                }
-
-            } else {
-
-                $string = str_replace($pattern, $replace, $string);
-            }
-
-        }
-
-        return $string;
 
     }
 
