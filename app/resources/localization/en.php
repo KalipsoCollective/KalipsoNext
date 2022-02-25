@@ -67,4 +67,5 @@ return [
     'registration_problem'              => 'There was a problem saving information!',
     'registration_successful'           => 'Registration successful!',
     'verify_email'                      => 'Verify Email Address',
+    'clear_storage'                     => 'Clear Storage Folder',
 ];

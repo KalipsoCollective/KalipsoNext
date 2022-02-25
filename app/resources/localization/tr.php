@@ -67,4 +67,5 @@ return [
     'registration_problem'              => 'Bilgiler kaydedilirken bir sorun oluştu!',
     'registration_successful'           => 'Kayıt başarılı!',
     'verify_email'                      => 'Eposta Adresini Doğrula',
+    'clear_storage'                     => 'Depolama Klasörünü Temizle',
 ];
