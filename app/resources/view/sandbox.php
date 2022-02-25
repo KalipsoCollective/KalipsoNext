@@ -31,6 +31,11 @@
                                 <?php echo self::lang('session'); ?>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link<?php echo self::currentPage('sandbox/clear-storage'); ?>" href="<?php echo self::base('sandbox/clear-storage'); ?>">
+                                <?php echo self::lang('clear_storage'); ?>
+                            </a>
+                        </li>
                     </ul>
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
@@ -224,6 +229,80 @@
 						$pageTitle = self::lang('session');
 						ob_start ();
 						self::dump($_SESSION);
+						$output = ob_get_clean();
+						break;
+
+					case 'clear-storage':
+						$pageTitle = self::lang('clear_storage');
+						ob_start ();
+
+						$deleteAction = (isset($_GET['delete']) !== false AND count($_GET['delete'])) ? $_GET['delete'] : null;
+						if ($deleteAction) {
+							$glob = glob(self::path('app/storage/*'), GLOB_BRACE);
+							if ($glob AND count($glob)) {
+								foreach ($glob as $folder) {
+									if (in_array(basename($folder), $deleteAction))
+										self::removeDir($folder);	
+								}
+								echo '<p class="text-success">Storage folder is cleared.</p>';
+
+							}
+						}
+
+						$glob = glob(self::path('app/storage/*'), GLOB_BRACE);
+
+						if ($glob AND count($glob)) {
+
+							echo '
+							<form method="get">
+								<div class="table-responsive">
+									<table class="table table-hover table-borderless table-striped">
+										<thead>
+										    <tr>
+												<th scope="col" width="5%">#</th>
+												<th scope="col">Folder</th>
+										    </tr>
+										</thead>
+										<tbody>';
+										$deleteBtn = false;
+										foreach ($glob as $folder) {
+										
+											if (! is_dir($folder)) 
+												continue;
+
+											$size = self::dirSize($folder);
+											if (! $deleteBtn AND $size) 
+												$deleteBtn = true;
+
+											$basename = basename($folder);
+
+											echo '
+											<tr>
+												<td>
+													<div class="form-check">
+														<input class="form-check-input" 
+															type="checkbox" name="delete[]" 
+															value="' . $basename . '"
+															'.(! $size ? ' disabled' : ' checked').'>
+													</div>
+												</td>
+												<td>/' . $basename . ' 
+													<small class="'.(! $size ? 'text-muted' : 'text-primary').'">
+														' . self::formatSize($size) . '
+													</small>
+												</td>
+											</tr>';
+
+										}
+									echo '
+										</tbody>
+									</table>
+								</div>
+								<button type="submit" class="btn btn-danger btn-sm"'.(! $deleteBtn ? ' disabled' : '').'>Delete</button>
+							</form>';
+						} else {
+							echo '<p class="text-danger">Folder not found!</p>';
+						}
 						$output = ob_get_clean();
 						break;
 					
