@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace App\Helpers;
 
+use \RecursiveIteratorIterator;
+use \RecursiveDirectoryIterator;
+use \FilesystemIterator;
+
 class KN {
 
 
@@ -42,6 +46,22 @@ class KN {
 
     }
 
+
+    /**
+     * Get the directory size
+     * @param  string $directory
+     * @return integer
+     */
+    public static function dirSize($directory) {
+        $size = 0;
+        foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
+            if ($file->getFilename() == '..' OR $file->getFilename() == '.gitignore') 
+                continue;
+
+            $size+=$file->getSize();
+        }
+        return $size;
+    }
 
     /**
      * Base URL
@@ -825,11 +845,26 @@ class KN {
         if ($bytes >= 1073741824) $bytes = number_format($bytes / 1073741824, 2) . ' GB';
         elseif ($bytes >= 1048576) $bytes = number_format($bytes / 1048576, 2) . ' MB';
         elseif ($bytes >= 1024) $bytes = number_format($bytes / 1024, 2) . ' KB';
-        elseif ($bytes > 1) $bytes = $bytes . ' ' . self::lang('byte') . lang('plural_suffix');
+        elseif ($bytes > 1) $bytes = $bytes . ' ' . self::lang('byte') . self::lang('plural_suffix');
         elseif ($bytes == 1) $bytes = $bytes . ' ' . self::lang('byte');
         else $bytes = '0 ' . self::lang('byte');
 
         return $bytes;
+
+    }
+
+    /**
+     * Remove directory
+     * @param $folder
+     * @return bool
+     */
+    public static function removeDir($folder) {
+
+        $d = new RecursiveDirectoryIterator($folder, FilesystemIterator::SKIP_DOTS);
+        $r = new RecursiveIteratorIterator($d, RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ( $r as $file ) {
+            $file->isDir() ?  rmdir($file->getPathname()) : unlink($file->getPathname());
+        }
 
     }
 
