@@ -257,7 +257,7 @@ class Route {
 
                         // call class and method
                         if (strpos($class, '@') !== false) {
-                            
+
                             $class = explode('@', $class, 2);
                             $method = $class[1];
                             $class = 'App\\Controllers\\' . $class[0];
@@ -292,13 +292,36 @@ class Route {
                 self::$status = 401;
 
                 foreach ($middlewareMessages as $message) {
-                    $messages[] = [
-                        'status' => 'default',
-                        'title'  => KN::lang('alert'),
-                        'message'=> KN::lang($message),
-                        'link'   => [KN::lang('go_to_home'), KN::base()],
+
+                    
+                    if (is_array($message)) {
+
+                        $status = $message['status'];
+                        $title = KN::lang($message['title']);
+                        $message = KN::lang($message['message']);
+                        if (isset($message['link'])) 
+                            $link = $message['link'];
+
+                    } else {
+
+                        $status = 'default';
+                        $title = KN::lang('alert');
+                        $message = KN::lang($message);
+                        $link = [KN::lang('go_to_home'), KN::base()];
+                    }
+
+                    $m = [
+                        'status' => $status,
+                        'title'  => $title,
+                        'message'=> $message,
                         'close'  => false
                     ];
+
+                    if (isset($link))
+                        $m['link'] = $link;
+
+                    $messages[] = $m;
+
                 }
                 $response = ['messages' => $messages];
 
