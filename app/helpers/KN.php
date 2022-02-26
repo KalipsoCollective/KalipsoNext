@@ -426,14 +426,12 @@ class KN {
     public static function view($file, $arguments = []) {
 
         $file = KN::path('app/resources/view/' . $file . '.php');
-        if (file_exists($file)) {
-
-            extract($arguments);
-            require $file;
-
-        } else {
-            return null;
+        if (! file_exists($file)) {
+            file_put_contents($file, '<?php '.PHP_EOL.'// Auto-created');
         }
+
+        extract($arguments);
+        require $file;
 
     }
 
