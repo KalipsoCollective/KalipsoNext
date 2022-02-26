@@ -459,7 +459,7 @@ class KN {
                 $alertComponent = require $file;
             } else {
                 $alertComponent = [
-                    'component' => '<div class="kn--message [CLASS]">[ICON] [TITLE] [MESSAGE] [LINK]</div>',
+                    'component' => '<div class="kn--message [CLASS]"><span>[ICON] [TITLE] [MESSAGE]</span><span>[LINK]</span></div>',
                     'classes'   => [
                         'default'   => '', 
                         'success'   => 'kn--message-success', 
