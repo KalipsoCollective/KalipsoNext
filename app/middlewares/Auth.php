@@ -67,4 +67,32 @@ final class Auth {
         */
 
     }
+
+    public function verify() {
+
+        $return = ['status' => true];
+
+        if (isset($_GET['verify-account']) !== false) {
+
+            $verifyToken = KN::filter($_GET['verify-account'], 'nulled_text');
+            if ($verifyToken) {
+
+                KN::dump($verifyToken);
+
+            }
+            
+
+        }
+
+        /*
+        
+
+        KN::input([]);
+
+        $return['message'] = ($type == 'nonAuth' ? 'you_have_a_session' : 'you_have_not_a_session');
+        */
+
+        return $return;
+
+    }
 }
