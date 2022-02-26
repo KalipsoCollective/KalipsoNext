@@ -61,14 +61,7 @@ class Route {
 
         foreach ($schema as $path => $properties) {
 
-            self::$schema[$path] = [
-                'middlewares'   => isset($properties['middlewares']) !== false ? $properties['middlewares'] : [],
-                'controller'    => isset($properties['controller']) !== false ? $properties['controller'] : [],
-                'function'      => isset($properties['function']) !== false ? $properties['function'] : null,
-                'method'        => strtolower(isset($properties['method']) !== false ? $properties['method'] : 'GET'),  
-                'session_check' => isset($properties['session_check']) !== false ? $properties['session_check'] : true,
-                'log'           => isset($properties['log']) !== false ? $properties['log'] : true,
-            ];
+            self::addRoute($path, $properties);
 
         }
     }
@@ -78,17 +71,21 @@ class Route {
     * Method used to add a new route
     * @param string $path    Route expressions
     * @param array $properties    Route properties
-    * @param string $method    Route method
     *
     */
-    public static function addRoute(string $path, array $properties = [], string $method = 'get') {
+    public static function addRoute(string $path, array $properties = []) {
 
         self::$schema[$path] = [
-            'middlewares'   => isset($properties['middlewares']) !== false ? $properties['middlewares'] : [],
-            'controller'    => isset($properties['controller']) !== false ? $properties['controller'] : [],
-            'function'      => isset($properties['function']) !== false ? $properties['function'] : null,
-            'session_check' => isset($properties['session_check']) !== false ? $properties['session_check'] : true,
-            'log'           => isset($properties['log']) !== false ? $properties['log'] : true,
+            'middlewares'   => isset($properties['middlewares']) !== false ? 
+                $properties['middlewares'] : [],
+            'controller'    => isset($properties['controller']) !== false ? 
+                $properties['controller'] : [],
+            'function'      => isset($properties['function']) !== false ? 
+                $properties['function'] : null,
+            'session_check' => isset($properties['session_check']) !== false ? 
+                $properties['session_check'] : true,
+            'log'           => isset($properties['log']) !== false ? 
+                $properties['log'] : true,
         ];
 
     }
@@ -113,12 +110,21 @@ class Route {
                     $explodedPath = trim($path, '/'); 
                     $explodedRequest = trim(self::$request, '/');
 
-                    $explodedPath = strpos($explodedPath, '/') !== false ? explode('/', $explodedPath) : [$explodedPath];
-                    $explodedRequest = strpos($explodedRequest, '/') !== false ? explode('/', $explodedRequest) : [$explodedRequest];
+                    $explodedPath = strpos($explodedPath, '/') !== false ? 
+                        explode('/', $explodedPath) : [$explodedPath];
+
+                    $explodedRequest = strpos($explodedRequest, '/') !== false ? 
+                        explode('/', $explodedRequest) : [$explodedRequest];
 
                     if (count($explodedPath) === count($explodedRequest)) {
 
-                        preg_match_all('@(:([a-zA-Z0-9_-]+))@m', $path, $expMatches, PREG_SET_ORDER, 0);
+                        preg_match_all(
+                            '@(:([a-zA-Z0-9_-]+))@m', 
+                            $path, 
+                            $expMatches, 
+                            PREG_SET_ORDER, 
+                            0
+                        );
 
                         $expMatches = array_map( function($v) {
                             return $v[0];
@@ -192,12 +198,12 @@ class Route {
             }
 
             // middleware
+            $middlewareError = false;
             if (count(self::$matchingRoute['middlewares'])) {
 
                 foreach (self::$matchingRoute['middlewares'] as $class => $arguments) {
 
                     try {
-
                         // call class and method
                         if (strpos($class, '@') !== false) {
 
@@ -219,9 +225,12 @@ class Route {
 
                         }
 
-                        if (! $middleware['status']) {
+                        if (isset($middleware['message']) !== false) {
                             $middlewareMessages[] = $middleware['message'];
-                            break;
+                        }
+
+                        if (! $middleware['status']) {
+                            $middlewareError = true;
                         }
                         
 
@@ -232,7 +241,7 @@ class Route {
             }
 
 
-            if (! count($middlewareMessages)) {
+            if (! $middlewareError) {
 
                 // controller
                 if (isset(self::$matchingRoute['controller']) !== false) {
@@ -240,11 +249,15 @@ class Route {
 
                     $class = self::$matchingRoute['controller'];
 
+                    if (count($middlewareMessages)) {
+                        $request['middleware_messages'] = $middlewareMessages;
+                    }
+
                     try {
 
                         // call class and method
                         if (strpos($class, '@') !== false) {
-
+                            
                             $class = explode('@', $class, 2);
                             $method = $class[1];
                             $class = 'App\\Controllers\\' . $class[0];
@@ -259,7 +272,6 @@ class Route {
                             $controller = (new $class(
                                 $request
                             ));
-
                         }
 
                         if ($controller) {
@@ -270,6 +282,7 @@ class Route {
                         
 
                     } catch (Exception $e) {
+
                         throw $e;
                     }
                 }
