@@ -294,4 +294,12 @@ final class UserController {
 
     }
 
+
+    public function verifyAccount($token) {
+
+        $this->model = (new User());
+        return $this->model->verifyAccount($token);
+
+    }
+
 }

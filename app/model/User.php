@@ -188,4 +188,16 @@ class User {
 
     }
 
+    public function verifyAccount($token) {
+
+        return $this->base->table($this->table)
+            ->where('token', $token)
+            ->where('status', 'passive')
+            ->update([
+                'token'     => KN::tokenGenerator(80),
+                'status'    => 'active'
+            ]);
+
+    }
+
 }
