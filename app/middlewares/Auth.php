@@ -76,9 +76,20 @@ final class Auth {
 
             $verifyToken = KN::filter($_GET['verify-account'], 'nulled_text');
             if ($verifyToken) {
-
-                KN::dump($verifyToken);
-
+                $verify = (new UserController)->verifyAccount($verifyToken);
+                if ($verify) {
+                    $return['message'] = [
+                        'status' => 'success', 
+                        'title' => 'success',
+                        'message' => 'your_account_verified'
+                    ];
+                } else {
+                    $return['message'] = [
+                        'status' => 'error', 
+                        'title' => 'error',
+                        'message' => 'your_account_not_verified'
+                    ];
+                }
             }
             
 
