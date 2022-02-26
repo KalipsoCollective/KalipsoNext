@@ -68,4 +68,6 @@ return [
     'registration_successful'           => 'Registration successful!',
     'verify_email'                      => 'Verify Email Address',
     'clear_storage'                     => 'Clear Storage Folder',
+    'your_account_verified'             => 'Your account has been successfully verified.',
+    'your_account_not_verified'         => 'Your account could not be verified.',
 ];

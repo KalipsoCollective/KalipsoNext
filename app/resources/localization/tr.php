@@ -68,4 +68,6 @@ return [
     'registration_successful'           => 'Kayıt başarılı!',
     'verify_email'                      => 'Eposta Adresini Doğrula',
     'clear_storage'                     => 'Depolama Klasörünü Temizle',
+    'your_account_verified'             => 'Hesabınız başarıyla doğrulandı.',
+    'your_account_not_verified'         => 'Hesabınız doğrulanamadı.',
 ];
