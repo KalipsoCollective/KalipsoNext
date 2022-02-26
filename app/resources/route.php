@@ -13,7 +13,7 @@ $route->addRoutes([
 		'controller'	=> 'AppController@index'
 	],
 	'/account'	=> [
-		'middlewares'	=> ['Auth@with' => ['auth']],
+		'middlewares'	=> ['Auth@verify' => [], 'Auth@with' => ['auth']],
 		'controller'	=> 'UserController@account'
 	],
 	'/account/login'	=> [
