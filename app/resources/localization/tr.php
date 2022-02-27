@@ -24,6 +24,10 @@ return [
     'noti_email_register_body'          => 'Selam [USER], <br>Hesabınız oluşturuldu, aramıza hoş geldiniz. Lütfen aşağıdaki bağlantı ile eposta adresinizi doğrulayın. <br> [VERIFY_LINK]',
     'noti_sys_register_title'           => 'Hoşgeldin!',
     'noti_sys_register_body'            => 'Hesabın oluşturuldu.',
+    'noti_email_recovery_request_title' => 'Hesap Kurtarma',
+    'noti_email_recovery_request_body'  => 'Selam [USER], <br>Hesabınızı kurtarabilmeniz için bir talep aldık. Bu talebi siz yapmadı iseniz dikkate almayın. Hesabınızı kurtarmanız için kullanacağınız bağlantıyı da aşağıya bıraktık. <br> [RECOVERY_LINK]',
+    'noti_email_recovery_account_title' => 'Hesabınız Kurtarıldı!',
+    'noti_email_recovery_account_body'  => 'Selam [USER], <br>Hesabınız başarıyla kurtarıldı, yeni şifrenizle giriş yapabilirsiniz. Bu işlemi siz yapmadıysanız lütfen iletişime geçin.',
 
     // VIEWS
     'login'                             => 'Giriş Yap',
@@ -35,6 +39,7 @@ return [
     'email'                             => 'Eposta Adresi',
     'username'                          => 'Kullanıcı Adı',
     'password'                          => 'Şifre',
+    'new_password'                      => 'Yeni Şifre',
     'sign_in'                           => 'Oturum Aç',
     'sign_up'                           => 'Kayıt Ol',
     'welcome'                           => 'Hoş Geldin!',
@@ -70,4 +75,8 @@ return [
     'clear_storage'                     => 'Depolama Klasörünü Temizle',
     'your_account_verified'             => 'Hesabınız başarıyla doğrulandı.',
     'your_account_not_verified'         => 'Hesabınız doğrulanamadı.',
+    'recovery_request_successful'       => 'Eposta adresine gönderdiğimiz bağlantı ile hesabını kurtarabilirsin.',
+    'recovery_request_problem'          => 'Hesap kurtarma bağlantısını gönderirken bir sorun oluştu.',
+    'recovery_account_successful'       => 'Hesabınız başarıyla kurtarıldı.',
+    'recovery_account_problem'          => 'Hesabınız kurtarılırken bir sorun oluştu.',
 ];

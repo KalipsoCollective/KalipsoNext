@@ -24,6 +24,10 @@ return [
     'noti_email_register_body'          => 'Hi [USER], <br> your account has been created, welcome aboard. Please verify your email address with the link below. <br>[VERIFY_LINK]',
     'noti_sys_register_title'           => 'Welcome!',
     'noti_sys_register_body'            => 'Your account has been created.',
+    'noti_email_recovery_request_title' => 'Account Recovery',
+    'noti_email_recovery_request_body'  => 'Hi [USER],<br> We have received a request to recover your account. If you did not make this request, ignore it. We\'ve also left the link below to use to recover your account. <br>[RECOVERY_LINK]',
+    'noti_email_recovery_account_title' => 'Your Account Has Been Recovered!',
+    'noti_email_recovery_account_body'  => 'Hi [USER], <br>Your account has been successfully recovered, you can login with your new password. If you haven\'t done this, please get in touch.',
 
     // VIEWS
     'login'                             => 'Login',
@@ -35,6 +39,7 @@ return [
     'email'                             => 'Email Address',
     'username'                          => 'Username',
     'password'                          => 'Password',
+    'new_password'                      => 'New Password',
     'sign_in'                           => 'Sign In',
     'sign_up'                           => 'Sign Up',
     'welcome'                           => 'Welcome!',
@@ -70,4 +75,8 @@ return [
     'clear_storage'                     => 'Clear Storage Folder',
     'your_account_verified'             => 'Your account has been successfully verified.',
     'your_account_not_verified'         => 'Your account could not be verified.',
+    'recovery_request_successful'       => 'You can recover your account with the link we sent to your email address.',
+    'recovery_request_problem'          => 'There was a problem sending the account recovery link.',
+    'recovery_account_successful'       => 'Your account has been successfully recovered.',
+    'recovery_account_problem'          => 'There was a problem recovering your account.',
 ];
