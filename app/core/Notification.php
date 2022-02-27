@@ -55,6 +55,56 @@ class Notification {
                         'created_at'    => time()
                     ]);
                 break;
+
+            case 'recovery_request':
+
+                $title = KN::lang('noti_email_recovery_request_title');
+                $name = (empty($data['f_name']) ? $data['u_name'] : $data['f_name']);
+                $link = '<a href="' . KN::base('account/recovery?token=' . $data['token']) . '">
+                    ' . KN::lang('recovery_account') . '
+                </a>';
+                $body = str_replace(
+                    ['[USER]', '[RECOVERY_LINK]'], 
+                    [$name, $link], 
+                    KN::lang('noti_email_recovery_request_body')
+                );
+
+                return $this->emailLogger([
+                    'title' => $title,
+                    'body' => $body,
+                    'recipient' => $data['u_name'],
+                    'recipient_email' => $data['email'],
+                    'recipient_id' => $data['id'],
+                    'token' => $data['token']
+                ]);
+                break;
+
+            case 'recovery_account':
+
+                $title = KN::lang('noti_email_recovery_account_title');
+                $name = (empty($data['f_name']) ? $data['u_name'] : $data['f_name']);
+                $body = str_replace(
+                    ['[USER]'], 
+                    [$name], 
+                    KN::lang('noti_email_recovery_account_body')
+                );
+
+                $this->emailLogger([
+                    'title' => $title,
+                    'body' => $body,
+                    'recipient' => $data['u_name'],
+                    'recipient_email' => $data['email'],
+                    'recipient_id' => $data['id'],
+                    'token' => $data['token']
+                ]);
+                    
+                return (new DB())->table('notifications')
+                    ->insert([
+                        'user_id'       => $data['id'],
+                        'type'          => $type,
+                        'created_at'    => time()
+                    ]);
+                break;
         }
         
     }

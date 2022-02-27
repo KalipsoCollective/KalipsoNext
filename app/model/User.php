@@ -43,25 +43,19 @@ class User {
 
         // single user data
         $get = $this->base->table($this->table)->select(
-            'id, u_name, f_name, l_name, email, password, role_id, b_date, status'
+            'id, u_name, f_name, l_name, email, password, token, role_id, b_date, status'
         );
 
         if ($with == 'email_or_username') {
-
             $get->where('u_name', $data)->orWhere('email', $data);
-
         } elseif ($with == 'email') {
-
             $get->where('email', $data);
-
         } elseif ($with == 'u_name') {
-
             $get->where('u_name', $data);
-
+        } elseif ($with == 'token') {
+            $get->where('token', $data);
         } else {
-
             $get->where('id', $data);
-
         }
 
         $get = $get->get();
@@ -188,6 +182,14 @@ class User {
 
     }
 
+    public function updateUser($update, $id) {
+
+        return $this->base->table($this->table)
+            ->where('id', $id)
+            ->update($update);
+
+    }
+
     public function verifyAccount($token) {
 
         return $this->base->table($this->table)
@@ -197,6 +199,14 @@ class User {
                 'token'     => KN::tokenGenerator(80),
                 'status'    => 'active'
             ]);
+
+    }
+
+    public function removeSessions($id) {
+
+        return $this->base->table($this->sessionTable)
+            ->where('user_id', $id)
+            ->delete();
 
     }
 

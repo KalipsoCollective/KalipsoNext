@@ -234,7 +234,132 @@ final class UserController {
 
     public function recovery() {
 
-        KN::layout('user/recovery');
+        if ($this->request['request_method'] == 'POST') {
+
+            extract(KN::input([
+                'email'     => 'nulled_email',
+                'token'     => 'nulled_text',
+                'password'  => 'nulled_text',
+            ], $this->request['parameters']));
+
+            if (! is_null($email)) {
+
+                $this->model = (new User());
+
+                $getWithEmail = $this->model->getUser('email', $email);
+
+                if ( $getWithEmail ) {
+                    $getWithEmail = (array) $getWithEmail;
+
+                    if ((new Notification)->add('recovery_request', $getWithEmail)) {
+
+                        unset($this->request['parameters']['email']);
+
+                        $this->response['redirect'] = [4, KN::base('account/login')];
+                        $this->response['messages'][] = [
+                            'status' => 'success',
+                            'title'  => KN::lang('success'),
+                            'message'=> KN::lang('recovery_request_successful'),
+                        ];
+
+                    } else {
+
+                        $this->response['messages'][] = [
+                            'status' => 'alert',
+                            'title'  => KN::lang('warning'),
+                            'message'=> KN::lang('recovery_request_problem')
+                        ];
+
+                    }
+
+                } else {
+
+                    $this->response['messages'][] = [
+                        'status' => 'alert',
+                        'title'  => KN::lang('warning'),
+                        'message'=> KN::lang('account_not_found')
+                    ];
+
+                }
+
+            } elseif (! is_null($token) AND ! is_null($password)) {
+
+                $this->model = (new User());
+
+                $getWithToken = $this->model->getUser('token', $token);
+
+                if ( $getWithToken ) {
+                    $getWithToken = (array) $getWithToken;
+                    $update = $this->model
+                        ->updateUser([
+                            'token'         => KN::tokenGenerator(80),
+                            'password'      => password_hash($password, PASSWORD_DEFAULT),
+                            'updated_at'    => time()
+                        ], $getWithToken['id']
+                    );
+
+                    if ($update) {
+
+                        if ((new Notification)->add('recovery_account', $getWithToken)) {
+
+                            $this->model->removeSessions($getWithToken['id']);
+                            unset($this->request['parameters']['email']);
+
+                            $this->response['redirect'] = [4, KN::base('account/login')];
+                            $this->response['messages'][] = [
+                                'status' => 'success',
+                                'title'  => KN::lang('success'),
+                                'message'=> KN::lang('recovery_account_successful'),
+                            ];
+
+                        } else {
+
+                            $this->response['messages'][] = [
+                                'status' => 'alert',
+                                'title'  => KN::lang('warning'),
+                                'message'=> KN::lang('recovery_account_problem')
+                            ];
+
+                        }
+
+                    } else {
+                        $this->response['messages'][] = [
+                            'status' => 'alert',
+                            'title'  => KN::lang('warning'),
+                            'message'=> KN::lang('recovery_account_problem')
+                        ];
+                    }
+
+                } else {
+
+                    if (isset($this->request['parameters']['token']) !== false) 
+                        unset($this->request['parameters']['token']);
+
+                    $this->response['messages'][] = [
+                        'status' => 'alert',
+                        'title'  => KN::lang('warning'),
+                        'message'=> KN::lang('account_not_found')
+                    ];
+
+                }
+
+            } else {
+
+                $this->response['messages'][] = [
+                    'status' => 'error',
+                    'title'  => KN::lang('alert'),
+                    'message'=> KN::lang('form_cannot_empty')
+                ];
+
+            }
+            
+        }
+
+        return KN::layout('user/recovery', [
+            'title'     => KN::lang('recovery_account') . ' | ' . KN::config('app.name'),
+            'request'   => $this->request,
+            'response'  => $this->response
+        ]);
 
     }
 
