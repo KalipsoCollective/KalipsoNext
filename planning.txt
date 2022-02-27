@@ -1,5 +1,0 @@
-notification
----
-type -> email 
-viewed
-arguments
