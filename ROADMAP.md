@@ -19,17 +19,20 @@
 	+ ~Sessions~
 	+ ~Views~
 
-- ~Sandbox ``(3/3)``~
+- ~Sandbox ``(5/5)``~
 	+ ~DB Init~
 	+ ~DB Seed~
 	+ ~PHP Info~
+	+ ~Session~
+	+ ~Clear Storage Folder~
 
-- User Module ``(5/2)``
+- User Module ``(6/4)``
 	- ~Login~
 	- ~Logout~
-	- Register
-	- Recovery
+	- ~Register~
+	- ~Recovery~
 	- Profile Update
+	- Active Sessions
 
 - Management 
 
