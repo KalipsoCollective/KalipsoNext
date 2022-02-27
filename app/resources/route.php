@@ -16,6 +16,18 @@ $route->addRoutes([
 		'middlewares'	=> ['Auth@verify' => [], 'Auth@with' => ['auth']],
 		'controller'	=> 'UserController@account'
 	],
+	'/account/profile'	=> [
+		'middlewares'	=> ['Auth@verify' => [], 'Auth@with' => ['auth']],
+		'controller'	=> 'UserController@account'
+	],
+	'/account/sessions'	=> [
+		'middlewares'	=> ['Auth@verify' => [], 'Auth@with' => ['auth']],
+		'controller'	=> 'UserController@account'
+	],
+	'/account'	=> [
+		'middlewares'	=> ['Auth@verify' => [], 'Auth@with' => ['auth']],
+		'controller'	=> 'UserController@account'
+	],
 	'/account/login'	=> [
 		'middlewares'	=> ['Auth@with' => ['nonAuth'], 'CSRF@validate' => ['POST']],
 		'controller'	=> 'UserController@login'

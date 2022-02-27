@@ -376,8 +376,22 @@ final class UserController {
 
         }
 
+        switch ($this->request['request']) {
+            case '/account/profile':
+                $title = KN::lang('account') . ' · ' . KN::lang('profile');
+                break;
+
+            case '/account/sessions':
+                $title = KN::lang('account') . ' · ' . KN::lang('sessions');
+                break;
+
+            default:
+                $title = KN::lang('account');
+                break;
+        }
+
         KN::layout('user/account', [
-            'title'     => KN::lang('account') . ' | ' . KN::config('app.name'),
+            'title'     => $title,
             'request'   => $this->request,
             'response'  => $this->response
         ]);

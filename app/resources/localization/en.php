@@ -79,4 +79,6 @@ return [
     'recovery_request_problem'          => 'There was a problem sending the account recovery link.',
     'recovery_account_successful'       => 'Your account has been successfully recovered.',
     'recovery_account_problem'          => 'There was a problem recovering your account.',
+    'profile'                           => 'Profile',
+    'sessions'                          => 'Sessions',
 ];

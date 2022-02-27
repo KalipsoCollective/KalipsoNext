@@ -431,6 +431,8 @@ class KN {
         }
 
         extract($arguments);
+        $title = self::title($title);
+
         require $file;
 
     }
@@ -1289,6 +1291,22 @@ class KN {
             $key .= $inputs[mt_rand(0, (count($inputs)-1))];
         }
         return $key;
+
+    }
+
+    /**
+     * Generate Title
+     * @param int $length
+     * @return string
+     */
+
+    public static function title($title): string {
+
+        return str_replace(
+            ['[APP]', '[TITLE]'], 
+            [self::config('settings.name'), $title], 
+            self::config('app.title_format')
+        );
 
     }
 

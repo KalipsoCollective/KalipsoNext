@@ -13,4 +13,5 @@ return [
 	'dev_mode'	=> true,
 	'session'	=> 'kn',
 	'charset'	=> 'utf-8',
+	'title_format' => '[TITLE] — [APP]',
 ];

@@ -79,4 +79,6 @@ return [
     'recovery_request_problem'          => 'Hesap kurtarma bağlantısını gönderirken bir sorun oluştu.',
     'recovery_account_successful'       => 'Hesabınız başarıyla kurtarıldı.',
     'recovery_account_problem'          => 'Hesabınız kurtarılırken bir sorun oluştu.',
+    'profile'                           => 'Profil',
+    'sessions'                          => 'Oturumlar',
 ];
