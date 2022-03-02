@@ -81,4 +81,5 @@ return [
     'recovery_account_problem'          => 'Hesabınız kurtarılırken bir sorun oluştu.',
     'profile'                           => 'Profil',
     'sessions'                          => 'Oturumlar',
+    'welcome_account'                   => 'Hoşgeldin! Yan menüden işlem yapabileceğin hesap sayfalarına ulaşabilirsin.',
 ];

@@ -537,7 +537,7 @@ class KN {
      */
     public static function layout($file, $externalParams = []) {
 
-        $title = isset($externalParams['title']) !== false ? $externalParams['title'] : self::config('settings.name');
+        $title = isset($externalParams['title']) !== false ? $externalParams['title'] : self::title();
         $layout = isset($externalParams['layout']) !== false ? $externalParams['layout'] : [
             'layout/header', 
             'layout/nav', 
@@ -1300,13 +1300,13 @@ class KN {
      * @return string
      */
 
-    public static function title($title): string {
+    public static function title($title = null): string {
 
-        return str_replace(
+        return $title ? str_replace(
             ['[APP]', '[TITLE]'], 
             [self::config('settings.name'), $title], 
             self::config('app.title_format')
-        );
+        )  : self::config('settings.name');
 
     }
 

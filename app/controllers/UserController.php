@@ -383,6 +383,7 @@ final class UserController {
 
             case '/account/sessions':
                 $title = KN::lang('account') . ' · ' . KN::lang('sessions');
+                // $this->response['messages']
                 break;
 
             default:

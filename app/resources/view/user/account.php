@@ -43,11 +43,11 @@
 									break;
 
 								case '/account/sessions':
-									echo 'sessions';
+									// (new UserController)->
 									break;
 								
 								default:
-									echo 'account';
+									echo self::lang('welcome_account');
 									break;
 							}	?>
 						</div>

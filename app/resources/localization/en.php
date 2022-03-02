@@ -81,4 +81,5 @@ return [
     'recovery_account_problem'          => 'There was a problem recovering your account.',
     'profile'                           => 'Profile',
     'sessions'                          => 'Sessions',
+    'welcome_account'                   => 'Welcome! You can access the account pages where you can act from the side menu.',
 ];
