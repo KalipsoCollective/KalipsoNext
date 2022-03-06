@@ -82,4 +82,9 @@ return [
     'profile'                           => 'Profil',
     'sessions'                          => 'Oturumlar',
     'welcome_account'                   => 'Hoşgeldin! Yan menüden işlem yapabileceğin hesap sayfalarına ulaşabilirsin.',
+    'first_name'                        => 'Ad',
+    'last_name'                         => 'Soyad',
+    'user_name'                         => 'Kullanıcı Adı',
+    'birth_date'                        => 'Doğum Tarihi',
+    
 ];

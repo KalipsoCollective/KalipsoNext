@@ -1310,4 +1310,15 @@ class KN {
 
     }
 
+    /**
+     * Return a User Info from Session
+     * @param string $key
+     * @return string
+     */
+    public static function userData($key) {
+
+        return isset($_SESSION['user']->{$key}) !== false ? $_SESSION['user']->{$key} : null;
+
+    }
+
 }

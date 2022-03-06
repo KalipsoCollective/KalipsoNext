@@ -82,4 +82,9 @@ return [
     'profile'                           => 'Profile',
     'sessions'                          => 'Sessions',
     'welcome_account'                   => 'Welcome! You can access the account pages where you can act from the side menu.',
+    'first_name'                        => 'Name',
+    'last_name'                         => 'Surname',
+    'user_name'                         => 'Username',
+    'birth_date'                        => 'Birth Date',
+
 ];
