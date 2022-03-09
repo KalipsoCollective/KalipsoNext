@@ -17,11 +17,11 @@ $route->addRoutes([
 		'controller'	=> 'UserController@account'
 	],
 	'/account/profile'	=> [
-		'middlewares'	=> ['Auth@verify' => [], 'Auth@with' => ['auth']],
+		'middlewares'	=> ['Auth@with' => ['auth'], 'CSRF@validate' => ['POST']],
 		'controller'	=> 'UserController@account'
 	],
 	'/account/sessions'	=> [
-		'middlewares'	=> ['Auth@verify' => [], 'Auth@with' => ['auth']],
+		'middlewares'	=> ['Auth@with' => ['auth']],
 		'controller'	=> 'UserController@account'
 	],
 	'/account'	=> [

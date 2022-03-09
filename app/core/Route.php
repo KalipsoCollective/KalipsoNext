@@ -199,6 +199,7 @@ class Route {
 
             // middleware
             $middlewareError = false;
+
             if (count(self::$matchingRoute['middlewares'])) {
 
                 foreach (self::$matchingRoute['middlewares'] as $class => $arguments) {
@@ -240,7 +241,6 @@ class Route {
                 }
             }
 
-
             if (! $middlewareError) {
 
                 // controller
@@ -274,11 +274,8 @@ class Route {
                             ));
                         }
 
-                        if ($controller) {
-
+                        if ($controller)
                             $response = $controller;
-
-                        }
                         
 
                     } catch (Exception $e) {
