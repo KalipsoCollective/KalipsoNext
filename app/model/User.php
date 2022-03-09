@@ -39,8 +39,9 @@ class User {
 
     }
 
-    public function getUser($with, $data) {
+    public function getUser($with, $data, $withOut = null) {
 
+        $this->row = null;
         // single user data
         $get = $this->base->table($this->table)->select(
             'id, u_name, f_name, l_name, email, password, token, role_id, b_date, status'
@@ -50,7 +51,7 @@ class User {
             $get->where('u_name', $data)->orWhere('email', $data);
         } elseif ($with == 'email') {
             $get->where('email', $data);
-        } elseif ($with == 'u_name') {
+        } elseif ($with == 'u_name' OR $with == 'username') {
             $get->where('u_name', $data);
         } elseif ($with == 'token') {
             $get->where('token', $data);
@@ -58,7 +59,18 @@ class User {
             $get->where('id', $data);
         }
 
+        if (is_array($withOut)) {
+
+            $get->grouped(function($q) use ($withOut) {
+                $q->notWhere($withOut[0], $withOut[1]);
+            });
+
+        }
+
         $get = $get->get();
+        if (is_array($get) AND ! count($get)) {
+            $get = false;
+        }
 
         if ($get) {
 
@@ -184,9 +196,10 @@ class User {
 
     public function updateUser($update, $id) {
 
-        return $this->base->table($this->table)
+        $update = $this->base->table($this->table)
             ->where('id', $id)
             ->update($update);
+        return $update;
 
     }
 
