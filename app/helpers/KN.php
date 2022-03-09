@@ -453,6 +453,18 @@ class KN {
 
         $alert = '';
 
+        if (isset(self::$request['middleware_messages']) !== false) {
+
+            foreach (self::$request['middleware_messages'] as $key => $value) {
+                self::$request['middleware_messages'][$key]['title'] = self::lang(self::$request['middleware_messages'][$key]['title']);
+                self::$request['middleware_messages'][$key]['message'] = self::lang(self::$request['middleware_messages'][$key]['message']);
+            }
+
+            self::$response['messages'] = isset(self::$response['messages']) !== false ? 
+                array_merge(self::$response['messages'], self::$request['middleware_messages']) 
+                : self::$request['middleware_messages'];
+        }
+
         if (isset(self::$response['messages']) !== false AND count(self::$response['messages'])) {
 
             $iconComponent = require KN::path('app/resources/view/components/icons.php');
@@ -1317,7 +1329,11 @@ class KN {
      */
     public static function userData($key) {
 
-        return isset($_SESSION['user']->{$key}) !== false ? $_SESSION['user']->{$key} : null;
+        $return = isset($_SESSION['user']->{$key}) !== false ? $_SESSION['user']->{$key} : null;
+        if ($key == 'b_date' AND $return) {
+            $return = date('Y-m-d', (int) $return);
+        }
+        return $return;
 
     }
 
