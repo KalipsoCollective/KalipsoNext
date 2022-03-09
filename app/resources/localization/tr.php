@@ -28,6 +28,8 @@ return [
     'noti_email_recovery_request_body'  => 'Selam [USER], <br>Hesabınızı kurtarabilmeniz için bir talep aldık. Bu talebi siz yapmadı iseniz dikkate almayın. Hesabınızı kurtarmanız için kullanacağınız bağlantıyı da aşağıya bıraktık. <br> [RECOVERY_LINK]',
     'noti_email_recovery_account_title' => 'Hesabınız Kurtarıldı!',
     'noti_email_recovery_account_body'  => 'Selam [USER], <br>Hesabınız başarıyla kurtarıldı, yeni şifrenizle giriş yapabilirsiniz. Bu işlemi siz yapmadıysanız lütfen iletişime geçin.',
+    'noti_email_change_title'           => 'Eposta Adresiniz Güncellendi!',
+    'noti_email_change_body'            => 'Selam [USER], <br>Az önce profilin güncellendi. Lütfen aşağıdaki bağlantı ile eposta adresinizi doğrulayın. <br> [VERIFY_LINK]',
 
     // VIEWS
     'login'                             => 'Giriş Yap',
@@ -55,9 +57,12 @@ return [
     'logging_in'                        => 'Oturum başlatılıyor...',
     'logging_out'                       => 'Oturum sonlandırılıyor...',
     'your_account_has_been_blocked'     => 'Hesabınız engellenmiş, iletişime geçin.',
+    'your_account_is_not_verified'      => 'Hesabınız doğrulanmamış, eposta adresinizi kontrol edin.',
     'error'                             => 'Hata!',
     'your_login_info_incorrect'         => 'Giriş bilgileriniz yanlış.',
     'start_session_problem'             => 'Oturum açılırken bir sorun oluştu!',
+    'profile_updated'                   => 'Bilgileriniz güncellendi.',
+    'profile_update_problem'            => 'Bilgileriniz güncellenirken bir sorun oluştu!',
     'session'                           => 'Oturum',
     'a_problem_occurred'                => 'Bir sorun oluştu!',
     'you_have_a_session'                => 'Zaten bir oturuma sahipsiniz!',
@@ -86,5 +91,5 @@ return [
     'last_name'                         => 'Soyad',
     'user_name'                         => 'Kullanıcı Adı',
     'birth_date'                        => 'Doğum Tarihi',
-    
+    'save'                              => 'Kaydet',
 ];

@@ -28,6 +28,8 @@ return [
     'noti_email_recovery_request_body'  => 'Hi [USER],<br> We have received a request to recover your account. If you did not make this request, ignore it. We\'ve also left the link below to use to recover your account. <br>[RECOVERY_LINK]',
     'noti_email_recovery_account_title' => 'Your Account Has Been Recovered!',
     'noti_email_recovery_account_body'  => 'Hi [USER], <br>Your account has been successfully recovered, you can login with your new password. If you haven\'t done this, please get in touch.',
+    'noti_email_change_title'           => 'Your Email Address Has Been Updated!',
+    'noti_email_change_body'            => 'Hi [USER],<br> Your profile has just been updated. Please verify your email address with the link below. <br>[VERIFY_LINK]',
 
     // VIEWS
     'login'                             => 'Login',
@@ -55,9 +57,12 @@ return [
     'logging_in'                        => 'Starting your session...',
     'logging_out'                       => 'Ending your session...',
     'your_account_has_been_blocked'     => 'Your account has been blocked, contact us.',
+    'your_account_is_not_verified'      => 'Your account is not verified, check your email address.',
     'error'                             => 'Error!',
     'your_login_info_incorrect'         => 'Your login information is incorrect.',
     'start_session_problem'             => 'There was a problem signing in!',
+    'profile_updated'                   => 'Your profile has been updated.',
+    'profile_update_problem'            => 'There was a problem updating the profile!',
     'session'                           => 'Session',
     'a_problem_occurred'                => 'A problem occurred!',
     'you_have_a_session'                => 'You already have a session!',
@@ -86,5 +91,5 @@ return [
     'last_name'                         => 'Surname',
     'user_name'                         => 'Username',
     'birth_date'                        => 'Birth Date',
-
+    'save'                              => 'Save',
 ];
