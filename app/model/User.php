@@ -186,6 +186,15 @@ class User {
 
     }
 
+    public function getSessions($userId) {
+
+        return $this->base->table($this->sessionTable)
+            ->select('*')
+            ->where('user_id', $userId)
+            ->getAll();
+
+    }
+
 
     public function addUser($data) {
 

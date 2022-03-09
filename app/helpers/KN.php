@@ -889,7 +889,7 @@ class KN {
 
     public static function userAgentDetails($ua = null): array {
 
-        $ua = is_null($u) ? self::getHeader() : $ua;
+        $ua = is_null($ua) ? self::getHeader() : $ua;
         $browser = '';
         $platform = '';
         $bIcon = 'mdi mdi-close-circle';
@@ -1328,6 +1328,9 @@ class KN {
      * @return string
      */
     public static function userData($key) {
+
+        if ($key == 'auth_code')
+            return $_COOKIE[KN_SESSION_NAME];
 
         $return = isset($_SESSION['user']->{$key}) !== false ? $_SESSION['user']->{$key} : null;
         if ($key == 'b_date' AND $return) {

@@ -366,6 +366,11 @@ final class UserController {
 
     public function account() {
 
+        $arguments = null;
+
+        $this->model = (new User());
+
+        // profile update
         if ($this->request['request_method'] == 'POST') {
 
             extract(KN::input([
@@ -378,8 +383,6 @@ final class UserController {
             ], $this->request['parameters']));
 
             if (! is_null($f_name) AND ! is_null($l_name) AND ! is_null($u_name) AND ! is_null($email) AND ! is_null($b_date)) {
-
-                $this->model = (new User());
 
                 $get = $this->model->getUser('id', KN::userData('id'));
                 $sessionDestroy = false;
@@ -532,6 +535,7 @@ final class UserController {
             
         }
 
+        // logout
         if (isset($this->request['parameters']['logout']) !== false) {
             $this->response['redirect'] = [4, KN::base()];
             $this->response['messages'][] = [
@@ -549,7 +553,7 @@ final class UserController {
 
             case '/account/sessions':
                 $title = KN::lang('account') . ' · ' . KN::lang('sessions');
-                // $this->response['messages']
+                $arguments['sessions'] = $this->model->getSessions(KN::userData('id'));
                 break;
 
             default:
@@ -557,11 +561,17 @@ final class UserController {
                 break;
         }
 
-        KN::layout('user/account', [
+        $push = [
             'title'     => $title,
             'request'   => $this->request,
             'response'  => $this->response
-        ]);
+        ];
+
+        if ($arguments) {
+            $push['arguments'] = $arguments;
+        }
+
+        KN::layout('user/account', $push);
 
         if (isset($this->request['parameters']['logout']) !== false) {
             $this->logout();
