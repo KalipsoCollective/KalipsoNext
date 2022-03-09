@@ -35,12 +35,12 @@
 						<div class="col-12 col-lg-8">
 							<?php 
 							echo self::alert();
-
 							switch (self::$request['request']) {
 
 								case '/account/profile':
 									?>
-									<form class="row g-2">
+									<form class="row g-2" method="post" action="<?php echo self::base('account/profile'); ?>" data-vpjax>
+										<?php echo self::createCSRF(); ?>
 										<div class="col-12 col-md-6">
 											<div class="form-floating">
 												<input type="text" name="f_name" class="form-control" id="fN" value="<?php echo self::userData('f_name'); ?>" placeholder="<?php echo self::lang('first_name'); ?>" required>
@@ -76,11 +76,14 @@
 										</div>
 										<div class="col-12 col-md-6">
 											<div class="form-floating">
-												<input type="password" name="password" class="form-control" id="eM" placeholder="<?php echo self::lang('password'); ?>">
-												<label for="eM"><?php echo self::lang('password'); ?></label>
+												<input type="password" name="password" class="form-control" id="uP" placeholder="<?php echo self::lang('password'); ?>">
+												<label for="uP"><?php echo self::lang('password'); ?></label>
 											</div>
 										</div>
-									</div>
+										<div class="col-12">
+											<button type="submit" class="btn btn-primary ms-auto d-flex"><?php echo self::lang('save'); ?></button>
+										</div>
+									</form>
 									<?php
 									break;
 
