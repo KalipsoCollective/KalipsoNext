@@ -43,7 +43,6 @@
 	- Reports
 		- Logs
 		- Views
-		- Statistics
 
 ---
 
