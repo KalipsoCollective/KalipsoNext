@@ -92,4 +92,8 @@ return [
     'user_name'                         => 'Kullanıcı Adı',
     'birth_date'                        => 'Doğum Tarihi',
     'save'                              => 'Kaydet',
+    'no_record_found'                   => 'Kayıt bulunamadı!',
+    'device'                            => 'Cihaz',
+    'ip'                                => 'IP',
+    'last_action'                       => 'Son İşlem',
 ];

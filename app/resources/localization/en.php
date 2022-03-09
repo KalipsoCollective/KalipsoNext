@@ -92,4 +92,8 @@ return [
     'user_name'                         => 'Username',
     'birth_date'                        => 'Birth Date',
     'save'                              => 'Save',
+    'no_record_found'                   => 'No record found!',
+    'device'                            => 'Device',
+    'ip'                                => 'IP',
+    'last_action'                       => 'Last Action',
 ];
