@@ -2,7 +2,7 @@
 			<div class="row justify-content-center">
 				<div class="col-12 col-md-9">
 					<div class="row">
-						<div class="col-12 col-lg-4">
+						<div class="col-12 col-lg-3">
 							<div class="list-group kn-list-menu">
 								<?php 
 
@@ -32,7 +32,7 @@
 								}	?>
 							</div>
 						</div>
-						<div class="col-12 col-lg-8">
+						<div class="col-12 col-lg-9">
 							<?php 
 							echo self::alert();
 							switch (self::$request['request']) {
@@ -88,7 +88,47 @@
 									break;
 
 								case '/account/sessions':
-									// (new UserController)->
+									if (isset($sessions) AND count($sessions)) {
+										echo '
+										<div class="table-responsive">
+											<table class="table table-sm table-bordered table-striped">
+												<thead>
+													<tr>
+														<th></th>
+														<th scope="col">'.self::lang('device').'</th>
+														<th scope="col">'.self::lang('ip').'</th>
+														<th scope="col">'.self::lang('last_action').'</th>
+													</tr>
+												</thead>
+												<tbody>';
+
+												foreach ($sessions as $session) {
+													
+													$device = self::userAgentDetails($session->header);
+													echo '
+													<tr'.(self::userData('auth_code') == $session->auth_code ? ' class="table-dark"' : '').'>
+														<td>
+															<i class="mdi mdi-circle'.(strtotime('-5 minutes') <= $session->last_action_date ? ' text-success' : ' text-muted').'"></i>
+														</td>
+														<td>
+															<span title="'.$device['os'].'"><i class="'.$device['p_icon'].'"></i> '.$device['platform'].'</span> · 
+															<span title="'.$device['version'].'"><i class="'.$device['b_icon'].'"></i> '.$device['browser'].'</span>
+														</td>
+														<td>'.$session->ip.'</td>
+														<td>
+															<span class="badge bg-secondary">'.$session->last_action_point.'</span> · 
+															<small class="text-muted">'.date('d.m.Y H:i', $session->last_action_date).'</small></td>
+													</tr>';
+
+												}
+
+										echo '	</tbody>
+											</table>
+										</div>';
+									} else {
+										echo '<p class="text-danger">'.self::lang('no_record_found').'</p>';
+									}
+
 									break;
 								
 								default:
