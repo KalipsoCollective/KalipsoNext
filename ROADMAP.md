@@ -26,12 +26,12 @@
 	+ ~Session~
 	+ ~Clear Storage Folder~
 
-- User Module ``(6/4)``
+- User Module ``(6/5)``
 	- ~Login~
 	- ~Logout~
 	- ~Register~
 	- ~Recovery~
-	- Profile Update
+	- ~Profile Update~
 	- Active Sessions
 
 - Management 
