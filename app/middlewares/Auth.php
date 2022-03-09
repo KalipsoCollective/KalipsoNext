@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace App\Middlewares;
 
 use App\Helpers\KN;
-use App\Controllers\UserController;
+use App\Model\User as UserModel;
 
 final class Auth {
 
@@ -76,7 +76,8 @@ final class Auth {
 
             $verifyToken = KN::filter($_GET['verify-account'], 'nulled_text');
             if ($verifyToken) {
-                $verify = (new UserController)->verifyAccount($verifyToken);
+
+                $verify = (new UserModel())->verifyAccount($verifyToken);
                 if ($verify) {
                     $return['message'] = [
                         'status' => 'success', 
