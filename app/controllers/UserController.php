@@ -19,7 +19,7 @@ final class UserController {
     public $response = [];
     protected $model = [];
 
-    public function __construct($request = []) {
+    public function __construct($request = null) {
 
         $this->request = $request;
 
@@ -366,6 +366,172 @@ final class UserController {
 
     public function account() {
 
+        if ($this->request['request_method'] == 'POST') {
+
+            extract(KN::input([
+                'f_name'    => 'nulled_text',
+                'l_name'    => 'nulled_text',
+                'u_name'    => 'nulled_text',
+                'email'     => 'nulled_email',
+                'b_date'    => 'date',
+                'password'  => 'nulled_text',
+            ], $this->request['parameters']));
+
+            if (! is_null($f_name) AND ! is_null($l_name) AND ! is_null($u_name) AND ! is_null($email) AND ! is_null($b_date)) {
+
+                $this->model = (new User());
+
+                $get = $this->model->getUser('id', KN::userData('id'));
+                $sessionDestroy = false;
+                $statusChange = false;
+
+                if ($get) {
+
+                    if ($get->status == 'passive') {
+
+                        $this->response['messages'][] = [
+                            'status' => 'warning',
+                            'title'  => KN::lang('warning'),
+                            'message'=> KN::lang('your_account_is_not_verified')
+                        ];
+
+                    } else {
+
+                        $currentUser = ['id', KN::userData('id')];
+
+                        $update = [
+                            'f_name'    => $f_name,
+                            'l_name'    => $l_name,
+                            'b_date'    => $b_date
+                        ];
+
+                        // Username Change
+                        $check = false;
+                        if ($u_name !== KN::userData('u_name')) {
+
+                            $check = $this->model->getUser('u_name', $u_name, $currentUser);
+
+                            if ($check) {
+
+                                $check = true;
+
+                                $this->response['messages'][] = [
+                                    'status' => 'warning',
+                                    'title'  => KN::lang('warning'),
+                                    'message'=> KN::lang('username_is_already_used')
+                                ];
+
+                            } else {
+
+                                $update['u_name'] = $u_name;
+
+                            }
+
+                        }
+
+                        // Email Change
+                        if (! $check AND $email !== KN::userData('email')) {
+
+                            $check = $this->model->getUser('email', $email, $currentUser);
+                            if ($check) {
+
+                                $check = true;
+
+                                $this->response['messages'][] = [
+                                    'status' => 'warning',
+                                    'title'  => KN::lang('warning'),
+                                    'message'=> KN::lang('email_is_already_used')
+                                ];
+
+                            } else {
+
+                                $update['email'] = $email;
+                                $update['token'] = KN::tokenGenerator(80);
+                                $update['status'] = 'passive';
+                                $statusChange = true;
+
+                            }
+
+                        }
+
+                        // Password Change
+                        if (! $check AND ! is_null($password)) {
+
+                            $update['password'] = password_hash($password, PASSWORD_DEFAULT);
+                            $sessionDestroy = true;
+                        }
+
+                        if (! $check) {
+
+                            $save = $this->model->updateUser($update, $currentUser[1]);
+                            if ($save) {
+
+                                $get = $this->model->getUser('id', $currentUser[1]);
+
+                                $this->response['messages'][] = [
+                                    'status' => 'success',
+                                    'title'  => KN::lang('success'),
+                                    'message'=> KN::lang('profile_updated'),
+                                ];
+                                $this->response['redirect'] = [5, KN::base('account/profile')];
+
+                                if ($sessionDestroy) {
+
+                                    $this->logout();
+                                    $this->model->removeSessions($currentUser[1]);
+
+                                } else {
+
+                                    $logged = KN::setSession($get);
+                                    $get->view_points = (object) explode(',', $get->view_points);
+                                    $get->action_points = (object) explode(',', $get->action_points);
+                                    if ($logged) {
+                                        $logged = $this->model->saveSession($get, $this->request['request']);
+                                    }
+
+                                }
+
+                                if ($statusChange) {
+
+                                    (new Notification)->add('email_change', (array) $get);
+                                }
+
+                            } else {
+
+                                $this->response['messages'][] = [
+                                    'status' => 'alert',
+                                    'title'  => KN::lang('warning'),
+                                    'message'=> KN::lang('profile_update_problem')
+                                ];
+                            }
+
+
+                        }
+
+                    }
+
+                } else {
+
+                    $this->response['messages'][] = [
+                        'status' => 'alert',
+                        'title'  => KN::lang('warning'),
+                        'message'=> KN::lang('form_cannot_empty')
+                    ];
+
+                }
+
+            } else {
+
+                $this->response['messages'][] = [
+                    'status' => 'alert',
+                    'title'  => KN::lang('warning'),
+                    'message'=> KN::lang('form_cannot_empty')
+                ];
+
+            }
+            
+        }
+
         if (isset($this->request['parameters']['logout']) !== false) {
             $this->response['redirect'] = [4, KN::base()];
             $this->response['messages'][] = [
@@ -431,14 +597,6 @@ final class UserController {
 
         }
         return $return;
-
-    }
-
-
-    public function verifyAccount($token) {
-
-        $this->model = (new User());
-        return $this->model->verifyAccount($token);
 
     }
 
