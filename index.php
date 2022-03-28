@@ -13,6 +13,7 @@ try {
     require __DIR__.'/app/bootstrap.php';
 
     (new App\Core\System)->go();
+    // routing -> resources/route.php
 
 } catch (Exception $e) {
 
