@@ -56,6 +56,7 @@ For example;
 - app/
     - config/ _(This folder contains your project settings files. You can use all available settings as in other frameworks. If you are sure that there is a `use App\Helpers\KN;` definition in the relevant file, you can use it as `KN::config('file_name.settings_key')`.)_
     - controllers/ _(Route and routines...)_
+        - AppController.php _(It is the main controller of the system. It includes pre-definition for sandbox and dynamic JS part. Other examples are provided for ease of use only, you can change or delete them as you wish.)_
     - core/ _(This directory contains the main core of the system. If possible, do not touch at all. Please contribute if you need to touch it and it's a bug.)_
         - DB.php: (Main database class. We used the PDOx class in db layer. Check the [documentation](https://github.com/izniburak/pdox/blob/master/DOCS.md "PDOx Documentation"))
         - Exception.php: (Basic exception handler)
@@ -66,5 +67,13 @@ For example;
     - helpers/ _(You can place helper classes here. Be careful not to delete the `KN` class. It is used in many parts of the system. Many of the methods in it are of such a nature as to prevent you from rewriting.)_
     - middlewares/ _(By default there is CSRF token controller and Auth controller, you can add your other middleware classes here.)_
     - model/ _(You can specify your model layer classes here.)_
-
-- AppController: It is the main controller of the system. It includes pre-definition for sandbox and dynamic JS part. Other examples are provided for ease of use only, you can change or delete them as you wish.
+    - resources/ _(Your main project files are located in this directory.)_
+        - localization/ _(This directory contains language files. ex: [lang].php)_
+        - template/ _(This directory contains html template files. ex: email.html)_
+        - view/ _(This directory contains the frontend html files)_
+        - db_schema.php _(It is the file where the database schema is written. Used to create tables while in sandbox mode.)_
+        - route.php _(It is the file where the route definitions are prepared.)_
+        - script.php _(It is a directly accessible dynamic Javascript file of the project.)_
+    - storage/ _(It contains files where data such as cache, log and email content file are stored.)_
+    bootstrap.php _(It is the file where the error handler and some constants are prepared.)_
+- assets/ _(Contains interface resource files. CSS, JS, fonts etc.)_
