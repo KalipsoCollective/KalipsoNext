@@ -24,3 +24,4 @@ error_reporting(E_ALL);
 // basic defines
 define('KN_START', microtime(true));
 define('KN_ROOT',  rtrim($_SERVER["DOCUMENT_ROOT"], '/').'/');
+define('KN_VERSION', '1.0.0');

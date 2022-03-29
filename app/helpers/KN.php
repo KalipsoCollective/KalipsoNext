@@ -368,7 +368,7 @@ class KN {
             switch ($code) {
 
                 case 'powered_by':
-                    header('X-Powered-By: KalipsoNext');
+                    header('X-Powered-By: KalipsoNext/v' . KN_VERSION);
                     break;
 
                 case 'location':
