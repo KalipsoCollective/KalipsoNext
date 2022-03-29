@@ -390,6 +390,9 @@ class KN {
                     if (isset($parameters['content']) === false) $parameters['content'] = null;
 
                     switch ($parameters['content']) {
+                        case 'application/json':
+                        case 'json': $parameters['content'] = 'application/json'; break;
+                        
                         case 'application/javascript':
                         case 'js': $parameters['content'] = 'application/javascript'; break;
 
