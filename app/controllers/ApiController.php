@@ -24,7 +24,12 @@ final class ApiController {
 
     public static function index() {
 
-        echo 'Welcome!';
+        KN::http('content_type', 
+            [   
+                'content' => 'json',
+                'write' => json_encode(["VERSION" => KN_VERSION])
+            ]
+        );
 
     }
 
