@@ -54,14 +54,14 @@ For example;
 ### Skeleton
 
 - app/
-    - config/ _(This folder contains your project settings files. You can use all available settings as in other frameworks. If you are sure that there is a `use App\Helpers\KN;` definition in the relevant file, you can use it as `KN::config('file_name.settings_key')`.)_
+    - config/ _(This folder contains your project settings files. You can use all available settings as in other frameworks. If you are sure that there is a `use App\Helpers\KN;` definition in the relevant file, you can use it as `KN::config('file_name.setting_key')`.)_
     - controllers/ _(Route and routines...)_
         - AppController.php _(It is the main controller of the system. It includes pre-definition for sandbox and dynamic JS part. Other examples are provided for ease of use only, you can change or delete them as you wish.)_
     - core/ _(This directory contains the main core of the system. If possible, do not touch at all. Please contribute if you need to touch it and it's a bug.)_
         - DB.php: (Main database class. We used the PDOx class in db layer. Check the [documentation](https://github.com/izniburak/pdox/blob/master/DOCS.md "PDOx Documentation"))
-        - Exception.php: (Basic exception handler)
+        - Exception.php: (Basic exception handler.)
         - Log.php: (Logger.)
-        - Notification.php: (Basin notification system layout.)
+        - Notification.php: (Basic notification system layout.)
         - Route.php: (Basic route parser.)
         - System.php: (Main methods.)
     - helpers/ _(You can place helper classes here. Be careful not to delete the `KN` class. It is used in many parts of the system. Many of the methods in it are of such a nature as to prevent you from rewriting.)_
