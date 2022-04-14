@@ -29,7 +29,16 @@ class Exception {
 	                <title>Error Handler - KN</title>
 	                <style>
 	                body {
-	                  font-family: monospace, system-ui;
+	                  font-family: ui-monospace, 
+			             Menlo, Monaco, 
+			             "Cascadia Mono", "Segoe UI Mono", 
+			             "Roboto Mono", 
+			             "Oxygen Mono", 
+			             "Ubuntu Monospace", 
+			             "Source Code Pro",
+			             "Fira Mono", 
+			             "Droid Sans Mono", 
+			             "Courier New", monospace;
 	                  background: #151515;
 	                  color: #b2b2b2;
 	                  padding: 1rem;
