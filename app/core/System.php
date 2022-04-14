@@ -7,9 +7,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core;
+namespace KN\Core;
 
-use App\Helpers\KN;
+use KN\Helpers;
 
 class System {
 

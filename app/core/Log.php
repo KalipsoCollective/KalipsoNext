@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core;
+namespace KN\Core;
 
 use App\Core\DB;
 use App\Helpers\KN;

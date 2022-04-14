@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core;
+namespace KN\Core;
 
 use \Buki\Pdox;
 use App\Helpers\KN;
