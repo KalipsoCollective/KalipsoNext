@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace KN\Core;
 
-use App\Core\DB;
-use App\Helpers\KN;
+use KN\Core\DB;
+use KN\Helpers\Base;
 
 class Log {
 
@@ -21,7 +21,7 @@ class Log {
 
     public function add($args) {
 
-        $args = KN::privateDataCleaner($args);
+        $args = Base::privateDataCleaner($args);
 
         $add = new DB();
         $add->table('logs')
@@ -31,8 +31,8 @@ class Log {
                 'http_status'   => $args['http_status'],
                 'auth_code'     => isset($_COOKIE[KN_SESSION_NAME]) !== false ? $_COOKIE[KN_SESSION_NAME] : null,
                 'user_id'       => isset($_SESSION['user']->id) !== false ? $_SESSION['user']->id : null,
-                'ip'            => KN::getIp(),
-                'header'        => KN::getHeader(),
+                'ip'            => Base::getIp(),
+                'header'        => Base::getHeader(),
                 'request'       => json_encode($args['request']),
                 'response'      => is_array($args['response']) ? json_encode($args['response']) : $args['response'],
 

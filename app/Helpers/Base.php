@@ -470,9 +470,9 @@ class Base {
 
         if (isset(self::$response['messages']) !== false AND count(self::$response['messages'])) {
 
-            $iconComponent = require KN::path('app/Resources/view/components/icons.php');
+            $iconComponent = require self::path('app/Resources/view/components/icons.php');
 
-            if (file_exists($file = KN::path('app/Resources/view/components/alert.php'))) {
+            if (file_exists($file = self::path('app/Resources/view/components/alert.php'))) {
                 $alertComponent = require $file;
             } else {
                 $alertComponent = [
