@@ -11,6 +11,9 @@ namespace KN\Core;
 
 class Exception {
 
+	/**
+	 *  Fatal error handler
+	 **/
 	static function fatalHandler() {
 		
 		$error = error_get_last();
@@ -19,7 +22,10 @@ class Exception {
 	    }
 	}
 
-	static function errorHandler(int $errNo, string $errMsg, string $file, int $line) {
+	/**
+	 *  Error handler output
+	 **/
+	static function errorHandler(int|string $errNo, string $errMsg, string $file, int $line) {
 		
 		$handlerInterface = '
         <!doctype html>
@@ -65,6 +71,9 @@ class Exception {
 	    echo str_replace('[OUTPUT]', $errorOutput, $handlerInterface);
 	}
 
+	/**
+	 *  Exception handler
+	 **/
 	static function exceptionHandler($e = null) {
 
 		if ( is_null($e) ) {

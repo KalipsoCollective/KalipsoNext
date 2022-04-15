@@ -56,11 +56,11 @@
 					case 'db-init':
 						$pageTitle = self::lang('prepare_database');
 						$output = '';
-						$dbSchema = require self::path('app/resources/db_schema.php');
+						$dbSchema = require self::path('app/Resources/db_schema.php');
 
 						if (isset($_GET['start']) !== false) {
 
-							$init = (new App\Core\DB)->dbInit($dbSchema);
+							$init = (new KN\Core\DB)->dbInit($dbSchema);
 
 							if ($init === 0) {
 								$output .= '<p class="text-success">Database has been prepared successfully.</p>';
@@ -158,12 +158,12 @@
 					case 'db-seed':
 						$pageTitle = self::lang('seed_database');
 						$output = '';
-						$dbSchema = require self::path('app/resources/db_schema.php');
+						$dbSchema = require self::path('app/Resources/db_schema.php');
 
 						if (isset($_GET['start']) !== false) {
 
 							$output = '<p class="text-muted">Seeding...</p>';
-							$init = (new App\Core\DB)->dbSeed($dbSchema);
+							$init = (new KN\Core\DB)->dbSeed($dbSchema);
 
 							if ($init === 0) {
 								$output .= '<p class="text-success">Database has been seeded successfully.</p>';
@@ -238,7 +238,7 @@
 
 						$deleteAction = (isset($_GET['delete']) !== false AND count($_GET['delete'])) ? $_GET['delete'] : null;
 						if ($deleteAction) {
-							$glob = glob(self::path('app/storage/*'), GLOB_BRACE);
+							$glob = glob(self::path('app/Storage/*'), GLOB_BRACE);
 							if ($glob AND count($glob)) {
 								foreach ($glob as $folder) {
 									if (in_array(basename($folder), $deleteAction))
@@ -249,7 +249,7 @@
 							}
 						}
 
-						$glob = glob(self::path('app/storage/*'), GLOB_BRACE);
+						$glob = glob(self::path('app/Storage/*'), GLOB_BRACE);
 
 						if ($glob AND count($glob)) {
 

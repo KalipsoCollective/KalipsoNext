@@ -7,13 +7,13 @@
 
 declare(strict_types=1);
 
-namespace App\Helpers;
+namespace KN\Helpers;
 
 use \RecursiveIteratorIterator;
 use \RecursiveDirectoryIterator;
 use \FilesystemIterator;
 
-class KN {
+class Base {
 
 
     protected static $request = [];
@@ -99,7 +99,7 @@ class KN {
 
             } else {
 
-                $file = self::path('app/config/' . $setting[0] . '.php');
+                $file = self::path('app/Resources/config/' . $setting[0] . '.php');
                 if (file_exists($file)) {
 
                     $settings = require $file;
@@ -428,7 +428,7 @@ class KN {
      */
     public static function view($file, $arguments = []) {
 
-        $file = KN::path('app/resources/view/' . $file . '.php');
+        $file = Base::path('app/Resources/view/' . $file . '.php');
         if (! file_exists($file)) {
             file_put_contents($file, '<?php '.PHP_EOL.'// Auto-created');
         }
@@ -470,9 +470,9 @@ class KN {
 
         if (isset(self::$response['messages']) !== false AND count(self::$response['messages'])) {
 
-            $iconComponent = require KN::path('app/resources/view/components/icons.php');
+            $iconComponent = require KN::path('app/Resources/view/components/icons.php');
 
-            if (file_exists($file = KN::path('app/resources/view/components/alert.php'))) {
+            if (file_exists($file = KN::path('app/Resources/view/components/alert.php'))) {
                 $alertComponent = require $file;
             } else {
                 $alertComponent = [

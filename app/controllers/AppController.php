@@ -7,9 +7,9 @@
 
 declare(strict_types=1);
 
-namespace App\Controllers;
+namespace KN\Controllers;
 
-use App\Helpers\KN;
+use KN\Helpers\Base;
 
 final class AppController {
 
@@ -24,22 +24,22 @@ final class AppController {
 
     public function index() {
 
-        KN::layout('index');
+        Base::layout('index');
 
     }
 
 
     public function sandbox() {
 
-        if (KN::config('app.dev_mode')) {
-            KN::layout('sandbox', [
+        if (Base::config('app.dev_mode')) {
+            Base::layout('sandbox', [
                 'layout'    => ['layout/header', '_', 'layout/end'],
-                'title'     => 'Sandbox | ' . KN::config('app.name'),
+                'title'     => 'Sandbox | ' . Base::config('app.name'),
                 'request'   => $this->request
             ]);
         } else {
-            KN::http(301);
-            KN::http('location', ['url' => KN::base()]);
+            Base::http(301);
+            Base::http('location', ['url' => Base::base()]);
         }
 
     }
@@ -47,8 +47,8 @@ final class AppController {
 
     public function dynamicJS() {
 
-        KN::http('content_type', ['content' => 'js']);
-        require KN::path('app/resources/script.php');
+        Base::http('content_type', ['content' => 'js']);
+        require Base::path('app/resources/script.php');
 
     }
 

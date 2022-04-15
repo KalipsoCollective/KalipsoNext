@@ -7,11 +7,11 @@
 
 declare(strict_types=1);
 
-namespace App\Controllers;
+namespace KN\Controllers;
 
-use App\Helpers\KN;
-use App\Model\User;
-use App\Core\Notification;
+use KN\Helpers\Base;
+use KN\Model\User;
+use KN\Core\Notification;
 
 final class UserController {
 
@@ -36,7 +36,7 @@ final class UserController {
 
         if ($this->request['request_method'] == 'POST') {
 
-            extract(KN::input([
+            extract(Base::input([
                 'username'  => 'nulled_text',
                 'password'  => 'nulled_text'
             ], $this->request['parameters']));
@@ -53,15 +53,15 @@ final class UserController {
 
                         $this->response['messages'][] = [
                             'status' => 'error',
-                            'title'  => KN::lang('error'),
-                            'message'=> KN::lang('your_account_has_been_blocked')
+                            'title'  => Base::lang('error'),
+                            'message'=> Base::lang('your_account_has_been_blocked')
                         ];
 
                     } else {
 
                         if (password_verify($password, $get->password)) {
 
-                            $logged = KN::setSession($get);
+                            $logged = Base::setSession($get);
 
                             $get->view_points = (object) explode(',', $get->view_points);
                             $get->action_points = (object) explode(',', $get->action_points);
@@ -73,19 +73,19 @@ final class UserController {
 
                             if ($logged) {
 
-                                $this->response['redirect'] = [4, KN::base()];
+                                $this->response['redirect'] = [4, Base::base()];
                                 $this->response['messages'][] = [
                                     'status' => 'success',
-                                    'title'  => KN::lang('success'),
-                                    'message'=> KN::lang('logging_in'),
+                                    'title'  => Base::lang('success'),
+                                    'message'=> Base::lang('logging_in'),
                                 ];
 
                             } else {
 
                                 $this->response['messages'][] = [
                                     'status' => 'alert',
-                                    'title'  => KN::lang('warning'),
-                                    'message'=> KN::lang('start_session_problem')
+                                    'title'  => Base::lang('warning'),
+                                    'message'=> Base::lang('start_session_problem')
                                 ];
 
                             }
@@ -94,8 +94,8 @@ final class UserController {
 
                             $this->response['messages'][] = [
                                 'status' => 'alert',
-                                'title'  => KN::lang('warning'),
-                                'message'=> KN::lang('your_login_info_incorrect')
+                                'title'  => Base::lang('warning'),
+                                'message'=> Base::lang('your_login_info_incorrect')
                             ];
 
                         }
@@ -106,8 +106,8 @@ final class UserController {
 
                     $this->response['messages'][] = [
                         'status' => 'alert',
-                        'title'  => KN::lang('warning'),
-                        'message'=> KN::lang('account_not_found')
+                        'title'  => Base::lang('warning'),
+                        'message'=> Base::lang('account_not_found')
                     ];
 
                 }
@@ -116,16 +116,16 @@ final class UserController {
 
                 $this->response['messages'][] = [
                     'status' => 'error',
-                    'title'  => KN::lang('alert'),
-                    'message'=> KN::lang('form_cannot_empty')
+                    'title'  => Base::lang('alert'),
+                    'message'=> Base::lang('form_cannot_empty')
                 ];
 
             }
             
         }
 
-        return KN::layout('user/login', [
-            'title'     => KN::lang('login') . ' | ' . KN::config('app.name'),
+        return Base::layout('user/login', [
+            'title'     => Base::lang('login') . ' | ' . Base::config('app.name'),
             'request'   => $this->request,
             'response'  => $this->response
         ]);
@@ -137,7 +137,7 @@ final class UserController {
 
         if ($this->request['request_method'] == 'POST') {
 
-            extract(KN::input([
+            extract(Base::input([
                 'username'  => 'nulled_text',
                 'email'     => 'nulled_email',
                 'name'      => 'nulled_text',
@@ -161,8 +161,8 @@ final class UserController {
                             'l_name'    => $surname,
                             'email'     => $email,
                             'password'  => $password,
-                            'token'     => KN::tokenGenerator(80),
-                            'role_id'   => KN::config('settings.default_user_role'),
+                            'token'     => Base::tokenGenerator(80),
+                            'role_id'   => Base::config('settings.default_user_role'),
                             'created_at'=> time(),
                             'status'    => 'passive'
                         ];
@@ -174,19 +174,19 @@ final class UserController {
                             $row['id'] = $insert;
                             (new Notification)->add('registration', $row);
 
-                            $this->response['redirect'] = [4, KN::base('account/login')];
+                            $this->response['redirect'] = [4, Base::base('account/login')];
                             $this->response['messages'][] = [
                                 'status' => 'success',
-                                'title'  => KN::lang('success'),
-                                'message'=> KN::lang('registration_successful'),
+                                'title'  => Base::lang('success'),
+                                'message'=> Base::lang('registration_successful'),
                             ];
 
                         } else {
 
                             $this->response['messages'][] = [
                                 'status' => 'alert',
-                                'title'  => KN::lang('warning'),
-                                'message'=> KN::lang('registration_problem')
+                                'title'  => Base::lang('warning'),
+                                'message'=> Base::lang('registration_problem')
                             ];
 
                         }
@@ -195,8 +195,8 @@ final class UserController {
 
                         $this->response['messages'][] = [
                             'status' => 'alert',
-                            'title'  => KN::lang('warning'),
-                            'message'=> KN::lang('username_is_already_used')
+                            'title'  => Base::lang('warning'),
+                            'message'=> Base::lang('username_is_already_used')
                         ];
 
                     }
@@ -205,8 +205,8 @@ final class UserController {
 
                     $this->response['messages'][] = [
                         'status' => 'alert',
-                        'title'  => KN::lang('warning'),
-                        'message'=> KN::lang('email_is_already_used')
+                        'title'  => Base::lang('warning'),
+                        'message'=> Base::lang('email_is_already_used')
                     ];
 
                 }
@@ -215,16 +215,16 @@ final class UserController {
 
                 $this->response['messages'][] = [
                     'status' => 'error',
-                    'title'  => KN::lang('alert'),
-                    'message'=> KN::lang('form_cannot_empty')
+                    'title'  => Base::lang('alert'),
+                    'message'=> Base::lang('form_cannot_empty')
                 ];
 
             }
             
         }
 
-        return KN::layout('user/register', [
-            'title'     => KN::lang('register') . ' | ' . KN::config('app.name'),
+        return Base::layout('user/register', [
+            'title'     => Base::lang('register') . ' | ' . Base::config('app.name'),
             'request'   => $this->request,
             'response'  => $this->response
         ]);
@@ -236,7 +236,7 @@ final class UserController {
 
         if ($this->request['request_method'] == 'POST') {
 
-            extract(KN::input([
+            extract(Base::input([
                 'email'     => 'nulled_email',
                 'token'     => 'nulled_text',
                 'password'  => 'nulled_text',
@@ -255,19 +255,19 @@ final class UserController {
 
                         unset($this->request['parameters']['email']);
 
-                        $this->response['redirect'] = [4, KN::base('account/login')];
+                        $this->response['redirect'] = [4, Base::base('account/login')];
                         $this->response['messages'][] = [
                             'status' => 'success',
-                            'title'  => KN::lang('success'),
-                            'message'=> KN::lang('recovery_request_successful'),
+                            'title'  => Base::lang('success'),
+                            'message'=> Base::lang('recovery_request_successful'),
                         ];
 
                     } else {
 
                         $this->response['messages'][] = [
                             'status' => 'alert',
-                            'title'  => KN::lang('warning'),
-                            'message'=> KN::lang('recovery_request_problem')
+                            'title'  => Base::lang('warning'),
+                            'message'=> Base::lang('recovery_request_problem')
                         ];
 
                     }
@@ -276,8 +276,8 @@ final class UserController {
 
                     $this->response['messages'][] = [
                         'status' => 'alert',
-                        'title'  => KN::lang('warning'),
-                        'message'=> KN::lang('account_not_found')
+                        'title'  => Base::lang('warning'),
+                        'message'=> Base::lang('account_not_found')
                     ];
 
                 }
@@ -292,7 +292,7 @@ final class UserController {
                     $getWithToken = (array) $getWithToken;
                     $update = $this->model
                         ->updateUser([
-                            'token'         => KN::tokenGenerator(80),
+                            'token'         => Base::tokenGenerator(80),
                             'password'      => password_hash($password, PASSWORD_DEFAULT),
                             'updated_at'    => time()
                         ], $getWithToken['id']
@@ -305,19 +305,19 @@ final class UserController {
                             $this->model->removeSessions($getWithToken['id']);
                             unset($this->request['parameters']['email']);
 
-                            $this->response['redirect'] = [4, KN::base('account/login')];
+                            $this->response['redirect'] = [4, Base::base('account/login')];
                             $this->response['messages'][] = [
                                 'status' => 'success',
-                                'title'  => KN::lang('success'),
-                                'message'=> KN::lang('recovery_account_successful'),
+                                'title'  => Base::lang('success'),
+                                'message'=> Base::lang('recovery_account_successful'),
                             ];
 
                         } else {
 
                             $this->response['messages'][] = [
                                 'status' => 'alert',
-                                'title'  => KN::lang('warning'),
-                                'message'=> KN::lang('recovery_account_problem')
+                                'title'  => Base::lang('warning'),
+                                'message'=> Base::lang('recovery_account_problem')
                             ];
 
                         }
@@ -325,8 +325,8 @@ final class UserController {
                     } else {
                         $this->response['messages'][] = [
                             'status' => 'alert',
-                            'title'  => KN::lang('warning'),
-                            'message'=> KN::lang('recovery_account_problem')
+                            'title'  => Base::lang('warning'),
+                            'message'=> Base::lang('recovery_account_problem')
                         ];
                     }
 
@@ -337,8 +337,8 @@ final class UserController {
 
                     $this->response['messages'][] = [
                         'status' => 'alert',
-                        'title'  => KN::lang('warning'),
-                        'message'=> KN::lang('account_not_found')
+                        'title'  => Base::lang('warning'),
+                        'message'=> Base::lang('account_not_found')
                     ];
 
                 }
@@ -347,16 +347,16 @@ final class UserController {
 
                 $this->response['messages'][] = [
                     'status' => 'error',
-                    'title'  => KN::lang('alert'),
-                    'message'=> KN::lang('form_cannot_empty')
+                    'title'  => Base::lang('alert'),
+                    'message'=> Base::lang('form_cannot_empty')
                 ];
 
             }
             
         }
 
-        return KN::layout('user/recovery', [
-            'title'     => KN::lang('recovery_account') . ' | ' . KN::config('app.name'),
+        return Base::layout('user/recovery', [
+            'title'     => Base::lang('recovery_account') . ' | ' . Base::config('app.name'),
             'request'   => $this->request,
             'response'  => $this->response
         ]);
@@ -373,7 +373,7 @@ final class UserController {
         // profile update
         if ($this->request['request_method'] == 'POST') {
 
-            extract(KN::input([
+            extract(Base::input([
                 'f_name'    => 'nulled_text',
                 'l_name'    => 'nulled_text',
                 'u_name'    => 'nulled_text',
@@ -384,7 +384,7 @@ final class UserController {
 
             if (! is_null($f_name) AND ! is_null($l_name) AND ! is_null($u_name) AND ! is_null($email) AND ! is_null($b_date)) {
 
-                $get = $this->model->getUser('id', KN::userData('id'));
+                $get = $this->model->getUser('id', Base::userData('id'));
                 $sessionDestroy = false;
                 $statusChange = false;
 
@@ -394,13 +394,13 @@ final class UserController {
 
                         $this->response['messages'][] = [
                             'status' => 'warning',
-                            'title'  => KN::lang('warning'),
-                            'message'=> KN::lang('your_account_is_not_verified')
+                            'title'  => Base::lang('warning'),
+                            'message'=> Base::lang('your_account_is_not_verified')
                         ];
 
                     } else {
 
-                        $currentUser = ['id', KN::userData('id')];
+                        $currentUser = ['id', Base::userData('id')];
 
                         $update = [
                             'f_name'    => $f_name,
@@ -410,7 +410,7 @@ final class UserController {
 
                         // Username Change
                         $check = false;
-                        if ($u_name !== KN::userData('u_name')) {
+                        if ($u_name !== Base::userData('u_name')) {
 
                             $check = $this->model->getUser('u_name', $u_name, $currentUser);
 
@@ -420,8 +420,8 @@ final class UserController {
 
                                 $this->response['messages'][] = [
                                     'status' => 'warning',
-                                    'title'  => KN::lang('warning'),
-                                    'message'=> KN::lang('username_is_already_used')
+                                    'title'  => Base::lang('warning'),
+                                    'message'=> Base::lang('username_is_already_used')
                                 ];
 
                             } else {
@@ -433,7 +433,7 @@ final class UserController {
                         }
 
                         // Email Change
-                        if (! $check AND $email !== KN::userData('email')) {
+                        if (! $check AND $email !== Base::userData('email')) {
 
                             $check = $this->model->getUser('email', $email, $currentUser);
                             if ($check) {
@@ -442,14 +442,14 @@ final class UserController {
 
                                 $this->response['messages'][] = [
                                     'status' => 'warning',
-                                    'title'  => KN::lang('warning'),
-                                    'message'=> KN::lang('email_is_already_used')
+                                    'title'  => Base::lang('warning'),
+                                    'message'=> Base::lang('email_is_already_used')
                                 ];
 
                             } else {
 
                                 $update['email'] = $email;
-                                $update['token'] = KN::tokenGenerator(80);
+                                $update['token'] = Base::tokenGenerator(80);
                                 $update['status'] = 'passive';
                                 $statusChange = true;
 
@@ -473,10 +473,10 @@ final class UserController {
 
                                 $this->response['messages'][] = [
                                     'status' => 'success',
-                                    'title'  => KN::lang('success'),
-                                    'message'=> KN::lang('profile_updated'),
+                                    'title'  => Base::lang('success'),
+                                    'message'=> Base::lang('profile_updated'),
                                 ];
-                                $this->response['redirect'] = [5, KN::base('account/profile')];
+                                $this->response['redirect'] = [5, Base::base('account/profile')];
 
                                 if ($sessionDestroy) {
 
@@ -485,7 +485,7 @@ final class UserController {
 
                                 } else {
 
-                                    $logged = KN::setSession($get);
+                                    $logged = Base::setSession($get);
                                     $get->view_points = (object) explode(',', $get->view_points);
                                     $get->action_points = (object) explode(',', $get->action_points);
                                     if ($logged) {
@@ -503,8 +503,8 @@ final class UserController {
 
                                 $this->response['messages'][] = [
                                     'status' => 'alert',
-                                    'title'  => KN::lang('warning'),
-                                    'message'=> KN::lang('profile_update_problem')
+                                    'title'  => Base::lang('warning'),
+                                    'message'=> Base::lang('profile_update_problem')
                                 ];
                             }
 
@@ -517,8 +517,8 @@ final class UserController {
 
                     $this->response['messages'][] = [
                         'status' => 'alert',
-                        'title'  => KN::lang('warning'),
-                        'message'=> KN::lang('form_cannot_empty')
+                        'title'  => Base::lang('warning'),
+                        'message'=> Base::lang('form_cannot_empty')
                     ];
 
                 }
@@ -527,8 +527,8 @@ final class UserController {
 
                 $this->response['messages'][] = [
                     'status' => 'alert',
-                    'title'  => KN::lang('warning'),
-                    'message'=> KN::lang('form_cannot_empty')
+                    'title'  => Base::lang('warning'),
+                    'message'=> Base::lang('form_cannot_empty')
                 ];
 
             }
@@ -537,27 +537,27 @@ final class UserController {
 
         // logout
         if (isset($this->request['parameters']['logout']) !== false) {
-            $this->response['redirect'] = [4, KN::base()];
+            $this->response['redirect'] = [4, Base::base()];
             $this->response['messages'][] = [
                 'status' => 'success',
-                'title'  => KN::lang('success'),
-                'message'=> KN::lang('logging_out'),
+                'title'  => Base::lang('success'),
+                'message'=> Base::lang('logging_out'),
             ];
 
         }
 
         switch ($this->request['request']) {
             case '/account/profile':
-                $title = KN::lang('account') . ' · ' . KN::lang('profile');
+                $title = Base::lang('account') . ' · ' . Base::lang('profile');
                 break;
 
             case '/account/sessions':
-                $title = KN::lang('account') . ' · ' . KN::lang('sessions');
-                $arguments['sessions'] = $this->model->getSessions(KN::userData('id'));
+                $title = Base::lang('account') . ' · ' . Base::lang('sessions');
+                $arguments['sessions'] = $this->model->getSessions(Base::userData('id'));
                 break;
 
             default:
-                $title = KN::lang('account');
+                $title = Base::lang('account');
                 break;
         }
 
@@ -571,7 +571,7 @@ final class UserController {
             $push['arguments'] = $arguments;
         }
 
-        KN::layout('user/account', $push);
+        Base::layout('user/account', $push);
 
         if (isset($this->request['parameters']['logout']) !== false) {
             $this->logout();
@@ -583,7 +583,7 @@ final class UserController {
 
         $this->model = (new User());
         $this->model->clearSession($authCode);
-        KN::clearSession();
+        Base::clearSession();
 
     }
 
@@ -599,7 +599,7 @@ final class UserController {
             if (is_null($get) OR ! $get) {
                 $this->logout($authCode);
             } elseif (is_object($get)) {
-                KN::setSession($get);
+                Base::setSession($get);
                 $return = true;
             } else {
                 $return = true;

@@ -7,10 +7,10 @@
 
 declare(strict_types=1);
 
-namespace App\Model;
+namespace KN\Model;
 
-use App\Core\DB;
-use App\Helpers\KN;
+use KN\Core\DB;
+use KN\Helpers\Base;
 
 class User {
 
@@ -112,8 +112,8 @@ class User {
                 ->where('id', $getSession->id)
                 ->update([
                     'user_id'           => $data->id,
-                    'header'            => KN::getHeader(),
-                    'ip'                => KN::getIp(),
+                    'header'            => Base::getHeader(),
+                    'ip'                => Base::getIp(),
                     'role_id'           => $data->role_id,
                     'last_action_date'  => time(),
                     'last_action_point' => $lastActionPoint
@@ -126,8 +126,8 @@ class User {
                 ->insert([
                     'auth_code'         => $_COOKIE[KN_SESSION_NAME],
                     'user_id'           => $data->id,
-                    'header'            => KN::getHeader(),
-                    'ip'                => KN::getIp(),
+                    'header'            => Base::getHeader(),
+                    'ip'                => Base::getIp(),
                     'role_id'           => $data->role_id,
                     'last_action_date'  => time(),
                     'last_action_point' => $lastActionPoint
@@ -170,8 +170,8 @@ class User {
                     ->where('id', $getSession->id)
                     ->update([
                         'role_id'           => isset($return->role_id) !== false ? $return->role_id : $getSession->role_id,
-                        'ip'                => KN::getIp(),
-                        'header'            => KN::getHeader(),
+                        'ip'                => Base::getIp(),
+                        'header'            => Base::getHeader(),
                         'last_action_date'  => time(),
                         'last_action_point' => $request
                     ]);
@@ -218,7 +218,7 @@ class User {
             ->where('token', $token)
             ->where('status', 'passive')
             ->update([
-                'token'     => KN::tokenGenerator(80),
+                'token'     => Base::tokenGenerator(80),
                 'status'    => 'active'
             ]);
 

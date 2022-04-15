@@ -1,6 +1,6 @@
 <?php
 
-$route = new App\Core\Route();
+$route = new KN\Core\Route();
 
 
 $route->addRoutes([

@@ -7,10 +7,10 @@
 
 declare(strict_types=1);
 
-namespace App\Middlewares;
+namespace KN\Middlewares;
 
-use App\Helpers\KN;
-use App\Model\User as UserModel;
+use KN\Helpers\Base;
+use KN\Model\User as UserModel;
 
 final class Auth {
 
@@ -74,7 +74,7 @@ final class Auth {
 
         if (isset($_GET['verify-account']) !== false) {
 
-            $verifyToken = KN::filter($_GET['verify-account'], 'nulled_text');
+            $verifyToken = Base::filter($_GET['verify-account'], 'nulled_text');
             if ($verifyToken) {
 
                 $verify = (new UserModel())->verifyAccount($verifyToken);
@@ -99,7 +99,7 @@ final class Auth {
         /*
         
 
-        KN::input([]);
+        Base::input([]);
 
         $return['message'] = ($type == 'nonAuth' ? 'you_have_a_session' : 'you_have_not_a_session');
         */

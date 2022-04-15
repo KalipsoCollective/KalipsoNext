@@ -10,22 +10,22 @@ declare(strict_types=1);
 namespace KN\Core;
 
 use \Buki\Pdox;
-use App\Helpers\KN;
-use PDO;
+use KN\Helpers\Base;
+use \PDO;
 
 class DB extends Pdox {
 
     public function __construct () {
 
         parent::__construct([
-            'host'      => KN::config('database.host'),
-            'driver'    => KN::config('database.driver'),
-            'database'  => KN::config('database.name'),
-            'username'  => KN::config('database.user'),
-            'password'  => KN::config('database.pass'),
-            'charset'   => KN::config('database.charset'),
-            'collation' => KN::config('database.collation'),
-            'prefix'    => KN::config('database.prefix'),
+            'host'      => Base::config('database.host'),
+            'driver'    => Base::config('database.driver'),
+            'database'  => Base::config('database.name'),
+            'username'  => Base::config('database.user'),
+            'password'  => Base::config('database.pass'),
+            'charset'   => Base::config('database.charset'),
+            'collation' => Base::config('database.collation'),
+            'prefix'    => Base::config('database.prefix'),
         ]);
 
         return $this;
@@ -34,7 +34,7 @@ class DB extends Pdox {
     public function dbInit($schema) {
 
         // delete other tables
-        $sql = "SELECT CONCAT(`TABLE_NAME`) FROM information_schema.TABLES WHERE TABLE_SCHEMA = \"" . KN::config('database.name') . "\"";
+        $sql = "SELECT CONCAT(`TABLE_NAME`) FROM information_schema.TABLES WHERE TABLE_SCHEMA = \"" . Base::config('database.name') . "\"";
         $allTables = $this->pdo->prepare($sql);
         $allTables->execute();
         $allTables = $allTables->fetchAll(PDO::FETCH_COLUMN);

@@ -9,9 +9,9 @@ declare(strict_types=1);
 
 namespace KN\Core;
 
-use App\Helpers\KN;
-use App\Controllers\UserController;
-use App\Core\Log;
+use KN\Helpers\Base;
+use KN\Controllers\UserController;
+use KN\Core\Log;
 
 class Route {
 
@@ -38,14 +38,14 @@ class Route {
         // GET Parameters
         if (isset($_GET) !== false AND count($_GET)) {
             foreach ($_GET as $key => $value) {
-                self::$params[$key] = KN::filter($value);
+                self::$params[$key] = Base::filter($value);
             }
         }
 
         // POST Parameters
         if (isset($_POST) !== false AND count($_POST)) {
             foreach ($_POST as $key => $value) {
-                self::$params[$key] = KN::filter($value);
+                self::$params[$key] = Base::filter($value);
             }
         }
 
@@ -171,15 +171,15 @@ class Route {
         if (self::$pathNotFound) {
 
             self::$status = 404;
-            KN::http(self::$status);
+            Base::http(self::$status);
             $messages[] = [
                 'status' => 'alert',
-                'title'  => KN::lang('alert'),
-                'message'=> KN::lang('page_not_found')
+                'title'  => Base::lang('alert'),
+                'message'=> Base::lang('page_not_found')
             ];
 
-            KN::layout('404', [
-                'title'     => KN::lang('page_not_found') . ' | ' . KN::config('app.name'),
+            Base::layout('404', [
+                'title'     => Base::lang('page_not_found') . ' | ' . Base::config('app.name'),
                 'request'   => $request,
                 'response'  => ['messages' => $messages]
             ]);
@@ -210,7 +210,7 @@ class Route {
 
                             $class = explode('@', $class, 2);
                             $method = $class[1];
-                            $class = 'App\\Middlewares\\' . $class[0];
+                            $class = 'KN\\Middlewares\\' . $class[0];
 
                             $middleware = (new $class(
                                 $request
@@ -218,7 +218,7 @@ class Route {
 
                         } else { // call class with construct
 
-                            $class = 'App\\Middlewares\\' . $class;
+                            $class = 'KN\\Middlewares\\' . $class;
                             $middleware = (new $class(
                                 $request, 
                                 ...$arguments
@@ -260,7 +260,7 @@ class Route {
 
                             $class = explode('@', $class, 2);
                             $method = $class[1];
-                            $class = 'App\\Controllers\\' . $class[0];
+                            $class = 'KN\\Controllers\\' . $class[0];
 
                             $controller = (new $class(
                                 $request
@@ -268,7 +268,7 @@ class Route {
 
                         } else { // call class with construct
 
-                            $class = 'App\\Controllers\\' . $class;
+                            $class = 'KN\\Controllers\\' . $class;
                             $controller = (new $class(
                                 $request
                             ));
@@ -294,17 +294,17 @@ class Route {
                     if (is_array($message)) {
 
                         $status = $message['status'];
-                        $title = KN::lang($message['title']);
-                        $message = KN::lang($message['message']);
+                        $title = Base::lang($message['title']);
+                        $message = Base::lang($message['message']);
                         if (isset($message['link'])) 
                             $link = $message['link'];
 
                     } else {
 
                         $status = 'default';
-                        $title = KN::lang('alert');
-                        $message = KN::lang($message);
-                        $link = [KN::lang('go_to_home'), KN::base()];
+                        $title = Base::lang('alert');
+                        $message = Base::lang($message);
+                        $link = [Base::lang('go_to_home'), Base::base()];
                     }
 
                     $m = [
@@ -322,8 +322,8 @@ class Route {
                 }
                 $response = ['messages' => $messages];
 
-                KN::layout(self::$status, [
-                    'title'     => KN::lang('a_problem_occurred') . ' | ' . KN::config('app.name'),
+                Base::layout(self::$status, [
+                    'title'     => Base::lang('a_problem_occurred') . ' | ' . Base::config('app.name'),
                     'request'   => $request,
                     'response'  => $response
                 ]);

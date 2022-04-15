@@ -7,9 +7,9 @@
 
 declare(strict_types=1);
 
-namespace App\Middlewares;
+namespace KN\Middlewares;
 
-use App\Helpers\KN;
+use KN\Helpers\Base;
 
 final class CSRF {
 
@@ -32,7 +32,7 @@ final class CSRF {
                     'message'   => 'csrf_token_mismatch'
                 ];
 
-            } elseif (! KN::verifyCSRF($this->request['parameters']['_token'])) {
+            } elseif (! Base::verifyCSRF($this->request['parameters']['_token'])) {
 
                 return [
                     'status'    => false,

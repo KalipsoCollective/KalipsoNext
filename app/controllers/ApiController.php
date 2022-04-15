@@ -7,9 +7,9 @@
 
 declare(strict_types=1);
 
-namespace App\Controllers;
+namespace KN\Controllers;
 
-use App\Helpers\KN;
+use KN\Helpers\Base;
 
 final class ApiController {
 
@@ -24,7 +24,7 @@ final class ApiController {
 
     public static function index() {
 
-        KN::http('content_type', 
+        Base::http('content_type', 
             [   
                 'content' => 'json',
                 'write' => json_encode(["VERSION" => KN_VERSION])
