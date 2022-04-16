@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace KN\Core;
 
 use KN\Helpers\Base;
+use KN\Core\Log;
 
 class System {
 
@@ -20,7 +21,7 @@ class System {
 
         global $languageFile;
 
-        // powered_by header - please don't remove!
+        // powered_by header - please don't remove! 
         Base::http('powered_by');
 
         define('KN_SESSION_NAME', Base::config('app.session'));

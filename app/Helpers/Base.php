@@ -54,7 +54,8 @@ class Base {
      */
     public static function dirSize($directory) {
         $size = 0;
-        foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
+        foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file)
+        {
             if ($file->getFilename() == '..' OR $file->getFilename() == '.gitignore') 
                 continue;
 
@@ -188,7 +189,7 @@ class Base {
                 if (is_array($value)) {
                     $_value[$key] = self::filter($value, $parameter);
                 } else {
-                    $value = str_replace('<p><br></p>', '<br>', $value);
+
                     switch ($parameter) {
 
                         case 'html': 
@@ -257,8 +258,6 @@ class Base {
             $data = $_value;
 
         } else {
-
-            $data = str_replace('<p><br></p>', '<br>', $data);
 
             switch ($parameter) {
 

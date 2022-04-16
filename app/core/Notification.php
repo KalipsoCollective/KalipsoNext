@@ -12,9 +12,6 @@ namespace KN\Core;
 use App\Core\DB;
 use App\Helpers\KN;
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
 class Notification {
 
     public $types;

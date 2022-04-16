@@ -7,13 +7,22 @@
 
 declare(strict_types=1);
 
-try {
-    
-    require __DIR__.'/vendor/autoload.php';
-    require __DIR__.'/app/bootstrap.php';
+require __DIR__.'/vendor/autoload.php';
+require __DIR__.'/app/bootstrap.php';
 
-    (new KN\Core\System)->go();
-    // routing -> resources/route.php
+try {
+
+    $app = (new KN\Core\Factory);
+
+    $app->routes([
+        ['GET,POST', '/login', 'UserController@login', ['Auth@withOut']],
+        ['GET,POST', '/register', 'UserController@register', ['Auth@withOut']],
+        ['GET,POST', '/recovery', 'UserController@recovery', ['Auth@withOut']]
+    ]);
+
+    $app->route('POST', '/', 'AppController@index');
+
+    $app->run();
 
 } catch (Exception $e) {
 

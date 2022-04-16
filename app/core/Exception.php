@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace KN\Core;
 
-class Exception {
+final class Exception {
 
 	/**
 	 *  Fatal error handler
@@ -25,46 +25,46 @@ class Exception {
 	/**
 	 *  Error handler output
 	 **/
-	static function errorHandler(int|string $errNo, string $errMsg, string $file, int $line) {
+	static function errorHandler($errNo, string $errMsg, string $file, int $line) {
 		
 		$handlerInterface = '
         <!doctype html>
-	        <html>
-	            <head>
-	                <meta charset="utf-8">
-	                <title>Error Handler - KN</title>
-	                <style>
-	                body {
-	                  font-family: ui-monospace, 
-			             Menlo, Monaco, 
-			             "Cascadia Mono", "Segoe UI Mono", 
-			             "Roboto Mono", 
-			             "Oxygen Mono", 
-			             "Ubuntu Monospace", 
-			             "Source Code Pro",
-			             "Fira Mono", 
-			             "Droid Sans Mono", 
-			             "Courier New", monospace;
-	                  background: #151515;
-	                  color: #b2b2b2;
-	                  padding: 1rem;
-	                }
-	                h1 {
-	                    margin: 0;
-	                    color: #bebebe;
-	                }
-	                h2 {
-	                    margin: 0;
-	                    color: #777;
-	                }
-	                </style>
-	            </head>
-	            <body>
-	                <h1>KalipsoNext</h1>
-	                <h2>Error Handler</h2>
-	                <pre>[OUTPUT]</pre>
-	            </body>
-	        </html>';
+        <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Error Handler - KN</title>
+                <style>
+                body {
+                  font-family: ui-monospace, 
+		             Menlo, Monaco, 
+		             "Cascadia Mono", "Segoe UI Mono", 
+		             "Roboto Mono", 
+		             "Oxygen Mono", 
+		             "Ubuntu Monospace", 
+		             "Source Code Pro",
+		             "Fira Mono", 
+		             "Droid Sans Mono", 
+		             "Courier New", monospace;
+                  background: #151515;
+                  color: #b2b2b2;
+                  padding: 1rem;
+                }
+                h1 {
+                    margin: 0;
+                    color: #bebebe;
+                }
+                h2 {
+                    margin: 0;
+                    color: #777;
+                }
+                </style>
+            </head>
+            <body>
+                <h1>KalipsoNext</h1>
+                <h2>Error Handler</h2>
+                <pre>[OUTPUT]</pre>
+            </body>
+        </html>';
 
 	    $errorOutput = '    '.$file.':'.$line.' - '.$errMsg.' <strong>('.$errNo.')</strong>';
 	    // if (! KN:config('app.dev_mode')) http(500);
