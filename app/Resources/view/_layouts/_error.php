@@ -2,6 +2,6 @@
 
 return [
 	'header',
-	'_',
+	'error',
 	'end'
 ];

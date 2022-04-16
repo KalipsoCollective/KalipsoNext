@@ -18,6 +18,7 @@ final class Factory
      * All request details as object
      **/
     public $request;
+    public $response;
     public $routes = [];
     public $lang = 'en';
 
@@ -78,6 +79,7 @@ final class Factory
          * 
          *  Handle request
          **/
+        $this->response = (object)['status' => 200];
         $this->request = (object)[];
 
         $url = parse_url($_SERVER['REQUEST_URI']);
@@ -137,6 +139,7 @@ final class Factory
 
     public function run() {
 
+        $notFound = false;
         /**
          *
          * Method step 
@@ -145,17 +148,20 @@ final class Factory
             $this->routes[$this->request->uri] : [];
 
         if (! count($route)) {
-            $this->request->status = 404;
-            $this->view('error', [
-                'title' => '',
-                'error' => '404',
-                'output' => ''
-            ], 'error');
+            $notFound = true;
         }
 
 
-        Base::dump($route);
+        if ($notFound) {
+            $this->response->status = 404;
+            $this->view('error', [
+                'title' => Base::lang('err'),
+                'error' => '404',
+                'output' => Base::lang('error.page_not_found')
+            ], 'error');
+        }
 
+        return $this;
     }
 
 
@@ -163,8 +169,52 @@ final class Factory
      *
      * View Page 
      **/
-    public function view($layout = null, $file, $arguments = []) {
+    public function view($file, $arguments = [], $layout = 'app') {
 
+
+        /**
+         * 
+         * Send HTTP status code.
+         **/
+
+        Base::http($this->response->status);
+
+
+        /**
+         * 
+         * Arguments are extracted and the title is defined.
+         **/
+
+        $arguments['title'] = isset($arguments['title']) !== false ? 
+            str_replace(
+                ['[TITLE]', '[APP]'], 
+                [$arguments['title'], 
+                Base::config('settings.name')], Base::config('app.title_format')) 
+                : Base::config('settings.name');
+
+        extract($arguments);
+
+
+        /**
+         * 
+         * Prepare the page structure according to the format.
+         **/
+
+        $layoutVars = Base::path('app/Resources/view/_layouts/_' . $layout . '.php');
+        $layout = file_exists($layoutVars) ? (require $layoutVars) : ['_'];
+
+        foreach ($layout as $part) {
+            
+            if ($part == '_')
+                $part = $file;
+            else
+                $part = '_parts/' . $part;
+
+            if (file_exists($req = Base::path('app/Resources/view/' . $part . '.php'))) {
+                require $req;
+            }
+
+        }
 
     }
 }

@@ -22,6 +22,9 @@ try {
 
     $app->route('POST', '/', 'AppController@index');
 
+    // Do not remove this route for the KN script library.
+    $app->route('POST', '/script', 'AppController@script');
+
     $app->run();
 
 } catch (Exception $e) {

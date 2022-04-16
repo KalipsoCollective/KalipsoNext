@@ -605,9 +605,19 @@ class Base {
 
         global $languageFile;
 
-        if (isset($languageFile[$key]) !== false) {
+        $key = strpos($key, '.') !== false ? explode('.', $key) : [$key];
 
-            $key = $languageFile[$key];
+        $terms = $languageFile;
+        foreach ($key as $index) {
+            if (isset($terms[$index]) !== false) {
+                $terms = $terms[$index];
+                $key = $terms;
+            }
+        }
+
+        if (is_array($key)) {
+
+            $key = $index;
 
         }
 
