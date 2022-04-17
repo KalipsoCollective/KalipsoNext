@@ -14,12 +14,17 @@ use KN\Core\Log;
 
 final class Factory 
 {
+    const ALERT_ERROR = 'error';
+    const ALERT_WARNING = 'warning';
+    const ALERT_SUCCESS = 'success';
+    const ALERT_INFO = 'info';
+    const ALERT_DEFAULT = 'default';
 
-    // const ALERT::DANGER
     /**
      * All request details as object
      **/
     public $request;
+    public $auth = false;
     public $response;
     public $routes = [];
     public $lang = 'en';
@@ -58,6 +63,11 @@ final class Factory
 
 
         /**
+         *  Auth check 
+         **/
+        $this->authCheck();
+
+        /**
          * 
          * Language definition 
          **/
@@ -88,12 +98,22 @@ final class Factory
          *  Handle request and method
          **/
 
-        $this->response = (object)['status' => 200];
+        $this->response = (object)[
+            'statusCode'    => 200,
+            'status'        => true,
+            'data'          => [],
+            'alerts'        => [],
+            'redirect'      => [], // link, second, http status code
+        ];
         $this->request = (object)[];
 
         $url = parse_url($_SERVER['REQUEST_URI']);
-        $this->request->uri = '/' . trim($url['path'] === '/' ? $url['path'] : rtrim($url['path'], '/'), '/');
-        $this->request->method = strtoupper(empty($_SERVER['REQUEST_METHOD']) ? 'GET' : $_SERVER['REQUEST_METHOD']);
+        $this->request->uri = '/' . trim(
+            $url['path'] === '/' ? $url['path'] : rtrim($url['path'], '/'), '/'
+        );
+        $this->request->method = strtoupper(
+            empty($_SERVER['REQUEST_METHOD']) ? 'GET' : $_SERVER['REQUEST_METHOD']
+        );
 
 
         /**
@@ -230,7 +250,9 @@ final class Factory
                             if (in_array($pathBody, $expMatches) !== false) { // slug directory check
 
                                 // extract as attribute
-                                $this->request->attributes[ltrim($pathBody, ':')] = $explodedRequest[$pathIndex];
+                                $this->request->attributes[ltrim($pathBody, ':')] = 
+                                    $explodedRequest[$pathIndex];
+
                                 $route = $details;
                                 $notFound = false;
 
@@ -258,7 +280,7 @@ final class Factory
         // 404
         if ($notFound) {
 
-            $this->response->status = 404;
+            $this->response->statusCode = 404;
             $this->view('error', [
                 'title' => Base::lang('err'),
                 'error' => '404',
@@ -289,7 +311,34 @@ final class Factory
                             $this
                         ))->$method();
 
-                        $this->
+                        /**
+                         * Middleware alerts 
+                         **/
+                        if (isset($middleware['alerts']) !== false)
+                            $this->response->alerts = array_merge(
+                                $this->response->alerts, 
+                                $middleware['alerts']
+                            );
+
+                        /**
+                         *  If we have alerts, we will display them on the next page with the session.
+                         **/
+                        if (isset($middleware['redirect']) !== false)
+                            $this->response->redirect = $middleware['redirect'];
+
+                        /**
+                         * Change status code if middleware returns.
+                         **/
+                        if (isset($middleware['statusCode']) !== false)
+                            $this->response->statusCode = $middleware['statusCode'];
+
+                        /**
+                         * A status token to use in some conditions, such as API responses. It must be boolean.
+                         **/
+                        $this->response->status = $middleware['status'];
+
+                        if (! $middleware['status'])
+                            break;
                     }
 
                 }
@@ -319,7 +368,7 @@ final class Factory
 
             } else { // 405
 
-                $this->response->status = 405;
+                $this->response->statusCode = 405;
                 $this->view('error', [
                     'title' => Base::lang('err'),
                     'error' => '405',
@@ -351,7 +400,7 @@ final class Factory
          * Send HTTP status code.
          **/
 
-        Base::http($this->response->status);
+        Base::http($this->response->statusCode);
 
 
         /**
@@ -390,5 +439,22 @@ final class Factory
 
         }
 
+    }
+
+
+    /**
+     * 
+     *  Authority check with session
+     *  @return this 
+     **/
+    public function authCheck() {
+
+        if (isset($_SESSION['user']->id) !== false AND $_SESSION['user']->id)
+            $this->auth = true;
+        
+        else
+            $this->auth = false;
+
+        return $this;
     }
 }
