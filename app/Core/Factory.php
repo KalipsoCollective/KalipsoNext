@@ -14,6 +14,8 @@ use KN\Core\Log;
 
 final class Factory 
 {
+
+    // const ALERT::DANGER
     /**
      * All request details as object
      **/
@@ -268,6 +270,35 @@ final class Factory
             if (isset($route[$this->request->method]) !== false) {
 
                 $route = $route[$this->request->method];
+
+                /**
+                 * 
+                 * Middleware step
+                 **/
+
+                if (isset($route['middlewares']) !== false) {
+
+                    foreach ($route['middlewares'] as $middleware) {
+
+                        $middleware = explode('@', $middleware, 2);
+
+                        $method = $middleware[1];
+                        $class = 'KN\\Middlewares\\' . $middleware[0];
+
+                        $middleware = (new $class(
+                            $this
+                        ))->$method();
+
+                        $this->
+                    }
+
+                }
+
+                /**
+                 * 
+                 * Controller step
+                 **/
+
                 if (isset($route['controller']) !== false) {
 
                     $controller = explode('@', $route['controller'], 2);

@@ -9,10 +9,10 @@ declare(strict_types=1);
 
 namespace KN\Controllers;
 
-use KN\Controllers\BaseController;
+use KN\Controllers\Controller;
 use KN\Helpers\Base;
 
-final class AppController extends BaseController {
+final class AppController extends Controller {
 
     public function index() {
 
