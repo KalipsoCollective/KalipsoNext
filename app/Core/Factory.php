@@ -448,6 +448,15 @@ final class Factory
 
         }
 
+        /*
+        if ($addLog) {
+            (new Log())->add([
+                'request'       => $request,
+                'http_status'   => self::$status,
+                'response'      => isset($response) !== false ? $response : null
+            ]);
+        } */
+
     }
 
 
