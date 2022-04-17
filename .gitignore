@@ -1,5 +1,5 @@
 /node_modules
-/storage/*.kpx
+app/Storage
 /vendor
 .env
 .env.backup
