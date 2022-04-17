@@ -2,18 +2,18 @@
 
 /**
  * @package KN
- * @subpackage KN Database
+ * @subpackage Model
  */
 
 declare(strict_types=1);
 
-namespace KN\Core;
+namespace KN\Model;
 
-use \Buki\Pdox;
 use KN\Helpers\Base;
+use \Buki\Pdox;
 use \PDO;
 
-class DB extends Pdox {
+class Model extends Pdox {
 
     public function __construct () {
 

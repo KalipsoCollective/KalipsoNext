@@ -9,35 +9,36 @@ declare(strict_types=1);
 
 namespace KN\Model;
 
-use KN\Core\DB;
+use KN\Model\Model;
 use KN\Helpers\Base;
 
-class User {
+final class Users extends Model {
 
-    public $table = 'users';
-    public $sessionTable = 'sessions';
-    public $roleTable = 'user_roles';
-    public $base = null;
-    public $row = null;
 
-    public function __construct() {
+    const CREATED_AT = 'created_at';
+    const UPDATED_AT = 'updated_at';
 
-        $this->base = (new DB());
-        $this->base->table($this->table);
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'users';
 
-    }
+    /**
+     * The primary key associated with the table.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id';
 
-    public function setter($data) {
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 
-        if (is_null($this->row)) $this->row = (object)[];
-
-        foreach ($data as $columnName => $columnValue) {
-            
-            $this->row->{$columnName} = $columnValue;
-
-        }
-
-    }
 
     public function getUser($with, $data, $withOut = null) {
 
