@@ -9,15 +9,22 @@ declare(strict_types=1);
 
 namespace KN\Controllers;
 
-use KN\Controllers\BaseController;
 use KN\Helpers\Base;
 
-final class AppController extends BaseController {
+final class AppController {
+
+    public $request = [];
+    public $response = [];
+
+    public function __construct($request = []) {
+
+        $this->request = $request;
+
+    }
 
     public function index() {
 
-        Base::dump($this->container);
-        echo '<pre>Index</pre>';
+        Base::layout('index');
 
     }
 

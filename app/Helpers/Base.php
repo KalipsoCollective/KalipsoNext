@@ -544,57 +544,6 @@ class Base {
 
     }
 
-    /**
-     * Layout Creator
-     * @param  $file   body file
-     * @return void    
-     */
-    public static function layout($file, $externalParams = []) {
-
-        $title = isset($externalParams['title']) !== false ? $externalParams['title'] : self::title();
-        $layout = isset($externalParams['layout']) !== false ? $externalParams['layout'] : [
-            'layout/header', 
-            'layout/nav', 
-            '_', 
-            'layout/footer', 
-            'layout/end'
-        ];
-
-        $arguments = [
-            'title' => $title,
-        ];
-
-        if (isset($externalParams['request']) !== false) self::$request = $externalParams['request'];
-        if (isset($externalParams['response']) !== false) self::$response = $externalParams['response'];
-
-        if (isset($externalParams['arguments']) !== false AND is_array($externalParams['arguments'])) {
-            $arguments = array_merge($arguments, $externalParams['arguments']);
-        }
-
-        if (isset(self::$response['redirect']) !== false) {
-
-            self::http('refresh', [
-                'second'    => self::$response['redirect'][0],
-                'url'       => self::$response['redirect'][1]
-            ]);
-
-        }
-
-        foreach ($layout as $part) {
-
-            if ($part == '_') {
-                $part = $file;
-            }
-
-            self::view($part, $arguments);
-            echo PHP_EOL;
-
-        }
-
-        return self::$response;
-
-    }
-
 
     /**
      * Language Translation

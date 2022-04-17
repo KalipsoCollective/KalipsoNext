@@ -10,5 +10,6 @@ return [
     'error' => [
         'page_not_found' => 'Page not found!',
         'method_not_allowed' => 'Method not allowed!',
+        'controller_not_defined' => 'Controller is not defined!',
     ]
 ];
