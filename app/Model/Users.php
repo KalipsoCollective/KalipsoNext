@@ -30,7 +30,7 @@ final class Users extends Model {
      *
      * @var string
      */
-    protected $primaryKey = 'flight_id';
+    protected $primaryKey = 'id';
 
     /**
      * Indicates if the model should be timestamped.
