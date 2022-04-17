@@ -298,6 +298,8 @@ final class Factory
                  * Middleware step
                  **/
 
+                $next = true;
+
                 if (isset($route['middlewares']) !== false) {
 
                     foreach ($route['middlewares'] as $middleware) {
@@ -337,6 +339,9 @@ final class Factory
                          **/
                         $this->response->status = $middleware['status'];
 
+                        if (! $middleware['next'])
+                            $next = false;
+
                         if (! $middleware['status'])
                             break;
                     }
@@ -348,21 +353,25 @@ final class Factory
                  * Controller step
                  **/
 
-                if (isset($route['controller']) !== false) {
+                if ($next) {
 
-                    $controller = explode('@', $route['controller'], 2);
+                    if (isset($route['controller']) !== false) {
 
-                    $method = $controller[1];
-                    $class = 'KN\\Controllers\\' . $controller[0];
+                        $controller = explode('@', $route['controller'], 2);
 
-                    $middleware = (new $class(
-                        $this
-                    ))->$method();
+                        $method = $controller[1];
+                        $class = 'KN\\Controllers\\' . $controller[0];
+
+                        $middleware = (new $class(
+                            $this
+                        ))->$method();
 
 
-                } else {
+                    } else {
 
-                    throw new \Exception(Base::lang('error.controller_not_defined'));
+                        throw new \Exception(Base::lang('error.controller_not_defined'));
+                    }
+
                 }
                 
 

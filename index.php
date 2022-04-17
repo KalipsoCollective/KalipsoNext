@@ -16,9 +16,10 @@ try {
 
     // Route group
     $app->routes([
-        ['GET,POST', '/login', 'UserController@login', ['Auth@withOut']],
-        ['GET,POST', '/register', 'UserController@register', ['Auth@withOut']],
-        ['GET,POST', '/recovery', 'UserController@recovery', ['Auth@withOut']]
+        ['GET,POST', '/auth/login', 'UserController@login', ['Auth@withOut']],
+        ['GET,POST', '/auth/register', 'UserController@register', ['Auth@withOut']],
+        ['GET,POST', '/auth/recovery', 'UserController@recovery', ['Auth@withOut']],
+        ['GET,POST', '/auth', 'UserController@account', ['Auth@with']]
     ]);
 
     // Single route

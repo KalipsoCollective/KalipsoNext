@@ -20,4 +20,10 @@ final class UserController extends Controller {
 
     }
 
+    public function account() {
+
+        echo '<pre>Account</pre>';
+
+    }
+
 }
