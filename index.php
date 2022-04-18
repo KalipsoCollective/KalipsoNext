@@ -14,19 +14,30 @@ try {
 
     $app = (new KN\Core\Factory);
 
-    // Route group
+    // Multi route group
     $app->routes([
-        ['GET,POST', '/auth/login', 'UserController@login', ['Auth@withOut']],
-        ['GET,POST', '/auth/register', 'UserController@register', ['Auth@withOut']],
-        ['GET,POST', '/auth/recovery', 'UserController@recovery', ['Auth@withOut']],
-        ['GET,POST', '/auth', 'UserController@account', ['Auth@with']]
+        ['GET,POST', '/sandbox', 'AppController@sandbox'],
+        ['GET,POST', '/sandbox/:action', 'AppController@sandbox']
     ]);
+
+
+    // Root-bound route group
+    $app->routeGroup(['GET,POST', '/auth', 'UserController@account', ['Auth@with']], function () {
+        return [
+            ['GET,POST', '/login', 'UserController@login', ['Auth@withOut']],
+            ['GET,POST', '/register', 'UserController@register', ['Auth@withOut']],
+            ['GET,POST', '/recovery', 'UserController@recovery', ['Auth@withOut']],
+            ['GET,POST', '/settings', 'UserController@settings', ['Auth@with']],
+        ];
+    });
 
     // Single route
     $app->route('GET', '/', 'AppController@index');
 
     // Do not remove this route for the KN script library.
     $app->route('GET,POST', '/script', 'AppController@script');
+    $app->route('GET,POST', '/sandbox', 'AppController@sandbox');
+    $app->route('GET,POST', '/sandbox/:action', 'AppController@sandbox');
 
     $app->run();
 

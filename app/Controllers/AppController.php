@@ -16,27 +16,49 @@ final class AppController extends Controller {
 
     public function index() {
 
-        Base::dump($this->container);
-        echo '<pre>Index</pre>';
+        return [
+            'status' => true,
+            'statusCode' => 200,
+            'arguments' => [
+                'title' => Base::lang('base.welcome'),
+                'output' => Base::lang('error.welcome_message')
+            ]
+        ];
 
     }
 
-
+    /**
+     * It prepares the project files and database, 
+     * it is also used for your debugging operations.
+     * 
+     **/
     public function sandbox() {
 
         if (Base::config('app.dev_mode')) {
-            Base::layout('sandbox', [
-                'layout'    => ['layout/header', '_', 'layout/end'],
-                'title'     => 'Sandbox | ' . Base::config('app.name'),
-                'request'   => $this->request
-            ]);
+
+            Base::dump($this->get('routes'));
+            
+            return [
+                'status' => true,
+                'statusCode' => 200,
+                'arguments' => [
+                    'title' => Base::lang('base.sandbox'),
+                    'output' => Base::lang('base.sandbox_message')
+                ],
+                'view' => ['sandbox', 'sandbox']
+            ];
+
         } else {
-            Base::http(301);
-            Base::http('location', ['url' => Base::base()]);
+
+            return [
+                'status' => false,
+                'statusCode' => 302,
+                'redirect' => '/',
+            ];
         }
 
     }
-
+    /*
 
     public function dynamicJS() {
 
@@ -44,5 +66,6 @@ final class AppController extends Controller {
         require Base::path('app/resources/script.php');
 
     }
+    */
 
 }

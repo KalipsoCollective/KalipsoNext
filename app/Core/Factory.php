@@ -14,6 +14,9 @@ use KN\Core\Log;
 
 final class Factory 
 {
+    /**
+     *  Alert types 
+     **/
     const ALERT_ERROR = 'error';
     const ALERT_WARNING = 'warning';
     const ALERT_SUCCESS = 'success';
@@ -104,6 +107,7 @@ final class Factory
             'data'          => [],
             'alerts'        => [],
             'redirect'      => [], // link, second, http status code
+            'view'          => [] // view parameters -> [0] = page, [1] = layout
         ];
         $this->request = (object)[];
 
@@ -173,6 +177,39 @@ final class Factory
 
 
     /**
+     *  Sub router register 
+     *  @param array root        available method or methods(with comma)
+     *  @param string method        available method or methods(with comma)
+     *  @param string route         link definition
+     *  @param string controller    controller definition, ex: (AppController@index)
+     *  @param array  middlewares   middleware definition, ex: ['CSRF@validate', 'Auth@with']
+     *  @return this
+     **/
+
+    public function routeWithRoot($root, $method, $route, $controller, $middlewares = [])
+    {
+        $methods = strpos($method, ',') ? explode(',', $method) : [$method];
+
+        foreach ($methods as $method) {
+            $detail = [
+                'controller' => $controller, 
+                'middlewares' => $middlewares
+            ];
+
+            if (! count($detail['middlewares'])) {
+                unset($detail['middlewares']);
+            }
+
+            $this->routes[$root[1].$route][$method] = $detail;
+        }
+
+
+        return $this;
+
+    }
+
+
+    /**
      * Multi route register 
      * @param routes -> multi route definition as array
      * @return this
@@ -181,6 +218,24 @@ final class Factory
 
         foreach ($routes as $route)
             $this->route(...$route);
+
+        return $this;
+    }
+
+
+    /**
+     * Root-bound groupped route register
+     * @param array root            root route definition
+     * @param function subRoutes    sub route definitions
+     * @return this
+     **/
+    public function routeGroup($root, $subRoutes) {
+
+        // register root route
+        $this->route(...$root);
+
+        foreach ($subRoutes() as $route)
+            $this->routeWithRoot($root, ...$route);
 
         return $this;
     }
@@ -281,11 +336,11 @@ final class Factory
         if ($notFound) {
 
             $this->response->statusCode = 404;
-            $this->view('error', [
-                'title' => Base::lang('err'),
+            $this->response->title = Base::lang('err');
+            $this->response->arguments = [
                 'error' => '404',
                 'output' => Base::lang('error.page_not_found')
-            ], 'error');
+            ];
 
         } else {
 
@@ -328,6 +383,13 @@ final class Factory
                         if (isset($middleware['redirect']) !== false)
                             $this->response->redirect = $middleware['redirect'];
 
+
+                        /**
+                         * Arguments 
+                         **/
+                        if (isset($middleware['arguments']) !== false)
+                            $this->response->arguments = $middleware['arguments'];
+
                         /**
                          * Change status code if middleware returns.
                          **/
@@ -362,10 +424,45 @@ final class Factory
                         $method = $controller[1];
                         $class = 'KN\\Controllers\\' . $controller[0];
 
-                        $middleware = (new $class(
+                        $controller = (new $class(
                             $this
                         ))->$method();
 
+                        /**
+                         * Middleware alerts 
+                         **/
+                        if (isset($controller['alerts']) !== false)
+                            $this->response->alerts = array_merge(
+                                $this->response->alerts, 
+                                $controller['alerts']
+                            );
+
+                        /**
+                         *  If we have alerts, we will display them on the next page with the session.
+                         **/
+                        if (isset($controller['redirect']) !== false)
+                            $this->response->redirect = $controller['redirect'];
+
+
+                        /**
+                         * Arguments 
+                         **/
+                        if (isset($controller['arguments']) !== false)
+                            $this->response->arguments = $controller['arguments'];
+
+                        /**
+                         * Change status code if middleware returns.
+                         **/
+                        if (isset($controller['statusCode']) !== false)
+                            $this->response->statusCode = $controller['statusCode'];
+
+                        /**
+                         * A status token to use in some conditions, such as API responses. It must be boolean.
+                         **/
+                        $this->response->status = $controller['status'];
+
+                        if (isset($controller['view']) !== false)
+                            $this->response->view = $controller['view'];
 
                     } else {
 
@@ -373,22 +470,61 @@ final class Factory
                     }
 
                 }
-                
+
+                // Output
+                $this->response();
 
             } else { // 405
 
                 $this->response->statusCode = 405;
-                $this->view('error', [
-                    'title' => Base::lang('err'),
+                $this->response->title = Base::lang('err');
+                $this->response->arguments = [
                     'error' => '405',
                     'output' => Base::lang('error.method_not_allowed')
-                ], 'error');
+                ];
 
             }
 
         }
 
         return $this;
+    }
+
+
+    /**
+     * Extract created response
+     * @return void
+     **/
+    public function response() {
+
+        if ($this->response->statusCode === 200) {
+
+            if ($this->response->view !== '') {
+
+            }
+
+        } else {
+
+            if ($this->response->redirect) {
+
+                Base::http($this->response->statusCode);
+                Base::http('refresh', [
+                    'url' => (is_array($this->response->redirect) ? $this->response->redirect[0] : $this->response->redirect),
+                    'second' => (is_array($this->response->redirect) ? $this->response->redirect[1] : null)
+                ]);
+
+            } else {
+
+                $this->view(
+                    $this->response->statusCode, 
+                    $this->response->arguments, 
+                    'error'
+                );
+
+            }
+
+        }
+
     }
 
 

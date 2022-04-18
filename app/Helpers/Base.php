@@ -352,6 +352,7 @@ class Base {
         $httpCodes = [
             200 => 'OK',
             301 => 'Moved Permanently',
+            302 => 'Found',
             401 => 'Unauthorized',
             403 => 'Forbidden',
             404 => 'Not Found',
