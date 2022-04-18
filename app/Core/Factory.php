@@ -504,9 +504,11 @@ final class Factory
                 if (is_string($this->response->view)) {
                     $viewFile = $this->response->view;
                     $viewLayout = 'app';
-                } else {
+                } elseif (is_array($this->response->view) AND count($this->response->view) === 2) {
                     $viewFile = $this->response->view[0];
                     $viewLayout = $this->response->view[1];
+                } else {
+                    throw new \Exception(Base::lang('error.view_definition_not_found'));
                 }
                 
                 Base::http($this->response->statusCode);

@@ -12,6 +12,7 @@ return [
         'method_not_allowed' => 'Methoda izin verilmez!',
         'controller_not_defined' => 'Kontrolcü tanımlanmamış!',
         'unauthorized' => 'Yetkiniz yok.',
+        'view_definition_not_found' => 'Kontrolcü, görüntüleme parametresi göndermedi!',
     ],
     'base' => [
         'welcome' => 'Hoş geldiniz!',

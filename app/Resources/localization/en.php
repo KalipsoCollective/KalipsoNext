@@ -12,6 +12,7 @@ return [
         'method_not_allowed' => 'Method not allowed!',
         'controller_not_defined' => 'Controller is not defined!',
         'unauthorized' => 'You are not authorized.',
+        'view_definition_not_found' => 'Controller did not send view parameter!',
     ],
     'base' => [
         'welcome' => 'Welcome!',
