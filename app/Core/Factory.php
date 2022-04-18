@@ -501,6 +501,20 @@ final class Factory
 
             if ($this->response->view !== '') {
 
+                if (is_string($this->response->view)) {
+                    $viewFile = $this->response->view;
+                    $viewLayout = 'app';
+                } else {
+                    $viewFile = $this->response->view[0];
+                    $viewLayout = $this->response->view[1];
+                }
+                
+                Base::http($this->response->statusCode);
+                $this->view($viewFile, 
+                    $this->response->arguments, 
+                    $viewLayout
+                );
+
             }
 
         } else {
@@ -610,5 +624,17 @@ final class Factory
             $this->auth = false;
 
         return $this;
+    }
+
+
+    /**
+     *  URL Generator
+     *  @param string $route
+     *  @return atring $url
+     **/
+    public function url($route) {
+
+        return $route;
+
     }
 }

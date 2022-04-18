@@ -35,8 +35,6 @@ final class AppController extends Controller {
     public function sandbox() {
 
         if (Base::config('app.dev_mode')) {
-
-            Base::dump($this->get('routes'));
             
             return [
                 'status' => true,
