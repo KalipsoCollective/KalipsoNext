@@ -36,6 +36,8 @@ return [
         'db_seed' => 'Veri Tabanını Doldur',
         'db_seed_message' => 'Şema içeriğinde verileri tablolara ekler.',
         'column' => 'Sütun',
+        'data' => 'Veri',
+        'table' => 'Tablo',
         'type' => 'Tip',
         'auto_inc' => 'Otomatik Artan',
         'attribute' => 'Özellik',
@@ -52,5 +54,13 @@ return [
         'db_engine' => 'Veri Tabanı Motoru',
         'db_init_alert' => '[DB_NAME] adında bir veritabanı yoksa, [COLLATION] karşılaştırma seti ayarıyla ekleyin.',
         'db_init_start' => 'Harika, Hazırla!',
+        'db_seed_success' => 'Veri tabanı başarıyla içe aktarıldı.',
+        'db_seed_problem' => 'Veritabanı içe aktarılırken bir sorun oluştu. -> [ERROR]',
+        'db_seed_start' => 'Harika, İçe Aktar!',
+        'clear_storage_success' => 'Depolama klasörü temizlendi.',
+        'folder' => 'Klasör',
+        'delete' => 'Sil',
+        'folder_not_found' => 'Klasör bulunamadı!',
+        'change_language' => 'Dili Değiştir',
     ]
 ];

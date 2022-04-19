@@ -1302,4 +1302,24 @@ class Base {
 
     }
 
+
+    public static function cleanHTML($data, $tags = []) {
+
+        $reg = [];
+        foreach($tags as $tag) {
+
+            if (in_array($tag, ['meta', 'hr', 'br']))
+                $reg[] = '<'.$tag.'[^>]*>';
+
+            else
+                $reg[] = '<'.$tag.'[^>]*>.+?<\/'.$tag.'>';
+            
+        }
+
+        $reg = implode('|', $reg);
+
+        return preg_replace('/('.$reg.')/is', '', $data);
+
+    }
+
 }

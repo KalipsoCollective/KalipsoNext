@@ -47,14 +47,13 @@ final class AppController extends Controller {
 
             $title = Base::lang('base.sandbox');
             $output = '';
+            $dbSchema = require Base::path('app/Resources/db_schema.php');
 
             switch ($action) {
                 case 'db-init':
                     $head = Base::lang('base.db_init');
                     $title = $head . ' | ' . $title;
                     $description = Base::lang('base.db_init_message');
-
-                    $dbSchema = require Base::path('app/Resources/db_schema.php');
 
                     if (isset($_GET['start']) !== false) {
 
@@ -175,12 +174,12 @@ final class AppController extends Controller {
                     if (isset($_GET['start']) !== false) {
 
                         $output = '<p class="text-muted">Seeding...</p>';
-                        $init = (new KN\Core\DB)->dbSeed($dbSchema);
+                        $init = (new Model)->dbSeed($dbSchema);
 
                         if ($init === 0) {
-                            $output .= '<p class="text-success">Database has been seeded successfully.</p>';
+                            $output .= '<p class="text-success">'.Base::lang('base.db_seed_success').'</p>';
                         } else {
-                            $output .= '<p class="text-danger">There was a problem while seeding the database. -> ' . $init. '</p>';
+                            $output .= '<p class="text-danger">'.str_replace('[ERROR]', $init, Base::lang('base.db_seed_problem')).'</p>';
                         }
 
                     } else {
@@ -192,8 +191,8 @@ final class AppController extends Controller {
                                 <table class="table table-dark table-sm table-hover table-striped">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Table</th>
-                                            <th scope="col">Data</th>
+                                            <th scope="col">'.Base::lang('base.table').'</th>
+                                            <th scope="col">'.Base::lang('base.data').'</th>
                                         </tr>
                                     </thead>
                                     <tbody>';
@@ -226,7 +225,9 @@ final class AppController extends Controller {
                         }
 
                         if ($output != '') {
-                            $output .= '<a class="btn btn-dark mt-5 btn-sm" href="'.self::base('sandbox/db-seed?start').'">Good, Seed!</a>';
+                            $output .= '<a class="btn btn-light mt-5 btn-sm" href="'.$this->get()->url('/sandbox/db-seed?start').'">
+                                '.Base::lang('base.db_seed_start').'
+                            </a>';
                         }
                     }
                     break;
@@ -235,18 +236,108 @@ final class AppController extends Controller {
                     $head = Base::lang('base.php_info');
                     $title = $head . ' | ' . $title;
                     $description = Base::lang('base.php_info_message');
+
+                    ob_start ();
+                    phpinfo ();
+                    $output = ob_get_clean();
+                    $output = Base::cleanHTML($output, ['script', 'meta', 'style', 'title']);;
+                    $output = '<pre>'.trim($output).'</pre>';
                     break;
 
                 case 'session':
                     $head = Base::lang('base.session');
                     $title = $head . ' | ' . $title;
                     $description = Base::lang('base.session_message');
+
+                    $output = '';
+                    foreach (Base::config('app.available_languages') as $lang) {
+                        $output .= '<a class="ms-2" href="' . $this->get()->url('/sandbox/session?lang=' . $lang) . '">
+                            ' . $lang . '
+                        </a>';
+                    }
+                    $output = '<p class="text-muted">'.Base::lang('base.change_language').': '.$output.'</p>';
+
+                    ob_start ();
+                    Base::dump($_SESSION);
+                    $output .= ob_get_clean();
                     break;
 
                 case 'clear-storage':
                     $head = Base::lang('base.clear_storage');
                     $title = $head . ' | ' . $title;
                     $description = Base::lang('base.clear_storage_message');
+
+                    $path = Base::path('app/Storage/*');
+                    $deleteAction = (isset($_GET['delete']) !== false AND count($_GET['delete'])) ? $_GET['delete'] : null;
+                    if ($deleteAction) {
+                        $glob = glob($path, GLOB_BRACE);
+                        if ($glob AND count($glob)) {
+                            foreach ($glob as $folder) {
+                                if (in_array(basename($folder), $deleteAction))
+                                    self::removeDir($folder);   
+                            }
+                            echo '<p class="text-success">'.Base::lang('base.clear_storage_success').'</p>';
+
+                        }
+                    }
+
+                    $glob = glob($path, GLOB_BRACE);
+
+                    if ($glob AND count($glob)) {
+
+                        echo '
+                        <form method="get">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-borderless table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" width="5%">#</th>
+                                            <th scope="col">'.Base::lang('base.folder').'</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>';
+                                    $deleteBtn = false;
+                                    foreach ($glob as $folder) {
+                                    
+                                        if (! is_dir($folder)) 
+                                            continue;
+
+                                        $size = self::dirSize($folder);
+                                        if (! $deleteBtn AND $size) 
+                                            $deleteBtn = true;
+
+                                        $basename = basename($folder);
+
+                                        echo '
+                                        <tr>
+                                            <td>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" 
+                                                        type="checkbox" name="delete[]" 
+                                                        value="' . $basename . '"
+                                                        '.(! $size ? ' disabled' : ' checked').'>
+                                                </div>
+                                            </td>
+                                            <td>/' . $basename . ' 
+                                                <small class="'.(! $size ? 'text-muted' : 'text-primary').'">
+                                                    ' . Base::formatSize($size) . '
+                                                </small>
+                                            </td>
+                                        </tr>';
+
+                                    }
+                                echo '
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button type="submit" class="btn btn-danger btn-sm"'.(! $deleteBtn ? ' disabled' : '').'>
+                                ' . Base::lang('base.delete') . '
+                            </button>
+                        </form>';
+                    } else {
+                        echo '<p class="text-danger">' . Base::lang('base.folder_not_found') . '</p>';
+                    }
+                    $output = ob_get_clean();
                     break;
                 
                 default:

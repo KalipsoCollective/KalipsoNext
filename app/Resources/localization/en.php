@@ -36,6 +36,8 @@ return [
         'db_seed' => 'Seed DB',
         'db_seed_message' => 'Inserts data into tables within the schema.',
         'column' => 'Column',
+        'table' => 'Table',
+        'data' => 'Data',
         'type' => 'Type',
         'auto_inc' => 'Auto Increment',
         'attribute' => 'Attribute',
@@ -52,5 +54,13 @@ return [
         'db_engine' => 'Database Engine',
         'db_init_alert' => 'If there is no database named [DB_NAME], add it with the [COLLATION] collation.',
         'db_init_start' => 'Good, Prepare!',
+        'db_seed_success' => 'Database has been seeded successfully.',
+        'db_seed_problem' => 'There was a problem while seeding the database. -> [ERROR]',
+        'db_seed_start' => 'Good, Seed!',
+        'clear_storage_success' => 'Storage folder is cleared.',
+        'folder' => 'Folder',
+        'delete' => 'Delete',
+        'folder_not_found' => 'Folder not found!',
+        'change_language' => 'Change Language',
     ]
 ];
