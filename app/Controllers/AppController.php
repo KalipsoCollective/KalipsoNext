@@ -23,7 +23,8 @@ final class AppController extends Controller {
             'arguments' => [
                 'title' => Base::lang('base.welcome'),
                 'output' => Base::lang('error.welcome_message')
-            ]
+            ],
+            'view' => 'index'
         ];
 
     }
