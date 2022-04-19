@@ -171,6 +171,64 @@ final class AppController extends Controller {
                     $head = Base::lang('base.db_seed');
                     $title = $head . ' | ' . $title;
                     $description = Base::lang('base.db_seed_message');
+
+                    if (isset($_GET['start']) !== false) {
+
+                        $output = '<p class="text-muted">Seeding...</p>';
+                        $init = (new KN\Core\DB)->dbSeed($dbSchema);
+
+                        if ($init === 0) {
+                            $output .= '<p class="text-success">Database has been seeded successfully.</p>';
+                        } else {
+                            $output .= '<p class="text-danger">There was a problem while seeding the database. -> ' . $init. '</p>';
+                        }
+
+                    } else {
+
+                        foreach ($dbSchema['data'] as $table => $detail) {
+
+                            $cols = '
+                            <div class="table-responsive">
+                                <table class="table table-dark table-sm table-hover table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Table</th>
+                                            <th scope="col">Data</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>';
+
+                            foreach ($detail as $tableDataDetail) {
+
+                                $dataList = '<ul class="list-group list-group-flush">';
+                                foreach ($tableDataDetail as $col => $data) {
+                                    $dataList .= '
+                                    <li class="list-group-item d-flex justify-content-between align-items-start space">
+                                        <strong>'.$col.'</strong> <span class="ml-2">'.$data.'</span>
+                                    </li>';
+                                }
+                                $dataList .= '</ul>';
+
+                                $cols .= '
+                                <tr>
+                                    <th scope="row">'.$table.'</th>
+                                    <td scope="col">
+                                        '.$dataList.'
+                                    </td>
+                                <tr>';
+
+                            }
+                            $cols .= '
+                                </table>
+                            </div>';
+
+                            $output .= '<details><summary>'.$table.'</summary>'.$cols.'</details>';
+                        }
+
+                        if ($output != '') {
+                            $output .= '<a class="btn btn-dark mt-5 btn-sm" href="'.self::base('sandbox/db-seed?start').'">Good, Seed!</a>';
+                        }
+                    }
                     break;
 
                 case 'php-info':

@@ -12,16 +12,15 @@
 		<ul class="navbar-nav">
 			<li class="nav-item">
 				<a class="nav-link<?php echo $this->currentLink('/sandbox'); ?>" href="<?php echo $this->url('/sandbox'); ?>">
-					<?php echo self::h('base')::lang('base.sandbox'); ?>
+					<?php echo KN\Helpers\Base::lang('base.sandbox'); ?>
 				</a>
 			</li>
 			<?php
 			foreach ($steps as $step) {
-				
 				echo '
 				<li class="nav-item">
 					<a class="nav-link'.$this->currentLink('/sandbox/' . $step).'" href="'.$this->url('/sandbox/' . $step).'">
-						'.self::h('base')::lang('base.' . str_replace('-', '_', $step)).'
+						'.KN\Helpers\Base::lang('base.' . str_replace('-', '_', $step)).'
 					</a>
 				</li>';
 			} ?>

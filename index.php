@@ -14,8 +14,6 @@ try {
 
     $app = (new KN\Core\Factory);
 
-    $app->registerHelper(KN\Helpers\Base::class, 'base');
-
     // Multi route group
     $app->routes([
         ['GET,POST', '/sandbox', 'AppController@sandbox'],
