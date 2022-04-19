@@ -726,8 +726,8 @@ class Base {
     public static function getSession($key = null) {
         
         $return = null;
-        if (is_string($key) AND isset($_SESSION->{$key}) !== false) {
-            $return = $_SESSION->{$key};
+        if (is_string($key) AND isset($_SESSION[$key]) !== false) {
+            $return = $_SESSION[$key];
         } elseif (is_null($key)) {
             $return = $_SESSION;
         }

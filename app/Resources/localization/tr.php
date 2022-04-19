@@ -62,5 +62,10 @@ return [
         'delete' => 'Sil',
         'folder_not_found' => 'Klasör bulunamadı!',
         'change_language' => 'Dili Değiştir',
-    ]
+        'seeding' => 'İçe aktarılıyor...',
+        'go_to_home' => 'Ana Sayfaya Dön',
+    ],
+    'app' => [
+        'home' => 'Ana Sayfa',
+    ] 
 ];

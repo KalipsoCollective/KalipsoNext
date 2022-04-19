@@ -173,7 +173,7 @@ final class AppController extends Controller {
 
                     if (isset($_GET['start']) !== false) {
 
-                        $output = '<p class="text-muted">Seeding...</p>';
+                        $output = '<p class="text-muted">'.Base::lang('base.seeding').'</p>';
                         $init = (new Model)->dbSeed($dbSchema);
 
                         if ($init === 0) {

@@ -23,7 +23,14 @@
 						'.KN\Helpers\Base::lang('base.' . str_replace('-', '_', $step)).'
 					</a>
 				</li>';
-			} ?>
+			}	?>
+		</ul>
+		<ul class="navbar-nav ms-auto">
+			<li class="nav-item">
+				<a class="nav-link" href="<?php echo $this->url('/'); ?>">
+					<?php echo KN\Helpers\Base::lang('base.go_to_home'); ?>
+				</a>
+			</li>
 		</ul>
 	</div>
 	</div>

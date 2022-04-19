@@ -62,5 +62,10 @@ return [
         'delete' => 'Delete',
         'folder_not_found' => 'Folder not found!',
         'change_language' => 'Change Language',
-    ]
+        'seeding' => 'Seeding...',
+        'go_to_home' => 'Go to Home',
+    ],
+    'app' => [
+        'home' => 'Home',
+    ] 
 ];

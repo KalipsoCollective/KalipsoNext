@@ -30,7 +30,7 @@ final class Factory
     public $auth = false;
     public $response;
     public $routes = [];
-    public $lang = 'en';
+    public $lang = '';
 
     /**
      *  
@@ -41,6 +41,11 @@ final class Factory
     {
 
         global $languageFile;
+
+        /**
+         * Assign default language 
+         **/
+        $this->lang = Base::config('app.default_language');
 
         /**
          * 
@@ -72,32 +77,6 @@ final class Factory
 
         /**
          * 
-         * Language definition 
-         **/
-
-        $sessionLanguageParam = Base::getSession('language');
-        if (
-            ! is_null($sessionLanguageParam) AND 
-            file_exists($path = Base::path('app/Resources/localization/'.$sessionLanguageParam.'.php'))
-        ) {
-
-            $this->lang = $sessionLanguageParam;
-            $languageFile = require $path;
-
-        } elseif (file_exists($path = Base::path('app/Resources/localization/'.$this->lang.'.php'))) {
-
-            $languageFile = require $path;
-            Base::setSession($this->lang, 'language');
-
-        } else {
-
-            throw new \Exception("Language file is not found!");
-
-        }
-
-
-        /**
-         * 
          *  Handle request and method
          **/
 
@@ -119,14 +98,19 @@ final class Factory
             empty($_SERVER['REQUEST_METHOD']) ? 'GET' : $_SERVER['REQUEST_METHOD']
         );
 
-
         /**
          * Clean GET parameters
          **/ 
-
+        $langChanged = false;
         if (isset($_GET) !== false AND count($_GET)) {
+
             foreach ($_GET as $key => $value) {
                 $this->request->params[$key] = Base::filter($value);
+
+                if ($key === 'lang' AND in_array($value, Base::config('app.available_languages'))) {
+                    $this->lang = $value;
+                    $langChanged = true;
+                }
             }
         }
 
@@ -139,6 +123,42 @@ final class Factory
             foreach ($_POST as $key => $value) {
                 $this->request->params[$key] = Base::filter($value);
             }
+        }
+
+        /**
+         * 
+         * Language definition 
+         **/
+        $sessionLanguageParam = Base::getSession('language');
+        if (
+            $langChanged AND 
+            $sessionLanguageParam != $this->lang AND 
+            file_exists($path = Base::path('app/Resources/localization/'.$this->lang.'.php'))
+        ) {
+
+            $languageFile = require $path;
+            Base::setSession($this->lang, 'language');
+
+        } elseif (
+            is_null($sessionLanguageParam) AND 
+            file_exists($path = Base::path('app/Resources/localization/'.$this->lang.'.php'))
+
+        ) {
+
+            $languageFile = require $path;
+            Base::setSession($this->lang, 'language');
+            
+        } elseif (
+            ! is_null($sessionLanguageParam) AND 
+            file_exists($path = Base::path('app/Resources/localization/'.$sessionLanguageParam.'.php'))
+
+        ) {
+
+            $languageFile = require $path;
+            $this->lang = $sessionLanguageParam;
+            
+        } else {
+            throw new \Exception("Language file is not found!");
         }
 
     }

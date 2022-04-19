@@ -15,4 +15,5 @@ return [
 	'charset'	=> 'utf-8',
 	'title_format' => '[TITLE] — [APP]',
 	'available_languages' => ['en', 'tr'],
+	'default_language' => 'en',
 ];
