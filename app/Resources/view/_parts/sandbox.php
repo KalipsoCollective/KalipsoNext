@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top shadow">
 	<div class="container-fluid">
 	<a class="navbar-brand" href="#">
 		<?php echo KN\Helpers\Base::config('app.name'); ?> 
@@ -32,3 +32,12 @@
 	</div>
 	</div>
 </nav>
+<div class="wrap bg-dark text-light pt-5 min-vh-100">
+	<div class="container">
+		<div class="row pt-3">
+			<div class="col-12">
+				<?php echo $output; ?>
+			</div>
+		</div>
+	</div>
+</div>

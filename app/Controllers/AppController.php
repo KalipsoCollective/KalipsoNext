@@ -35,13 +35,35 @@ final class AppController extends Controller {
     public function sandbox() {
 
         if (Base::config('app.dev_mode')) {
+
+            $sandboxSteps = [
+                '' => 'welcome',
+                'db-init' => 'db-init',
+                'db-seed' => 'db-seed',
+                'php-info' => 'php-info',
+                'session' => 'session',
+                'clear-storage' => 'clear-storage'
+            ];
+
+            $title = Base::lang('base.sandbox');
+            $description = Base::lang('base.sandbox_message');
+
+            if (isset($this->get('request')->attributes['action']) !== false) {
+
+                $action = $this->get('request')->attributes['action'];
+
+                $title = Base::lang('base.' . $action) . ' | ' . $title;
+
+            }
             
             return [
                 'status' => true,
                 'statusCode' => 200,
                 'arguments' => [
-                    'title' => Base::lang('base.sandbox'),
-                    'output' => Base::lang('base.sandbox_message')
+                    'title' => $title,
+                    'description' => $description,
+                    'output' => 'output',
+                    'steps' => $sandboxSteps
                 ],
                 'view' => ['sandbox', 'sandbox']
             ];
