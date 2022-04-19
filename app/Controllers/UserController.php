@@ -16,13 +16,27 @@ final class UserController extends Controller {
 
     public function login() {
 
-        echo '<pre>Index</pre>';
+        return [
+            'status' => true,
+            'statusCode' => 200,
+            'arguments' => [
+                'title' => Base::lang('base.login'),
+                'output' => Base::lang('error.login_message')
+            ]
+        ];
 
     }
 
     public function account() {
 
-        echo '<pre>Account</pre>';
+        return [
+            'status' => true,
+            'statusCode' => 200,
+            'arguments' => [
+                'title' => Base::lang('base.account'),
+                'output' => Base::lang('error.account_message')
+            ]
+        ];
 
     }
 

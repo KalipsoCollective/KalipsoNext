@@ -25,15 +25,12 @@ final class Auth extends Middleware {
         } else {
             return [
                 'status' => false,
+                'statusCode' => 401,
                 'next'   => false,
-                'view'   => [
-                    'error', 
-                    [
-                        'title' => Base::lang('err'),
-                        'error' => '401',
-                        'output' => Base::lang('error.unauthorized')
-                    ], 
-                    'error'
+                'arguments' => [
+                    'title' => Base::lang('err'),
+                    'error' => '401',
+                    'output' => Base::lang('error.unauthorized')
                 ]
             ];
         }
@@ -51,7 +48,8 @@ final class Auth extends Middleware {
             return [
                 'status' => false,
                 'next'   => false,
-                'redirect' => ['/' , 0, 302]
+                'statusCode' => 302,
+                'redirect' => '/'
             ];
         }
 

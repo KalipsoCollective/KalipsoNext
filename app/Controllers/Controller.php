@@ -25,9 +25,9 @@ class Controller {
 
     }
 
-    public function get($key) {
+    public function get($key = null) {
 
-        return $this->container->{$key};
+        return is_null($key) ? $this->container : $this->container->{$key};
 
     }
 

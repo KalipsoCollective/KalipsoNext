@@ -352,6 +352,7 @@ class Base {
         $httpCodes = [
             200 => 'OK',
             301 => 'Moved Permanently',
+            302 => 'Found',
             401 => 'Unauthorized',
             403 => 'Forbidden',
             404 => 'Not Found',
@@ -725,8 +726,8 @@ class Base {
     public static function getSession($key = null) {
         
         $return = null;
-        if (is_string($key) AND isset($_SESSION->{$key}) !== false) {
-            $return = $_SESSION->{$key};
+        if (is_string($key) AND isset($_SESSION[$key]) !== false) {
+            $return = $_SESSION[$key];
         } elseif (is_null($key)) {
             $return = $_SESSION;
         }
@@ -1298,6 +1299,26 @@ class Base {
             $return = date('Y-m-d', (int) $return);
         }
         return $return;
+
+    }
+
+
+    public static function cleanHTML($data, $tags = []) {
+
+        $reg = [];
+        foreach($tags as $tag) {
+
+            if (in_array($tag, ['meta', 'hr', 'br']))
+                $reg[] = '<'.$tag.'[^>]*>';
+
+            else
+                $reg[] = '<'.$tag.'[^>]*>.+?<\/'.$tag.'>';
+            
+        }
+
+        $reg = implode('|', $reg);
+
+        return preg_replace('/('.$reg.')/is', '', $data);
 
     }
 
