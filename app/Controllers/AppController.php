@@ -36,24 +36,46 @@ final class AppController extends Controller {
 
         if (Base::config('app.dev_mode')) {
 
-            $sandboxSteps = [
-                '' => 'welcome',
-                'db-init' => 'db-init',
-                'db-seed' => 'db-seed',
-                'php-info' => 'php-info',
-                'session' => 'session',
-                'clear-storage' => 'clear-storage'
-            ];
+            $steps = ['db-init', 'db-seed', 'php-info', 'session', 'clear-storage'];
 
-            $title = Base::lang('base.sandbox');
-            $description = Base::lang('base.sandbox_message');
-
-            if (isset($this->get('request')->attributes['action']) !== false) {
-
+            $action = '';
+            if (
+                isset($this->get('request')->attributes['action']) !== false AND 
+                in_array($this->get('request')->attributes['action'], $steps))
                 $action = $this->get('request')->attributes['action'];
 
-                $title = Base::lang('base.' . $action) . ' | ' . $title;
+            $title = Base::lang('base.sandbox');
 
+            switch ($action) {
+                case 'db-init':
+                    $title = Base::lang('base.db_init') . ' | ' . $title;
+                    $description = Base::lang('base.db_init_message');
+                    break;
+
+                case 'db-seed':
+                    $title = Base::lang('base.db_seed') . ' | ' . $title;
+                    $description = Base::lang('base.db_seed_message');
+                    break;
+
+                case 'php-info':
+                    $title = Base::lang('base.php_info') . ' | ' . $title;
+                    $description = Base::lang('base.php_info_message');
+                    break;
+
+                case 'session':
+                    $title = Base::lang('base.session') . ' | ' . $title;
+                    $description = Base::lang('base.session_message');
+                    break;
+
+                case 'clear-storage':
+                    $title = Base::lang('base.clear_storage') . ' | ' . $title;
+                    $description = Base::lang('base.clear_storage_message');
+                    break;
+                
+                default:
+                    
+                    $description = Base::lang('base.sandbox_message');
+                    break;
             }
             
             return [
@@ -63,7 +85,7 @@ final class AppController extends Controller {
                     'title' => $title,
                     'description' => $description,
                     'output' => 'output',
-                    'steps' => $sandboxSteps
+                    'steps' => $steps
                 ],
                 'view' => ['sandbox', 'sandbox']
             ];

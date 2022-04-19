@@ -11,23 +11,20 @@
 	<div class="collapse navbar-collapse" id="navbarNav">
 		<ul class="navbar-nav">
 			<li class="nav-item">
-				<a class="nav-link" href="<?php echo $this->url('/sandbox'); ?>">Welcome</a>
+				<a class="nav-link" href="<?php echo $this->url('/sandbox'); ?>">
+					<?php echo self::h('base')::lang('base.sandbox'); ?>
+				</a>
 			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="<?php echo $this->url('/sandbox/db-init'); ?>">DB Init</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="<?php echo $this->url('/sandbox/db-seed'); ?>">DB Seed</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="<?php echo $this->url('/sandbox/php-info'); ?>">PHP Info</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="<?php echo $this->url('/sandbox/session'); ?>">Session</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="<?php echo $this->url('/sandbox/clear-storage'); ?>">Clear Storage</a>
-			</li>
+			<?php
+			foreach ($steps as $step) {
+				
+				echo '
+				<li class="nav-item">
+					<a class="nav-link" href="'.$this->url('/sandbox/' . $step).'">
+						'.self::h('base')::lang('base.' . str_replace('-', '_', $step)).'
+					</a>
+				</li>';
+			} ?>
 		</ul>
 	</div>
 	</div>
@@ -36,6 +33,8 @@
 	<div class="container">
 		<div class="row pt-3">
 			<div class="col-12">
+				<h1><?php echo $title; ?></h1>
+				<h2 class="h4"><?php echo $description; ?></h2>
 				<?php echo $output; ?>
 			</div>
 		</div>

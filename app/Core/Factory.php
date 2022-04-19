@@ -31,6 +31,7 @@ final class Factory
     public $response;
     public $routes = [];
     public $lang = 'en';
+    public static $helpers = [];
 
     /**
      *  
@@ -637,6 +638,22 @@ final class Factory
     public function url($route) {
 
         return $route;
+
+    }
+
+    public function registerHelper($helper, $name) {
+
+        self::$helpers[$name] = $helper;
+
+    }
+
+    public static function h($helperName) {
+
+        try {
+            return self::$helpers[$helperName];
+        } catch (Exception $e) {
+            throw new \Exception(Base::lang('error.helper_is_not_registered'));
+        }
 
     }
 }
