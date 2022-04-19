@@ -633,7 +633,7 @@ final class Factory
     /**
      *  URL Generator
      *  @param string $route
-     *  @return atring $url
+     *  @return string $url
      **/
     public function url($route) {
 
@@ -641,12 +641,25 @@ final class Factory
 
     }
 
+
+    /**
+     * Helper register 
+     * @param object $helper    helper class
+     * @param string $name      helper name
+     * @return this
+     **/
     public function registerHelper($helper, $name) {
 
         self::$helpers[$name] = $helper;
-
+        return $this;
     }
 
+
+    /**
+     * Helper caller 
+     * @param object $helperName    helper name
+     * @return helper class
+     **/
     public static function h($helperName) {
 
         try {
@@ -655,5 +668,24 @@ final class Factory
             throw new \Exception(Base::lang('error.helper_is_not_registered'));
         }
 
+    }
+
+
+    /**
+     * Returns the active class if the given link is the current link.
+     * @param string $link     given link
+     * @param string $class    html class to return
+     * @param boolean $exact   it gives full return when it is exactly the same.
+     * @return string $string
+     **/
+    public function currentLink ($link, $class = 'active', $exact = true) {
+        
+        $return = '';
+        if ($this->request->uri === $link OR 
+            (! $exact AND strpos($this->request->uri, $link))
+        ) {
+            $return = ' ' . trim($class);
+        }
+        return $return;
     }
 }

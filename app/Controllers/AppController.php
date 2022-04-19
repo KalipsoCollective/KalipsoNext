@@ -11,6 +11,7 @@ namespace KN\Controllers;
 
 use KN\Controllers\Controller;
 use KN\Helpers\Base;
+use KN\Model\Model;
 
 final class AppController extends Controller {
 
@@ -45,35 +46,153 @@ final class AppController extends Controller {
                 $action = $this->get('request')->attributes['action'];
 
             $title = Base::lang('base.sandbox');
+            $output = '';
 
             switch ($action) {
                 case 'db-init':
-                    $title = Base::lang('base.db_init') . ' | ' . $title;
+                    $head = Base::lang('base.db_init');
+                    $title = $head . ' | ' . $title;
                     $description = Base::lang('base.db_init_message');
+
+                    $dbSchema = require Base::path('app/Resources/db_schema.php');
+
+                    if (isset($_GET['start']) !== false) {
+
+                        $init = (new Model)->dbInit($dbSchema);
+
+                        if ($init === 0) {
+                            $output .= '<p class="text-success">'.Base::lang('base.db_init_success').'</p>';
+                        } else {
+                            $output .= '<p class="text-danger">'.str_replace('[ERROR]', $init, Base::lang('base.db_init_problem')).'</p>';
+                        }
+
+                    } else {
+
+                        foreach ($dbSchema['tables'] as $table => $detail) {
+
+                            $cols = '
+                            <div class="table-responsive">
+                                <table class="table table-dark table-sm table-hover table-striped caption-bottom">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">'.Base::lang('base.column').'</th>
+                                            <th scope="col">'.Base::lang('base.type').'</th>
+                                            <th scope="col">'.Base::lang('base.auto_inc').'</th>
+                                            <th scope="col">'.Base::lang('base.attribute').'</th>
+                                            <th scope="col">'.Base::lang('base.default').'</th>
+                                            <th scope="col">'.Base::lang('base.index').'</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>';
+
+                            foreach ($detail['cols'] as $col => $colDetail) {
+
+                                $cols .= '
+                                        <tr>
+                                            <th scope="row">'.$col.'</th>
+                                            <td scope="col">
+                                                '.$colDetail['type'].(
+                                                    isset($colDetail['type_values']) !== false ? 
+                                                    (is_array($colDetail['type_values']) ? '('.implode(',', $colDetail['type_values']).')' : 
+                                                        '('.$colDetail['type_values']).')' : ''
+                                                ).'
+                                            </td>
+                                            <td scope="col">'.Base::lang('base.' . (isset($colDetail['auto_inc']) !== false ? 'yes' : 'no')).'</td>
+                                            <td scope="col">'.(isset($colDetail['attr']) !== false ? $colDetail['attr'] : '').'</td>
+                                            <td scope="col">'.(isset($colDetail['default']) !== false ? $colDetail['default'] : '').'</td>
+                                            <td scope="col">'.(isset($colDetail['index']) !== false ? $colDetail['index'] : '').'</td>
+                                        <tr>';
+
+                            }
+
+                            $tableValues = '';
+
+                            $tableValues = '<h3 class="small text-muted">
+                                '.(
+                                    isset($dbSchema['table_values']['specific'][$table]['charset']) !== false ? 
+                                        Base::lang('base.charset') . ': <strong>'.$dbSchema['table_values']['specific'][$table]['charset'].'</strong><br>' : 
+                                        ''
+                                ).'
+                                '.(
+                                    isset($dbSchema['table_values']['specific'][$table]['collate']) !== false ? 
+                                        Base::lang('base.collate') . ': <strong>'.$dbSchema['table_values']['specific'][$table]['collate'].'</strong><br>' : 
+                                        ''
+                                ).'
+                                '.(
+                                    isset($dbSchema['table_values']['specific'][$table]['engine']) !== false ? 
+                                        Base::lang('base.engine') . ': <strong>'.$dbSchema['table_values']['specific'][$table]['engine'].'</strong><br>' : 
+                                        ''
+                                ).'
+                            </h3>';
+
+                            $cols .= '
+                                    </tbody>
+                                    <caption>'.$tableValues.'</caption>
+                                </table>
+                            </div>';
+
+                            $output .= '<details><summary>'.$table.'</summary>'.$cols.'</details>';
+                        }
+
+                        if ($output != '') {
+                            $output = '
+                            <h3 class="small text-muted">
+                                '.Base::lang('base.db_name').': 
+                                <strong>'.Base::config('database.name').'</strong><br>
+                                '.Base::lang('base.db_charset').': 
+                                <strong>'.(isset($dbSchema['table_values']['charset']) !== false ? $dbSchema['table_values']['charset'] : '-').'</strong><br>
+                                '.Base::lang('base.db_collate').': 
+                                <strong>'.(isset($dbSchema['table_values']['collate']) !== false ? $dbSchema['table_values']['collate'] : '-').'</strong><br>
+                                '.Base::lang('base.db_engine').': 
+                                <strong>'.(isset($dbSchema['table_values']['engine']) !== false ? $dbSchema['table_values']['engine'] : '-').'</strong><br>
+                            </h3>
+                            '.$output.'
+                            <p class="small text-danger mt-5">
+                                '.str_replace(
+                                    [
+                                        '[DB_NAME]', 
+                                        '[COLLATION]'
+                                    ], 
+                                    [
+                                        '<strong>'.Base::config('database.name').'</strong>',
+                                        '<strong>'.Base::config('database.collation').'</strong>'
+                                    ], 
+                                    Base::lang('base.db_init_alert')
+                                ).'
+                            </p>
+                            <a class="btn btn-light btn-sm" href="'.$this->get()->url('/sandbox/db-init?start').'">
+                                '.Base::lang('base.db_init_start').'
+                            </a>';
+                        }
+                    }
                     break;
 
                 case 'db-seed':
-                    $title = Base::lang('base.db_seed') . ' | ' . $title;
+                    $head = Base::lang('base.db_seed');
+                    $title = $head . ' | ' . $title;
                     $description = Base::lang('base.db_seed_message');
                     break;
 
                 case 'php-info':
-                    $title = Base::lang('base.php_info') . ' | ' . $title;
+                    $head = Base::lang('base.php_info');
+                    $title = $head . ' | ' . $title;
                     $description = Base::lang('base.php_info_message');
                     break;
 
                 case 'session':
-                    $title = Base::lang('base.session') . ' | ' . $title;
+                    $head = Base::lang('base.session');
+                    $title = $head . ' | ' . $title;
                     $description = Base::lang('base.session_message');
                     break;
 
                 case 'clear-storage':
-                    $title = Base::lang('base.clear_storage') . ' | ' . $title;
+                    $head = Base::lang('base.clear_storage');
+                    $title = $head . ' | ' . $title;
                     $description = Base::lang('base.clear_storage_message');
                     break;
                 
                 default:
-                    
+                    $head = Base::lang('base.welcome');
                     $description = Base::lang('base.sandbox_message');
                     break;
             }
@@ -83,8 +202,9 @@ final class AppController extends Controller {
                 'statusCode' => 200,
                 'arguments' => [
                     'title' => $title,
+                    'head'  => $head,
                     'description' => $description,
-                    'output' => 'output',
+                    'output' => $output,
                     'steps' => $steps
                 ],
                 'view' => ['sandbox', 'sandbox']

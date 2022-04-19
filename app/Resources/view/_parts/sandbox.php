@@ -11,7 +11,7 @@
 	<div class="collapse navbar-collapse" id="navbarNav">
 		<ul class="navbar-nav">
 			<li class="nav-item">
-				<a class="nav-link" href="<?php echo $this->url('/sandbox'); ?>">
+				<a class="nav-link<?php echo $this->currentLink('/sandbox'); ?>" href="<?php echo $this->url('/sandbox'); ?>">
 					<?php echo self::h('base')::lang('base.sandbox'); ?>
 				</a>
 			</li>
@@ -20,7 +20,7 @@
 				
 				echo '
 				<li class="nav-item">
-					<a class="nav-link" href="'.$this->url('/sandbox/' . $step).'">
+					<a class="nav-link'.$this->currentLink('/sandbox/' . $step).'" href="'.$this->url('/sandbox/' . $step).'">
 						'.self::h('base')::lang('base.' . str_replace('-', '_', $step)).'
 					</a>
 				</li>';
@@ -33,7 +33,7 @@
 	<div class="container">
 		<div class="row pt-3">
 			<div class="col-12">
-				<h1><?php echo $title; ?></h1>
+				<h1><?php echo $head; ?></h1>
 				<h2 class="h4"><?php echo $description; ?></h2>
 				<?php echo $output; ?>
 			</div>
