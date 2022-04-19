@@ -42,4 +42,18 @@ final class UserController extends Controller {
 
     }
 
+    public function register() {
+
+        return [
+            'status' => true,
+            'statusCode' => 200,
+            'arguments' => [
+                'title' => Base::lang('base.register'),
+                'output' => Base::lang('base.register_message')
+            ],
+            'view' => 'user.register',
+        ];
+
+    }
+
 }
