@@ -621,13 +621,14 @@ final class Factory
         }
 
         /*
-        if ($addLog) {
+        if (Base::config('settings.log')) {
             (new Log())->add([
                 'request'       => $request,
                 'http_status'   => self::$status,
                 'response'      => isset($response) !== false ? $response : null
             ]);
-        } */
+        }
+        */
 
     }
 

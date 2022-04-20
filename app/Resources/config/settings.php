@@ -7,7 +7,7 @@ return [
 	'separator'				=> '-',
 	'language'				=> 'tr',
 	'ssl'					=> false,
-
+	'log'					=> true,
 	'mail_send_type'		=> 'server',
 	'smtp_address'			=> 'smtp.yandex.com.tr',
 	'smtp_port'				=> '587',

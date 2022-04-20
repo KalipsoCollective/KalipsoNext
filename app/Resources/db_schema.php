@@ -642,12 +642,6 @@ return [
 					'default'       => 'NULL',
 					'index'         => 'INDEX'
 				],
-				'user_id' => [
-					'type'          => 'int',
-					'nullable'      => true,
-					'default'       => 0,
-					'index'         => 'INDEX'
-				],
 				'ip' => [
 					'type'          => 'varchar',
 					'type_values'   => 80,
@@ -670,6 +664,23 @@ return [
 					'type'          => 'text',
 					'nullable'      => true,
 					'default'       => 'NULL'
+				],
+				'exec_time' => [
+					'type'          => 'float',
+					'type_values'   => '10,2',
+					'default'       => 0,
+					'index'         => 'INDEX'
+				],
+				'created_at' => [
+					'type'          => 'varchar',
+					'type_values'   => 80,
+					'index'         => 'INDEX'
+				],
+				'created_by' => [
+					'type'          => 'int',
+					'type_values'   => 10,
+					'default'       => 0,
+					'index'         => 'INDEX'
 				]
 			]
 		],

@@ -68,6 +68,12 @@ class Model extends Pdox {
                         $type = 'int(' . $attributes['type_values'] . ')';
                         break;
 
+                    case 'float':
+                    case 'decimal':
+                        if (isset($attributes['type_values']) !== false) $attributes['type_values'] = '('.$attributes['type_values'].')';
+                        $type = $attributes['type'] . $attributes['type_values'];
+                        break;
+
                     case 'varchar':
                         $type = 'varchar(' . $attributes['type_values'] . ') COLLATE ' .
                             (isset($attributes['collate']) !== false ? $attributes['collate'] :
@@ -181,6 +187,7 @@ class Model extends Pdox {
 
         try {
 
+            // \KN\Helpers\Base::dump($sql);
             return $this->pdo->exec($sql);
 
         } catch(PDOException $e) {
