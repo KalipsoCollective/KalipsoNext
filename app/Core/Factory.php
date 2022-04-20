@@ -558,9 +558,15 @@ final class Factory
                 );
 
             }
-
         }
 
+        Base::dump(Base::config('settings.log'));
+        if (Base::config('settings.log')) {
+            (new Log())->add([
+                'request'       => $this->request,
+                'response'      => $this->response,
+            ]);
+        }
     }
 
 
@@ -620,16 +626,6 @@ final class Factory
 
         }
 
-        /*
-        if (Base::config('settings.log')) {
-            (new Log())->add([
-                'request'       => $request,
-                'http_status'   => self::$status,
-                'response'      => isset($response) !== false ? $response : null
-            ]);
-        }
-        */
-
     }
 
 
@@ -669,7 +665,7 @@ final class Factory
      * @param boolean $exact   it gives full return when it is exactly the same.
      * @return string $string
      **/
-    public function currentLink ($link, $class = 'active', $exact = true) {
+    public function currentLink($link, $class = 'active', $exact = true) {
         
         $return = '';
         if ($this->request->uri === $link OR 

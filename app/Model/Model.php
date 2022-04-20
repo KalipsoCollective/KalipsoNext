@@ -13,7 +13,7 @@ use KN\Helpers\Base;
 use \Buki\Pdox;
 use \PDO;
 
-class Model extends Pdox {
+abstract class Model extends Pdox {
 
     public function __construct () {
 

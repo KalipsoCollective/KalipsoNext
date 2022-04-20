@@ -1206,21 +1206,6 @@ class Base {
     }
 
     /**
-     * Get URL attribute
-     * @param string $name
-     * @return string
-     */
-    public static function getAttribute($name) {
-
-        $return = null;
-        if (isset(self::$request['attributes'][$name]) !== false) {
-            $return = self::$request['attributes'][$name];
-        }
-        return $return;
-
-    }
-
-    /**
      * Get auth status
      * @return bool
      */
@@ -1269,18 +1254,13 @@ class Base {
     }
 
     /**
-     * Generate Title
-     * @param int $length
+     * Get Auth Code
      * @return string
      */
 
-    public static function title($title = null): string {
+    public static function authCode(): string {
 
-        return $title ? str_replace(
-            ['[APP]', '[TITLE]'], 
-            [self::config('settings.name'), $title], 
-            self::config('app.title_format')
-        )  : self::config('settings.name');
+        return isset($_COOKIE[KN_SESSION_NAME]) !== false ? $_COOKIE[KN_SESSION_NAME] : null;
 
     }
 
