@@ -15,25 +15,27 @@ use KN\Helpers\Base;
 final class Log extends Model {
 
 
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
+    const CREATED = true;
+    const UPDATED = false;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'logs';
 
     public function __construct () {
 
-    	$this->table($this->table);
+    	return $this->db->table('logs');
        
     }
 
-    public function insert (array $data, $type = false) {
+    public function add(array $data, $type = false) {
 
-    	Base::dump($data);
+        if (self::CREATED) {
+
+            $data['created_at'] = time();
+            $data['created_by'] = Base::userData('id') ?? 0;
+
+        }
+        // Base::dump($data);
+        // Base::dump($this, true);
+        return $this->db->insert($data);
        
     }
 

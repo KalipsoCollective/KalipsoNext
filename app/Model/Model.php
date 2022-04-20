@@ -13,11 +13,13 @@ use KN\Helpers\Base;
 use \Buki\Pdox;
 use \PDO;
 
-abstract class Model extends Pdox {
+class Model {
 
-    public function __construct () {
+    public $db = null;
 
-        parent::__construct([
+    public function __construct() {
+
+        $this->db = new Pdox([
             'host'      => Base::config('database.host'),
             'driver'    => Base::config('database.driver'),
             'database'  => Base::config('database.name'),
@@ -35,14 +37,14 @@ abstract class Model extends Pdox {
 
         // delete other tables
         $sql = "SELECT CONCAT(`TABLE_NAME`) FROM information_schema.TABLES WHERE TABLE_SCHEMA = \"" . Base::config('database.name') . "\"";
-        $allTables = $this->pdo->prepare($sql);
+        $allTables = $this->db->pdo->prepare($sql);
         $allTables->execute();
         $allTables = $allTables->fetchAll(PDO::FETCH_COLUMN);
         
         if (is_array($allTables) AND count($allTables)) {
 
             foreach ($allTables as $table) {
-                $this->pdo->exec("DROP TABLE IF EXISTS `" . $table . "`;");
+                $this->db->pdo->exec("DROP TABLE IF EXISTS `" . $table . "`;");
             }
 
         }
@@ -188,7 +190,7 @@ abstract class Model extends Pdox {
         try {
 
             // \KN\Helpers\Base::dump($sql);
-            return $this->pdo->exec($sql);
+            return $this->db->pdo->exec($sql);
 
         } catch(PDOException $e) {
 
@@ -244,7 +246,7 @@ abstract class Model extends Pdox {
 
         try {
 
-            return $this->pdo->exec($sql);
+            return $this->db->pdo->exec($sql);
 
         } catch(PDOException $e) {
 
