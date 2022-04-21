@@ -24,8 +24,6 @@ class Log {
         $args = Base::privateDataCleaner($args);
         $exec = microtime(true) - KN_START;
 
-        Base::dump($exec);
-
         $model = new Model();
         return $model->insert([
             'endpoint'      => $args['request']->uri,

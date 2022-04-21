@@ -363,6 +363,9 @@ final class Factory
                 'output' => Base::lang('error.page_not_found')
             ];
 
+            // Output
+            $this->response();
+
         } else {
 
             if (isset($route[$this->request->method]) !== false) {
@@ -622,7 +625,7 @@ final class Factory
         foreach ($layout as $part) {
             
             if ($part == '_')
-                $part = $file;
+                $part = strpos($file, '.') !== false ? str_replace('.', '/', $file) : $file;
             else
                 $part = '_parts/' . $part;
 
