@@ -622,11 +622,6 @@ return [
 					'type_values'   => 11,
 					'index'         => 'PRIMARY'
 				],
-				'date' => [
-					'type'          => 'varchar',
-					'type_values'   => 80,
-					'index'         => 'INDEX'
-				],
 				'endpoint' => [
 					'type'          => 'text',
 					'index'         => 'FULLTEXT'
@@ -667,7 +662,7 @@ return [
 				],
 				'exec_time' => [
 					'type'          => 'float',
-					'type_values'   => '10,2',
+					'type_values'   => '5,4',
 					'default'       => 0,
 					'index'         => 'INDEX'
 				],

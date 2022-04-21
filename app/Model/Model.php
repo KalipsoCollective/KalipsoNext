@@ -13,13 +13,14 @@ use KN\Helpers\Base;
 use \Buki\Pdox;
 use \PDO;
 
-class Model {
+class Model extends Pdox {
 
-    public $db = null;
+    protected $created = false;
+    protected $updated = false;
 
     public function __construct() {
 
-        $this->db = new Pdox([
+        parent::__construct([
             'host'      => Base::config('database.host'),
             'driver'    => Base::config('database.driver'),
             'database'  => Base::config('database.name'),
@@ -29,22 +30,33 @@ class Model {
             'collation' => Base::config('database.collation'),
             'prefix'    => Base::config('database.prefix'),
         ]);
+    }
 
-        return $this;
+    public function insert(array $data, $type = false) {
+
+        if ($this->created) {
+
+            $data['created_at'] = time();
+            $data['created_by'] = Base::userData('id') ?? 0;
+
+        }
+
+        return parent::insert($data, $type);
+
     }
 
     public function dbInit($schema) {
 
         // delete other tables
         $sql = "SELECT CONCAT(`TABLE_NAME`) FROM information_schema.TABLES WHERE TABLE_SCHEMA = \"" . Base::config('database.name') . "\"";
-        $allTables = $this->db->pdo->prepare($sql);
+        $allTables = $this->pdo->prepare($sql);
         $allTables->execute();
         $allTables = $allTables->fetchAll(PDO::FETCH_COLUMN);
         
         if (is_array($allTables) AND count($allTables)) {
 
             foreach ($allTables as $table) {
-                $this->db->pdo->exec("DROP TABLE IF EXISTS `" . $table . "`;");
+                $this->pdo->exec("DROP TABLE IF EXISTS `" . $table . "`;");
             }
 
         }
@@ -190,7 +202,7 @@ class Model {
         try {
 
             // \KN\Helpers\Base::dump($sql);
-            return $this->db->pdo->exec($sql);
+            return $this->pdo->exec($sql);
 
         } catch(PDOException $e) {
 
@@ -246,7 +258,7 @@ class Model {
 
         try {
 
-            return $this->db->pdo->exec($sql);
+            return $this->pdo->exec($sql);
 
         } catch(PDOException $e) {
 

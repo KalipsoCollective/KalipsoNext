@@ -1258,7 +1258,7 @@ class Base {
      * @return string
      */
 
-    public static function authCode(): string {
+    public static function authCode() {
 
         return isset($_COOKIE[KN_SESSION_NAME]) !== false ? $_COOKIE[KN_SESSION_NAME] : null;
 

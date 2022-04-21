@@ -559,8 +559,7 @@ final class Factory
 
             }
         }
-
-        Base::dump(Base::config('settings.log'));
+        
         if (Base::config('settings.log')) {
             (new Log())->add([
                 'request'       => $this->request,
