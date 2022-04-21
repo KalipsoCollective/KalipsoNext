@@ -357,6 +357,7 @@ final class AppController extends Controller {
                     'output' => $output,
                     'steps' => $steps
                 ],
+                'log' => false,
                 'view' => ['sandbox', 'sandbox']
             ];
 

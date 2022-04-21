@@ -31,6 +31,7 @@ final class Factory
     public $response;
     public $routes = [];
     public $lang = '';
+    public $log = true;
 
     /**
      *  
@@ -471,6 +472,12 @@ final class Factory
                             $this->response->arguments = $controller['arguments'];
 
                         /**
+                         * Log 
+                         **/
+                        if (isset($controller['log']) !== false)
+                            $this->log = $controller['log'];
+
+                        /**
                          * Change status code if middleware returns.
                          **/
                         if (isset($controller['statusCode']) !== false)
@@ -560,7 +567,7 @@ final class Factory
             }
         }
         
-        if (Base::config('settings.log')) {
+        if ($this->log AND Base::config('settings.log')) {
             (new Log())->add([
                 'request'       => $this->request,
                 'response'      => $this->response,
