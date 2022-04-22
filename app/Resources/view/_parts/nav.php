@@ -8,7 +8,7 @@
                     <ul class="navbar-nav">
                         <li class="nav-item">
                             <a class="nav-link<?php echo $this->currentLink('/'); ?>" href="<?php echo $this->url('/'); ?>">
-                                <?php echo KN\Helpers\Base::lang('app.home'); ?>
+                                <?php echo KN\Helpers\Base::lang('base.home'); ?>
                             </a>
                         </li>
                     </ul>

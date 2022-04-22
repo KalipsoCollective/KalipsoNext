@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top shadow">
 	<div class="container-fluid">
-	<a class="navbar-brand" href="#">
+	<a class="navbar-brand" href="<?php echo $this->url('/sandbox'); ?>">
 		<?php echo KN\Helpers\Base::config('app.name'); ?> 
 		<small class="h6">_sandbox</small>
 	</a>
@@ -12,15 +12,16 @@
 		<ul class="navbar-nav">
 			<li class="nav-item">
 				<a class="nav-link<?php echo $this->currentLink('/sandbox'); ?>" href="<?php echo $this->url('/sandbox'); ?>">
-					<?php echo KN\Helpers\Base::lang('base.sandbox'); ?>
+					<i class="ti ti-box"></i> <?php echo KN\Helpers\Base::lang('base.sandbox'); ?>
 				</a>
 			</li>
 			<?php
-			foreach ($steps as $step) {
+			foreach ($steps as $step => $details) {
+
 				echo '
 				<li class="nav-item">
 					<a class="nav-link'.$this->currentLink('/sandbox/' . $step).'" href="'.$this->url('/sandbox/' . $step).'">
-						'.KN\Helpers\Base::lang('base.' . str_replace('-', '_', $step)).'
+						<i class="' . $details['icon'] . '"></i>  '.KN\Helpers\Base::lang($details['lang']).'
 					</a>
 				</li>';
 			}	?>
@@ -28,7 +29,7 @@
 		<ul class="navbar-nav ms-auto">
 			<li class="nav-item">
 				<a class="nav-link" href="<?php echo $this->url('/'); ?>">
-					<?php echo KN\Helpers\Base::lang('base.go_to_home'); ?>
+					<i class="ti ti-arrow-left"></i> <?php echo KN\Helpers\Base::lang('base.go_to_home'); ?>
 				</a>
 			</li>
 		</ul>
