@@ -1,1 +1,0 @@
-/* KalipsoNext Script */
