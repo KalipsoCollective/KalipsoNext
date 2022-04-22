@@ -623,8 +623,8 @@ final class Factory
         $layout = file_exists($layoutVars) ? (require $layoutVars) : ['_'];
 
         foreach ($layout as $part) {
-            
-            if ($part == '_')
+
+            if ($part === '_')
                 $part = strpos($file, '.') !== false ? str_replace('.', '/', $file) : $file;
             else
                 $part = '_parts/' . $part;

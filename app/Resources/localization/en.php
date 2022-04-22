@@ -15,15 +15,6 @@ return [
         'view_definition_not_found' => 'Controller did not send view parameter!',
     ],
     'base' => [
-        'welcome' => 'Welcome!',
-        'welcome_message' => 'It is the start page of KalipsoNext.', 
-        'login' => 'Login',
-        'login_message' => 'It is the sample login page.',
-        'register' => 'Register',
-        'register_message' => 'It is the sample register page.',
-        'logout' => 'Logout',
-        'account' => 'Account',
-        'account_message' => 'It is the sample login page.',
         'sandbox' => 'Sandbox',
         'sandbox_message' => 'You can access all the tools that will help you in the development process from this screen.',
         'clear_storage' => 'Clear Storage',
@@ -67,8 +58,18 @@ return [
         'change_language' => 'Change Language',
         'seeding' => 'Seeding...',
         'go_to_home' => 'Go to Home',
+        'home' => 'Home',
+        'welcome' => 'Welcome!',
+        'welcome_message' => 'It is the start page of KalipsoNext.', 
+        'login' => 'Login',
+        'login_message' => 'It is the sample login page.',
+        'register' => 'Register',
+        'register_message' => 'It is the sample register page.',
+        'logout' => 'Logout',
+        'account' => 'Account',
+        'account_message' => 'It is the sample login page.',
     ],
     'app' => [
-        'home' => 'Home',
+        
     ] 
 ];

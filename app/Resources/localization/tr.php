@@ -15,15 +15,6 @@ return [
         'view_definition_not_found' => 'Kontrolcü, görüntüleme parametresi göndermedi!',
     ],
     'base' => [
-        'welcome' => 'Hoş geldiniz!',
-        'welcome_message' => 'KalipsoNext\'in başlangıç sayfasıdır.',
-        'login' => 'Giriş Yap',
-        'login_message' => 'Örnek giriş sayfasıdır.',
-        'register' => 'Kayıt Ol',
-        'register_message' => 'Örnek kayıt sayfasıdır.',
-        'logout' => 'Çıkış Yap',
-        'account' => 'Hesap',
-        'account_message' => 'Örnek hesap sayfasıdır.',
         'sandbox' => 'Geliştirici Araçları',
         'sandbox_message' => 'Geliştirme sürecinde size yardımcı olacak tüm araçlara bu ekrandan ulaşabilirsiniz.',
         'clear_storage' => 'Klasörleri Temizle',
@@ -67,8 +58,18 @@ return [
         'change_language' => 'Dili Değiştir',
         'seeding' => 'İçe aktarılıyor...',
         'go_to_home' => 'Ana Sayfaya Dön',
+        'home' => 'Ana Sayfa',
+        'welcome' => 'Hoş geldiniz!',
+        'welcome_message' => 'KalipsoNext\'in başlangıç sayfasıdır.',
+        'login' => 'Giriş Yap',
+        'login_message' => 'Örnek giriş sayfasıdır.',
+        'register' => 'Kayıt Ol',
+        'register_message' => 'Örnek kayıt sayfasıdır.',
+        'logout' => 'Çıkış Yap',
+        'account' => 'Hesap',
+        'account_message' => 'Örnek hesap sayfasıdır.',
     ],
     'app' => [
-        'home' => 'Ana Sayfa',
+        
     ] 
 ];
