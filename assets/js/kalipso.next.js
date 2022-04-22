@@ -503,4 +503,6 @@ NProgress.start();
 
 })()
 
-function init();
+function init() {
+	
+}
