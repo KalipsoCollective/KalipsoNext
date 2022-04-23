@@ -13,6 +13,8 @@ return [
         'controller_not_defined' => 'Kontrolcü tanımlanmamış!',
         'unauthorized' => 'Yetkiniz yok.',
         'view_definition_not_found' => 'Kontrolcü, görüntüleme parametresi göndermedi!',
+        'csrf_token_mismatch' => 'CSRF anahtarı uyuşmuyor.',
+        'csrf_token_incorrect' => 'CSRF anahtarı geçersiz.',
     ],
     'base' => [
         'sandbox' => 'Geliştirici Araçları',

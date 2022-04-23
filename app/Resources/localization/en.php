@@ -13,6 +13,8 @@ return [
         'controller_not_defined' => 'Controller is not defined!',
         'unauthorized' => 'You are not authorized.',
         'view_definition_not_found' => 'Controller did not send view parameter!',
+        'csrf_token_mismatch' => 'CSRF key mismatch.',
+        'csrf_token_incorrect' => 'CSRF key invalid.',
     ],
     'base' => [
         'sandbox' => 'Sandbox',
