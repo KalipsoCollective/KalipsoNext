@@ -15,6 +15,7 @@ return [
         'view_definition_not_found' => 'Controller did not send view parameter!',
         'csrf_token_mismatch' => 'CSRF key mismatch.',
         'csrf_token_incorrect' => 'CSRF key invalid.',
+        'username_is_already_used' => 'Username is already used.',
     ],
     'base' => [
         'sandbox' => 'Sandbox',

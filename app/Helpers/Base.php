@@ -432,7 +432,22 @@ class Base {
          *   - error
          **/
 
-        return json_encode($alerts);
+        $alert = '';
+        foreach ($alerts as $a) {
+
+            switch ($a['status']) {
+                case 'error':
+                    $a['status'] = 'danger';
+                    break;
+                
+                case 'default':
+                    $a['status'] = 'dark';
+                    break;
+            }
+
+            $alert .= '<div class="alert alert-' . $a['status'] . '">' . $a['message'] . '</div>';
+
+        }
 
         return $alert;
 

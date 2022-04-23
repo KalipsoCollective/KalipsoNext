@@ -61,10 +61,11 @@ final class UserController extends Controller {
 
                 $users = (new Users());
 
-                $getWithEmail = $users->getUser('email', $email);
+                $getWithEmail = $users->select('email')->where('email', $email)->get();
                 if ( !$getWithEmail) {
 
-                    $getWithUsername = $users->getUser('u_name', $username);
+                    $users = (new Users());
+                    $getWithUsername = $users->select('u_name')->where('u_name', $username)->get();
                     if ( !$getWithUsername) {
 
                         $row = [
@@ -73,8 +74,8 @@ final class UserController extends Controller {
                             'l_name'    => $surname,
                             'email'     => $email,
                             'password'  => $password,
-                            'token'     => KN::tokenGenerator(80),
-                            'role_id'   => KN::config('settings.default_user_role'),
+                            'token'     => Base::tokenGenerator(80),
+                            'role_id'   => Base::config('settings.default_user_role'),
                             'created_at'=> time(),
                             'status'    => 'passive'
                         ];

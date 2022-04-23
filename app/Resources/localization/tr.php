@@ -15,6 +15,7 @@ return [
         'view_definition_not_found' => 'Kontrolcü, görüntüleme parametresi göndermedi!',
         'csrf_token_mismatch' => 'CSRF anahtarı uyuşmuyor.',
         'csrf_token_incorrect' => 'CSRF anahtarı geçersiz.',
+        'username_is_already_used' => 'Kullanıcı adı zaten kullanımda.',
     ],
     'base' => [
         'sandbox' => 'Geliştirici Araçları',
