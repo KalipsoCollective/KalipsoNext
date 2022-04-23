@@ -454,7 +454,7 @@ final class Factory
                         ))->$method();
 
                         /**
-                         * Middleware alerts 
+                         * Controller alerts 
                          **/
                         if (isset($controller['alerts']) !== false)
                             $this->response->alerts = array_merge(

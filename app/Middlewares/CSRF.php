@@ -31,7 +31,7 @@ final class CSRF extends Middleware {
                     ]
                 ];
 
-            } elseif (! Base::verifyCSRF($this->request['parameters']['_token'])) {
+            } elseif (! Base::verifyCSRF($this->get('request')->params['_token'])) {
 
                 return [
                     'status' => false,

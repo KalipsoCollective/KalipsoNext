@@ -7,7 +7,7 @@
 								<h1 class="fw-bolder h6 m-0 text-center"><?php echo \KN\Helpers\Base::lang('base.register'); ?></h1>
 							</div>
 							<div class="card-body">
-								<?php echo \KN\Helpers\Base::alert(); ?>
+								<?php echo \KN\Helpers\Base::alert($this->response->alerts); ?>
 								<form method="post" action="<?php echo \KN\Helpers\Base::base('auth/register'); ?>" data-vpjax>
 									<?php echo \KN\Helpers\Base::createCSRF(); ?>
 									<div class="form-floating mb-3">

@@ -417,31 +417,12 @@ class Base {
 
     }
 
-
-    /**
-     * View File
-     * @param  $file   file to show
-     * @return void   
-     */
-    public static function view($file, $arguments = []) {
-
-        $file = Base::path('app/Resources/view/' . $file . '.php');
-        if (! file_exists($file)) {
-            file_put_contents($file, '<?php '.PHP_EOL.'// Auto-created');
-        }
-
-        extract($arguments);
-        $title = self::title($title);
-
-        require $file;
-
-    }
-
     /**
      * User Alert Generator
+     * @param array $alerts alert arguments
      * @return string    
      */
-    public static function alert() {
+    public static function alert(array $alerts = []) {
 
         /**
          *   types:
@@ -451,92 +432,7 @@ class Base {
          *   - error
          **/
 
-        $alert = '';
-
-        if (isset(self::$request['middleware_messages']) !== false) {
-
-            foreach (self::$request['middleware_messages'] as $key => $value) {
-                self::$request['middleware_messages'][$key]['title'] = self::lang(self::$request['middleware_messages'][$key]['title']);
-                self::$request['middleware_messages'][$key]['message'] = self::lang(self::$request['middleware_messages'][$key]['message']);
-            }
-
-            self::$response['messages'] = isset(self::$response['messages']) !== false ? 
-                array_merge(self::$response['messages'], self::$request['middleware_messages']) 
-                : self::$request['middleware_messages'];
-        }
-
-        if (isset(self::$response['messages']) !== false AND count(self::$response['messages'])) {
-
-            $iconComponent = require self::path('app/Resources/view/components/icons.php');
-
-            if (file_exists($file = self::path('app/Resources/view/components/alert.php'))) {
-                $alertComponent = require $file;
-            } else {
-                $alertComponent = [
-                    'component' => '<div class="kn--message [CLASS]"><span>[ICON] [TITLE] [MESSAGE]</span><span>[LINK]</span></div>',
-                    'classes'   => [
-                        'default'   => '', 
-                        'success'   => 'kn--message-success', 
-                        'alert'   => 'kn--message-warning', 
-                        'error'     => 'kn--message-error'
-                    ],
-                    'close' => false
-                ];
-            }
-
-            $component = $alertComponent['component'];
-            $classes = $alertComponent['classes'];
-            
-            foreach (self::$response['messages'] as $m) {
-
-                $title = isset($m['title']) !== false ? '<strong>' . $m['title'] . '</strong>' : '';
-                $message = isset($m['message']) !== false ? $m['message'] : '';
-                $icon = isset($m['icon']) !== false ? $m['icon'] : '';
-                $status = in_array($m['status'], ['success', 'error', 'alert']) !== false ? $m['status'] : 'default';
-                $link = isset($m['link']) !== false ? '<a class="btn btn-primary" href="'.$m['link'][1].'">'.$m['link'][0].'</a>' : '';
-                $close = isset($component['close']) !== false ? $component['close'] : null;
-                if (isset($m['close']) !== false AND ! $m['close']) {
-                    $close = null;
-                }
-
-
-                $class = $classes[$status];
-
-                // Material Design Icons
-                if ($icon == '') {
-
-                    switch ($status) {
-                        case 'success':
-                            $icon = $iconComponent[$status];
-                            break;
-
-                        case 'error':
-                             $icon = $iconComponent[$status];
-                            break;
-
-                         case 'alert':
-                             $icon = $iconComponent[$status];
-                            break;
-                        
-                        default:
-                            $icon = $iconComponent['info'];
-                            break;
-                    }
-
-                }
-
-                $icon = '<span class="'.$icon.'"></span>';
-
-                $alert .= str_replace(
-                    ['[CLASS]', '[ICON]', '[TITLE]', '[MESSAGE]', '[LINK]', '[CLOSE]'], 
-                    [$class, $icon, $title, $message, $link, $close],
-                    $component
-                );
-
-            }
-
-
-        }
+        return json_encode($alerts);
 
         return $alert;
 
@@ -625,20 +521,18 @@ class Base {
 
     /**
      * CSRF Token Generator
-     * @param bool $onlyToken  Output option
+     * @param bool $onlyToken  output option
      * @return string|null
      */
     public static function createCSRF($onlyToken = false) {
 
-        global $requestUri;
 
         $return = null;
         if (isset($_COOKIE[KN_SESSION_NAME]) !== false) {
 
             $csrf = [
-                'cookie'        => $_COOKIE[KN_SESSION_NAME],
+                'cookie'        => self::authCode(),
                 'timeout'       => strtotime('+1 hour'),
-                'request_uri'   => $requestUri,
                 'header'        => self::getHeader(),
                 'ip'            => self::getIp()
             ];
@@ -661,8 +555,6 @@ class Base {
      */
     public static function verifyCSRF($token) {
 
-        global $requestUri;
-
         $return = false;
         $token = @json_decode(self::decryptKey($token), true);
         if (is_array($token)) {
@@ -670,7 +562,6 @@ class Base {
             if (
                 (isset($token['cookie']) !== false AND $token['cookie'] == $_COOKIE[KN_SESSION_NAME]) AND
                 (isset($token['timeout']) !== false AND $token['timeout'] >= time()) AND
-                (isset($token['request_uri']) !== false AND $requestUri) AND
                 (isset($token['header']) !== false AND $token['header'] == self::getHeader()) AND
                 (isset($token['ip']) !== false AND $token['ip'] == self::getIp())
 
