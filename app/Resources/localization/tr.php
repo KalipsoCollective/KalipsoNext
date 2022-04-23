@@ -68,6 +68,13 @@ return [
         'logout' => 'Çıkış Yap',
         'account' => 'Hesap',
         'account_message' => 'Örnek hesap sayfasıdır.',
+        'email_or_username' => 'Eposta ya da Kullanıcı Adı',
+        'password' => 'Şifre',
+        'recovery_account' => 'Hesabımı Kurtar',
+        'email' => 'Eposta Adresi',
+        'username' => 'Kullanıcı Adı', 
+        'name' => 'Ad',
+        'surname' => 'Soyad',
     ],
     'app' => [
         

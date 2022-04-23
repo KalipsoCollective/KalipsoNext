@@ -28,6 +28,7 @@ try {
             ['GET,POST', '/register', 'UserController@register', ['Auth@withOut']],
             ['GET,POST', '/recovery', 'UserController@recovery', ['Auth@withOut']],
             ['GET,POST', '/settings', 'UserController@settings', ['Auth@with']],
+            ['GET,POST', '/sessions', 'UserController@sessions', ['Auth@with']],
         ];
     });
 

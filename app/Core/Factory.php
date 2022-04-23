@@ -90,6 +90,7 @@ final class Factory
             'view'          => [] // view parameters -> [0] = page, [1] = layout
         ];
         $this->request = (object)[];
+        $this->request->params = [];
 
         $url = parse_url($_SERVER['REQUEST_URI']);
         $this->request->uri = '/' . trim(
@@ -512,6 +513,8 @@ final class Factory
                     'error' => '405',
                     'output' => Base::lang('error.method_not_allowed')
                 ];
+
+                $this->response();
 
             }
 

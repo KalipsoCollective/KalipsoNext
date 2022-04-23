@@ -68,6 +68,13 @@ return [
         'logout' => 'Logout',
         'account' => 'Account',
         'account_message' => 'It is the sample login page.',
+        'email_or_username' => 'Email or Username',
+        'password' => 'Password',
+        'recovery_account' => 'Recovery Account',
+        'email' => 'Email Address',
+        'username' => 'Username', 
+        'name' => 'Name',
+        'surname' => 'Surname',
     ],
     'app' => [
         
