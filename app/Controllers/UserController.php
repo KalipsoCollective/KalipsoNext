@@ -64,7 +64,6 @@ final class UserController extends Controller {
                 $getWithEmail = $users->select('email')->where('email', $email)->get();
                 if ( !$getWithEmail) {
 
-                    $users = (new Users());
                     $getWithUsername = $users->select('u_name')->where('u_name', $username)->get();
                     if ( !$getWithUsername) {
 
@@ -73,31 +72,31 @@ final class UserController extends Controller {
                             'f_name'    => $name,
                             'l_name'    => $surname,
                             'email'     => $email,
-                            'password'  => $password,
+                            'password'  => password_hash($password, PASSWORD_DEFAULT),
                             'token'     => Base::tokenGenerator(80),
                             'role_id'   => Base::config('settings.default_user_role'),
                             'created_at'=> time(),
                             'status'    => 'passive'
                         ];
 
-                        $insert = $users->addUser($row);
+                        $insert = $users->insert($row);
 
                         if ($insert) {
 
                             $row['id'] = $insert;
-                            (new Notification)->add('registration', $row);
+                            // (new Notification)->add('registration', $row);
 
                             $alerts[] = [
                                 'status' => 'success',
-                                'message' => Base::lang('error.registration_successful')
+                                'message' => Base::lang('base.registration_successful')
                             ];
-                            $redirect = [$this->get('url')('/auth/login'), 4];
+                            $redirect = [$this->get()->url('/auth/login'), 4];
 
                         } else {
 
                             $alerts[] = [
                                 'status' => 'warning',
-                                'message' => Base::lang('error.registration_problem')
+                                'message' => Base::lang('base.registration_problem')
                             ];
 
                         }
@@ -106,7 +105,7 @@ final class UserController extends Controller {
 
                         $alerts[] = [
                             'status' => 'warning',
-                            'message' => Base::lang('error.username_is_already_used')
+                            'message' => Base::lang('base.username_is_already_used')
                         ];
 
                     }
@@ -115,7 +114,7 @@ final class UserController extends Controller {
 
                     $alerts[] = [
                         'status' => 'warning',
-                        'message' => Base::lang('error.email_is_already_used')
+                        'message' => Base::lang('base.email_is_already_used')
                     ];
 
                 }
@@ -124,14 +123,14 @@ final class UserController extends Controller {
 
                 $alerts[] = [
                     'status' => 'warning',
-                    'message' => Base::lang('error.form_cannot_empty')
+                    'message' => Base::lang('base.form_cannot_empty')
                 ];
 
             }
             
         }
 
-        return [
+        $return = [
             'status' => true,
             'statusCode' => 200,
             'arguments' => [
@@ -141,6 +140,11 @@ final class UserController extends Controller {
             'alerts' => $alerts,
             'view' => 'user.register',
         ];
+
+        if (isset($redirect))
+            $return['redirect'] = $redirect;
+
+        return $return;
 
     }
 

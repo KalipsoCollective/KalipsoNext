@@ -14,11 +14,13 @@ use KN\Helpers\Base;
 
 final class Log extends Model {
 
-    public function __construct () {
+    function __construct () {
+
+        $this->table = 'logs';
+        $this->created = true;
+        $this->updated = true;
 
         parent::__construct();
-        $this->created = true;
-        $this->table('logs');
-    }
 
+    }
 }

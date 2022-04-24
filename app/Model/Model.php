@@ -15,6 +15,7 @@ use \PDO;
 
 class Model extends Pdox {
 
+    protected $table = '';
     protected $created = false;
     protected $updated = false;
 
@@ -30,18 +31,27 @@ class Model extends Pdox {
             'collation' => Base::config('database.collation'),
             'prefix'    => Base::config('database.prefix'),
         ]);
+
+        $this->table($this->table);
     }
 
     public function insert(array $data, $type = false) {
 
         if ($this->created) {
 
-            $data['created_at'] = time();
-            $data['created_by'] = Base::userData('id') ?? 0;
+            $data['created_at'] = isset($data['created_at']) === false ? time() : $data['created_at'];
+            $data['created_by'] = isset($data['created_at']) === false ? (Base::userData('id') ?? 0) : $data['created_at'];
 
         }
 
         return parent::insert($data, $type);
+
+    }
+
+    protected function reset() {
+
+        parent::reset();
+        $this->table($this->table);
 
     }
 

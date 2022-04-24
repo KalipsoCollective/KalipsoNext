@@ -78,6 +78,11 @@ return [
         'username' => 'Username', 
         'name' => 'Name',
         'surname' => 'Surname',
+        'form_cannot_empty' => 'The form cannot be empty!',
+        'email_is_already_used' => 'Email address is already in use.',
+        'username_is_already_used' => 'Username is already in use.',
+        'registration_problem' => 'There was a problem during registration.',
+        'registration_successful' => 'Registration successful!',
     ],
     'app' => [
         

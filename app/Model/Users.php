@@ -14,13 +14,14 @@ use KN\Helpers\Base;
 
 final class Users extends Model {
 
+    function __construct () {
 
-    public function __construct () {
-
-        parent::__construct();
+        $this->table = 'users';
         $this->created = true;
         $this->updated = true;
-        $this->table('users');
+
+        parent::__construct();
+
     }
 
 }

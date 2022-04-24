@@ -78,6 +78,11 @@ return [
         'username' => 'Kullanıcı Adı', 
         'name' => 'Ad',
         'surname' => 'Soyad',
+        'form_cannot_empty' => 'Form boş olamaz!',
+        'email_is_already_used' => 'Eposta adresi zaten kullanılıyor.',
+        'username_is_already_used' => 'Kullanıcı adı zaten kullanılıyor.',
+        'registration_problem' => 'Kayıt esnasında bir sorun oluştu.',
+        'registration_successful' => 'Kayıt başarılı!',
     ],
     'app' => [
         

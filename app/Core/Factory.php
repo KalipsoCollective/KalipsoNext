@@ -530,7 +530,18 @@ final class Factory
      **/
     public function response() {
 
+        Base::http($this->response->statusCode);
+
         if ($this->response->statusCode === 200) {
+
+             if ($this->response->redirect) {
+
+                Base::http('refresh', [
+                    'url' => (is_array($this->response->redirect) ? $this->response->redirect[0] : $this->response->redirect),
+                    'second' => (is_array($this->response->redirect) ? $this->response->redirect[1] : null)
+                ]);
+
+            }
 
             if ($this->response->view !== '') {
 
@@ -543,8 +554,7 @@ final class Factory
                 } else {
                     throw new \Exception(Base::lang('error.view_definition_not_found'));
                 }
-                
-                Base::http($this->response->statusCode);
+
                 $this->view($viewFile, 
                     $this->response->arguments, 
                     $viewLayout
@@ -556,7 +566,6 @@ final class Factory
 
             if ($this->response->redirect) {
 
-                Base::http($this->response->statusCode);
                 Base::http('refresh', [
                     'url' => (is_array($this->response->redirect) ? $this->response->redirect[0] : $this->response->redirect),
                     'second' => (is_array($this->response->redirect) ? $this->response->redirect[1] : null)
