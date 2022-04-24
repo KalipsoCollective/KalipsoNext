@@ -10,45 +10,52 @@ declare(strict_types=1);
 namespace KN\Middlewares;
 
 use KN\Helpers\Base;
+use KN\Middlewares\Middleware;
 
-final class CSRF {
+final class CSRF extends Middleware {
 
-    public $request = [];
+    public function validate() {
 
-    public function __construct($request = []) {
+        if ($this->get('request')->method === 'POST') {
 
-        $this->request = $request;
-
-    }
-
-    public function validate($method = 'POST') {
-
-        if ($this->request['request_method'] == $method) {
-
-            if (isset($this->request['parameters']['_token']) === false) {
+            if (isset($this->get('request')->params['_token']) === false) {
 
                 return [
-                    'status'    => false,
-                    'message'   => 'csrf_token_mismatch'
+                    'status' => false,
+                    'statusCode' => 401,
+                    'next'   => false,
+                    'arguments' => [
+                        'title' => Base::lang('err'),
+                        'error' => '401',
+                        'output' => Base::lang('error.csrf_token_mismatch')
+                    ]
                 ];
 
-            } elseif (! Base::verifyCSRF($this->request['parameters']['_token'])) {
+            } elseif (! Base::verifyCSRF($this->get('request')->params['_token'])) {
 
                 return [
-                    'status'    => false,
-                    'message'   => 'csrf_token_incorrect'
+                    'status' => false,
+                    'statusCode' => 401,
+                    'next'   => false,
+                    'arguments' => [
+                        'title' => Base::lang('err'),
+                        'error' => '401',
+                        'output' => Base::lang('error.csrf_token_incorrect')
+                    ]
                 ];
 
             } else {
 
                 return [
                     'status' => true,
+                    'next'   => true
                 ];
             }
         } else {
 
             return [
                 'status' => true,
+                'next'   => true
             ];
         }
 

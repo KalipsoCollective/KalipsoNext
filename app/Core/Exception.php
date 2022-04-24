@@ -27,6 +27,9 @@ final class Exception {
 	 **/
 	static function errorHandler($errNo, string $errMsg, string $file, int $line) {
 		
+		ob_get_clean();
+		ob_start();
+
 		$handlerInterface = '
         <!doctype html>
         <html>
@@ -69,6 +72,7 @@ final class Exception {
 	    $errorOutput = '    '.$file.':'.$line.' - '.$errMsg.' <strong>('.$errNo.')</strong>';
 	    // if (! KN:config('app.dev_mode')) http(500);
 	    echo str_replace('[OUTPUT]', $errorOutput, $handlerInterface);
+	    exit;
 	}
 
 	/**

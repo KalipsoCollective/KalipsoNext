@@ -22,8 +22,9 @@ final class AppController extends Controller {
             'statusCode' => 200,
             'arguments' => [
                 'title' => Base::lang('base.welcome'),
-                'output' => Base::lang('error.welcome_message')
-            ]
+                'output' => Base::lang('base.welcome_message')
+            ],
+            'view' => 'index'
         ];
 
     }
@@ -37,12 +38,28 @@ final class AppController extends Controller {
 
         if (Base::config('app.dev_mode')) {
 
-            $steps = ['db-init', 'db-seed', 'php-info', 'session', 'clear-storage'];
+            $steps = [
+                'db-init' => [
+                    'icon' => 'ti ti-database', 'lang' => 'base.db_init'
+                ], 
+                'db-seed' => [
+                    'icon' => 'ti ti-database-import', 'lang' => 'base.db_seed'
+                ],
+                'php-info' => [
+                    'icon' => 'ti ti-brand-php', 'lang' => 'base.php_info'
+                ], 
+                'session' => [
+                    'icon' => 'ti ti-fingerprint', 'lang' => 'base.session'
+                ], 
+                'clear-storage' => [
+                    'icon' => 'ti ti-folders', 'lang' => 'base.clear_storage'
+                ],
+            ];
 
             $action = '';
             if (
                 isset($this->get('request')->attributes['action']) !== false AND 
-                in_array($this->get('request')->attributes['action'], $steps))
+                in_array($this->get('request')->attributes['action'], array_keys($steps)))
                 $action = $this->get('request')->attributes['action'];
 
             $title = Base::lang('base.sandbox');
@@ -356,6 +373,7 @@ final class AppController extends Controller {
                     'output' => $output,
                     'steps' => $steps
                 ],
+                'log' => false,
                 'view' => ['sandbox', 'sandbox']
             ];
 

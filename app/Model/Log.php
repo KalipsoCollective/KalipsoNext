@@ -12,16 +12,15 @@ namespace KN\Model;
 use KN\Model\Model;
 use KN\Helpers\Base;
 
-final class Users extends Model {
+final class Log extends Model {
 
     function __construct () {
 
-        $this->table = 'users';
+        $this->table = 'logs';
         $this->created = true;
         $this->updated = true;
 
         parent::__construct();
 
     }
-
 }

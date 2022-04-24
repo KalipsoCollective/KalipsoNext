@@ -31,6 +31,7 @@ final class Factory
     public $response;
     public $routes = [];
     public $lang = '';
+    public $log = true;
 
     /**
      *  
@@ -89,6 +90,7 @@ final class Factory
             'view'          => [] // view parameters -> [0] = page, [1] = layout
         ];
         $this->request = (object)[];
+        $this->request->params = [];
 
         $url = parse_url($_SERVER['REQUEST_URI']);
         $this->request->uri = '/' . trim(
@@ -362,6 +364,9 @@ final class Factory
                 'output' => Base::lang('error.page_not_found')
             ];
 
+            // Output
+            $this->response();
+
         } else {
 
             if (isset($route[$this->request->method]) !== false) {
@@ -449,7 +454,7 @@ final class Factory
                         ))->$method();
 
                         /**
-                         * Middleware alerts 
+                         * Controller alerts 
                          **/
                         if (isset($controller['alerts']) !== false)
                             $this->response->alerts = array_merge(
@@ -469,6 +474,12 @@ final class Factory
                          **/
                         if (isset($controller['arguments']) !== false)
                             $this->response->arguments = $controller['arguments'];
+
+                        /**
+                         * Log 
+                         **/
+                        if (isset($controller['log']) !== false)
+                            $this->log = $controller['log'];
 
                         /**
                          * Change status code if middleware returns.
@@ -503,6 +514,8 @@ final class Factory
                     'output' => Base::lang('error.method_not_allowed')
                 ];
 
+                $this->response();
+
             }
 
         }
@@ -517,7 +530,18 @@ final class Factory
      **/
     public function response() {
 
+        Base::http($this->response->statusCode);
+
         if ($this->response->statusCode === 200) {
+
+             if ($this->response->redirect) {
+
+                Base::http('refresh', [
+                    'url' => (is_array($this->response->redirect) ? $this->response->redirect[0] : $this->response->redirect),
+                    'second' => (is_array($this->response->redirect) ? $this->response->redirect[1] : null)
+                ]);
+
+            }
 
             if ($this->response->view !== '') {
 
@@ -530,8 +554,7 @@ final class Factory
                 } else {
                     throw new \Exception(Base::lang('error.view_definition_not_found'));
                 }
-                
-                Base::http($this->response->statusCode);
+
                 $this->view($viewFile, 
                     $this->response->arguments, 
                     $viewLayout
@@ -543,7 +566,6 @@ final class Factory
 
             if ($this->response->redirect) {
 
-                Base::http($this->response->statusCode);
                 Base::http('refresh', [
                     'url' => (is_array($this->response->redirect) ? $this->response->redirect[0] : $this->response->redirect),
                     'second' => (is_array($this->response->redirect) ? $this->response->redirect[1] : null)
@@ -558,9 +580,14 @@ final class Factory
                 );
 
             }
-
         }
-
+        
+        if ($this->log AND Base::config('settings.log')) {
+            (new Log())->add([
+                'request'       => $this->request,
+                'response'      => $this->response,
+            ]);
+        }
     }
 
 
@@ -608,9 +635,9 @@ final class Factory
         $layout = file_exists($layoutVars) ? (require $layoutVars) : ['_'];
 
         foreach ($layout as $part) {
-            
-            if ($part == '_')
-                $part = $file;
+
+            if ($part === '_')
+                $part = strpos($file, '.') !== false ? str_replace('.', '/', $file) : $file;
             else
                 $part = '_parts/' . $part;
 
@@ -619,15 +646,6 @@ final class Factory
             }
 
         }
-
-        /*
-        if ($addLog) {
-            (new Log())->add([
-                'request'       => $request,
-                'http_status'   => self::$status,
-                'response'      => isset($response) !== false ? $response : null
-            ]);
-        } */
 
     }
 
@@ -668,7 +686,7 @@ final class Factory
      * @param boolean $exact   it gives full return when it is exactly the same.
      * @return string $string
      **/
-    public function currentLink ($link, $class = 'active', $exact = true) {
+    public function currentLink($link, $class = 'active', $exact = true) {
         
         $return = '';
         if ($this->request->uri === $link OR 

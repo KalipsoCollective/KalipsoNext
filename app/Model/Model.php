@@ -15,7 +15,11 @@ use \PDO;
 
 class Model extends Pdox {
 
-    public function __construct () {
+    protected $table = '';
+    protected $created = false;
+    protected $updated = false;
+
+    public function __construct() {
 
         parent::__construct([
             'host'      => Base::config('database.host'),
@@ -28,7 +32,27 @@ class Model extends Pdox {
             'prefix'    => Base::config('database.prefix'),
         ]);
 
-        return $this;
+        $this->table($this->table);
+    }
+
+    public function insert(array $data, $type = false) {
+
+        if ($this->created) {
+
+            $data['created_at'] = isset($data['created_at']) === false ? time() : $data['created_at'];
+            $data['created_by'] = isset($data['created_at']) === false ? (Base::userData('id') ?? 0) : $data['created_at'];
+
+        }
+
+        return parent::insert($data, $type);
+
+    }
+
+    protected function reset() {
+
+        parent::reset();
+        $this->table($this->table);
+
     }
 
     public function dbInit($schema) {
@@ -66,6 +90,12 @@ class Model extends Pdox {
                     case 'int':
                         if (isset($attributes['type_values']) === false) $attributes['type_values'] = 11;
                         $type = 'int(' . $attributes['type_values'] . ')';
+                        break;
+
+                    case 'float':
+                    case 'decimal':
+                        if (isset($attributes['type_values']) !== false) $attributes['type_values'] = '('.$attributes['type_values'].')';
+                        $type = $attributes['type'] . $attributes['type_values'];
                         break;
 
                     case 'varchar':
@@ -181,6 +211,7 @@ class Model extends Pdox {
 
         try {
 
+            // \KN\Helpers\Base::dump($sql);
             return $this->pdo->exec($sql);
 
         } catch(PDOException $e) {

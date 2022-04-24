@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * Basic constants
+ **/
+define('KN_START', microtime(true));
+define('KN_ROOT',  rtrim($_SERVER["DOCUMENT_ROOT"], '/').'/');
+define('KN_VERSION', '1.0.0');
+
+/**
  * Shutdown function registration
  **/
 register_shutdown_function( function() {
@@ -29,10 +36,3 @@ set_exception_handler( function($e) {
  **/
 ini_set('display_errors', 'on');
 error_reporting(E_ALL);
-
-/**
- * Basic constants
- **/
-define('KN_START', microtime(true));
-define('KN_ROOT',  rtrim($_SERVER["DOCUMENT_ROOT"], '/').'/');
-define('KN_VERSION', '1.0.0');

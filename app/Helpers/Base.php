@@ -15,10 +15,6 @@ use \FilesystemIterator;
 
 class Base {
 
-
-    protected static $request = [];
-    protected static $response = [];
-
     /**
      * Dump Data
      * @param any $value
@@ -356,6 +352,7 @@ class Base {
             401 => 'Unauthorized',
             403 => 'Forbidden',
             404 => 'Not Found',
+            405 => 'Method Not Allowed',
             500 => 'Internal Server Error'
         ];
 
@@ -420,31 +417,12 @@ class Base {
 
     }
 
-
-    /**
-     * View File
-     * @param  $file   file to show
-     * @return void   
-     */
-    public static function view($file, $arguments = []) {
-
-        $file = Base::path('app/Resources/view/' . $file . '.php');
-        if (! file_exists($file)) {
-            file_put_contents($file, '<?php '.PHP_EOL.'// Auto-created');
-        }
-
-        extract($arguments);
-        $title = self::title($title);
-
-        require $file;
-
-    }
-
     /**
      * User Alert Generator
+     * @param array $alerts alert arguments
      * @return string    
      */
-    public static function alert() {
+    public static function alert(array $alerts = []) {
 
         /**
          *   types:
@@ -455,89 +433,19 @@ class Base {
          **/
 
         $alert = '';
+        foreach ($alerts as $a) {
 
-        if (isset(self::$request['middleware_messages']) !== false) {
-
-            foreach (self::$request['middleware_messages'] as $key => $value) {
-                self::$request['middleware_messages'][$key]['title'] = self::lang(self::$request['middleware_messages'][$key]['title']);
-                self::$request['middleware_messages'][$key]['message'] = self::lang(self::$request['middleware_messages'][$key]['message']);
+            switch ($a['status']) {
+                case 'error':
+                    $a['status'] = 'danger';
+                    break;
+                
+                case 'default':
+                    $a['status'] = 'dark';
+                    break;
             }
 
-            self::$response['messages'] = isset(self::$response['messages']) !== false ? 
-                array_merge(self::$response['messages'], self::$request['middleware_messages']) 
-                : self::$request['middleware_messages'];
-        }
-
-        if (isset(self::$response['messages']) !== false AND count(self::$response['messages'])) {
-
-            $iconComponent = require self::path('app/Resources/view/components/icons.php');
-
-            if (file_exists($file = self::path('app/Resources/view/components/alert.php'))) {
-                $alertComponent = require $file;
-            } else {
-                $alertComponent = [
-                    'component' => '<div class="kn--message [CLASS]"><span>[ICON] [TITLE] [MESSAGE]</span><span>[LINK]</span></div>',
-                    'classes'   => [
-                        'default'   => '', 
-                        'success'   => 'kn--message-success', 
-                        'alert'   => 'kn--message-warning', 
-                        'error'     => 'kn--message-error'
-                    ],
-                    'close' => false
-                ];
-            }
-
-            $component = $alertComponent['component'];
-            $classes = $alertComponent['classes'];
-            
-            foreach (self::$response['messages'] as $m) {
-
-                $title = isset($m['title']) !== false ? '<strong>' . $m['title'] . '</strong>' : '';
-                $message = isset($m['message']) !== false ? $m['message'] : '';
-                $icon = isset($m['icon']) !== false ? $m['icon'] : '';
-                $status = in_array($m['status'], ['success', 'error', 'alert']) !== false ? $m['status'] : 'default';
-                $link = isset($m['link']) !== false ? '<a class="btn btn-primary" href="'.$m['link'][1].'">'.$m['link'][0].'</a>' : '';
-                $close = isset($component['close']) !== false ? $component['close'] : null;
-                if (isset($m['close']) !== false AND ! $m['close']) {
-                    $close = null;
-                }
-
-
-                $class = $classes[$status];
-
-                // Material Design Icons
-                if ($icon == '') {
-
-                    switch ($status) {
-                        case 'success':
-                            $icon = $iconComponent[$status];
-                            break;
-
-                        case 'error':
-                             $icon = $iconComponent[$status];
-                            break;
-
-                         case 'alert':
-                             $icon = $iconComponent[$status];
-                            break;
-                        
-                        default:
-                            $icon = $iconComponent['info'];
-                            break;
-                    }
-
-                }
-
-                $icon = '<span class="'.$icon.'"></span>';
-
-                $alert .= str_replace(
-                    ['[CLASS]', '[ICON]', '[TITLE]', '[MESSAGE]', '[LINK]', '[CLOSE]'], 
-                    [$class, $icon, $title, $message, $link, $close],
-                    $component
-                );
-
-            }
-
+            $alert .= '<div class="alert alert-' . $a['status'] . '">' . $a['message'] . '</div>';
 
         }
 
@@ -628,20 +536,18 @@ class Base {
 
     /**
      * CSRF Token Generator
-     * @param bool $onlyToken  Output option
+     * @param bool $onlyToken  output option
      * @return string|null
      */
     public static function createCSRF($onlyToken = false) {
 
-        global $requestUri;
 
         $return = null;
         if (isset($_COOKIE[KN_SESSION_NAME]) !== false) {
 
             $csrf = [
-                'cookie'        => $_COOKIE[KN_SESSION_NAME],
+                'cookie'        => self::authCode(),
                 'timeout'       => strtotime('+1 hour'),
-                'request_uri'   => $requestUri,
                 'header'        => self::getHeader(),
                 'ip'            => self::getIp()
             ];
@@ -664,8 +570,6 @@ class Base {
      */
     public static function verifyCSRF($token) {
 
-        global $requestUri;
-
         $return = false;
         $token = @json_decode(self::decryptKey($token), true);
         if (is_array($token)) {
@@ -673,7 +577,6 @@ class Base {
             if (
                 (isset($token['cookie']) !== false AND $token['cookie'] == $_COOKIE[KN_SESSION_NAME]) AND
                 (isset($token['timeout']) !== false AND $token['timeout'] >= time()) AND
-                (isset($token['request_uri']) !== false AND $requestUri) AND
                 (isset($token['header']) !== false AND $token['header'] == self::getHeader()) AND
                 (isset($token['ip']) !== false AND $token['ip'] == self::getIp())
 
@@ -1193,28 +1096,14 @@ class Base {
     /**
      * Write the value of the submitted field.
      * @param string $name
+     * @param array $parameters
      * @return string
      */
-    public static function inputValue($name) {
+    public static function inputValue($name, $parameters) {
 
         $return = '';
-        if (isset(self::$request['parameters'][$name]) !== false) {
-            $return = 'value="' . self::$request['parameters'][$name] . '"';
-        }
-        return $return;
-
-    }
-
-    /**
-     * Get URL attribute
-     * @param string $name
-     * @return string
-     */
-    public static function getAttribute($name) {
-
-        $return = null;
-        if (isset(self::$request['attributes'][$name]) !== false) {
-            $return = self::$request['attributes'][$name];
+        if (isset($parameters[$name]) !== false) {
+            $return = 'value="' . $parameters[$name] . '"';
         }
         return $return;
 
@@ -1269,18 +1158,13 @@ class Base {
     }
 
     /**
-     * Generate Title
-     * @param int $length
+     * Get Auth Code
      * @return string
      */
 
-    public static function title($title = null): string {
+    public static function authCode() {
 
-        return $title ? str_replace(
-            ['[APP]', '[TITLE]'], 
-            [self::config('settings.name'), $title], 
-            self::config('app.title_format')
-        )  : self::config('settings.name');
+        return isset($_COOKIE[KN_SESSION_NAME]) !== false ? $_COOKIE[KN_SESSION_NAME] : null;
 
     }
 
@@ -1302,7 +1186,12 @@ class Base {
 
     }
 
-
+    /**
+     * Clean given HTML tags from a string
+     * @param string $data  full html string
+     * @param array $ tags  given tags
+     * @return string
+     */
     public static function cleanHTML($data, $tags = []) {
 
         $reg = [];
@@ -1320,6 +1209,28 @@ class Base {
 
         return preg_replace('/('.$reg.')/is', '', $data);
 
+    }
+
+    public static function generateUUID() {
+        return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            // 32 bits for "time_low"
+            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
+
+            // 16 bits for "time_mid"
+            mt_rand( 0, 0xffff ),
+
+            // 16 bits for "time_hi_and_version",
+            // four most significant bits holds version number 4
+            mt_rand( 0, 0x0fff ) | 0x4000,
+
+            // 16 bits, 8 bits for "clk_seq_hi_res",
+            // 8 bits for "clk_seq_low",
+            // two most significant bits holds zero and one for variant DCE1.1
+            mt_rand( 0, 0x3fff ) | 0x8000,
+
+            // 48 bits for "node"
+            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
+        );
     }
 
 }

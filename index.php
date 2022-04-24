@@ -24,10 +24,23 @@ try {
     // Root-bound route group
     $app->routeGroup(['GET,POST', '/auth', 'UserController@account', ['Auth@with']], function () {
         return [
-            ['GET,POST', '/login', 'UserController@login', ['Auth@withOut']],
-            ['GET,POST', '/register', 'UserController@register', ['Auth@withOut']],
-            ['GET,POST', '/recovery', 'UserController@recovery', ['Auth@withOut']],
-            ['GET,POST', '/settings', 'UserController@settings', ['Auth@with']],
+            ['GET,POST', '/login', 'UserController@login', ['Auth@withOut', 'CSRF@validate']],
+            ['GET,POST', '/register', 'UserController@register', ['Auth@withOut', 'CSRF@validate']],
+            ['GET,POST', '/recovery', 'UserController@recovery', ['Auth@withOut', 'CSRF@validate']],
+            ['GET,POST', '/settings', 'UserController@settings', ['Auth@with', 'CSRF@validate']],
+            ['GET,POST', '/sessions', 'UserController@sessions', ['Auth@with']],
+        ];
+    });
+
+    $app->routeGroup(['GET,POST', '/management', 'AdminController@dashboard', ['Auth@with']], function () {
+        return [
+            ['GET,POST', '/users', 'AdminController@users', ['Auth@withOut']],
+            ['GET,POST', '/roles', 'AdminController@userRoles', ['Auth@withOut']],
+            ['GET,POST', '/sessions', 'AdminController@sessions', ['Auth@with']],
+            ['GET,POST', '/contents', 'AdminController@contents', ['Auth@with']],
+            ['GET,POST', '/files', 'AdminController@files', ['Auth@with']],
+            ['GET,POST', '/settings', 'AdminController@settings', ['Auth@withOut']],
+            ['GET,POST', '/logs', 'AdminController@logs', ['Auth@with']],
         ];
     });
 

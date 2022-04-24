@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace KN\Core;
 
-use KN\Core\DB;
+use KN\Model\Log as Model;
 use KN\Helpers\Base;
 
 class Log {
@@ -22,21 +22,19 @@ class Log {
     public function add($args) {
 
         $args = Base::privateDataCleaner($args);
+        $exec = microtime(true) - KN_START;
 
-        $add = new DB();
-        $add->table('logs')
-            ->insert([
-                'date'          => time(),
-                'endpoint'      => $args['request']['request'],
-                'http_status'   => $args['http_status'],
-                'auth_code'     => isset($_COOKIE[KN_SESSION_NAME]) !== false ? $_COOKIE[KN_SESSION_NAME] : null,
-                'user_id'       => isset($_SESSION['user']->id) !== false ? $_SESSION['user']->id : null,
-                'ip'            => Base::getIp(),
-                'header'        => Base::getHeader(),
-                'request'       => json_encode($args['request']),
-                'response'      => is_array($args['response']) ? json_encode($args['response']) : $args['response'],
-
-            ]);
+        $model = new Model();
+        return $model->insert([
+            'endpoint'      => $args['request']->uri,
+            'http_status'   => (string) $args['response']->statusCode,
+            'auth_code'     => Base::authCode(),
+            'ip'            => Base::getIp(),
+            'header'        => Base::getHeader(),
+            'request'       => json_encode($args['request']),
+            'response'      => json_encode($args['response']),
+            'exec_time'     => (string) $exec
+        ]);
 
     }
 
