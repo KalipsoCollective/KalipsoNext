@@ -626,6 +626,27 @@ return [
 					'type'          => 'text',
 					'index'         => 'FULLTEXT'
 				],
+				'method' => [
+					'type'          => 'varchar',
+					'type_values'   => 10,
+					'nullable'      => true,
+					'default'       => 'NULL',
+					'index'         => 'INDEX'
+				],
+				'controller' => [
+					'type'          => 'varchar',
+					'type_values'   => 255,
+					'nullable'      => true,
+					'default'       => 'NULL',
+					'index'         => 'INDEX'
+				],
+				'middleware' => [
+					'type'          => 'varchar',
+					'type_values'   => 255,
+					'nullable'      => true,
+					'default'       => 'NULL',
+					'index'         => 'INDEX'
+				],
 				'http_status' => [
 					'type'          => 'int',
 					'index'         => 'INDEX'

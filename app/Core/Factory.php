@@ -32,6 +32,7 @@ final class Factory
     public $routes = [];
     public $lang = '';
     public $log = true;
+    public $action;
 
     /**
      *  
@@ -42,6 +43,14 @@ final class Factory
     {
 
         global $languageFile;
+
+        /**
+         * Controller and middleware name for logs 
+         */
+        $this->action = (object)[
+            'middleware' => [], 
+            'controller' => ''
+        ];
 
         /**
          * Assign default language 
@@ -384,6 +393,8 @@ final class Factory
 
                     foreach ($route['middlewares'] as $middleware) {
 
+                        $this->action->middleware[] = $middleware;
+
                         $middleware = explode('@', $middleware, 2);
 
                         $method = $middleware[1];
@@ -443,6 +454,8 @@ final class Factory
                 if ($next) {
 
                     if (isset($route['controller']) !== false) {
+
+                        $this->action->controller = $route['controller'];
 
                         $controller = explode('@', $route['controller'], 2);
 
@@ -583,9 +596,16 @@ final class Factory
         }
         
         if ($this->log AND Base::config('settings.log')) {
+
+            $this->action->middleware = implode(',', $this->action->middleware);
+
+            foreach ($this->action as $key => $val) 
+                if ($val === '') $this->action->{$key} = null;
+
             (new Log())->add([
                 'request'       => $this->request,
                 'response'      => $this->response,
+                'action'        => $this->action
             ]);
         }
     }
