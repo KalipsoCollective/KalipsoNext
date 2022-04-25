@@ -6,6 +6,9 @@
  **/
 
 return [
+    'lang' => [
+        'code' => 'en',
+    ],
     'err' => 'Error',
     'error' => [
         'page_not_found' => 'Page not found!',
@@ -16,6 +19,11 @@ return [
         'csrf_token_mismatch' => 'CSRF key mismatch.',
         'csrf_token_incorrect' => 'CSRF key invalid.',
         'username_is_already_used' => 'Username is already used.',
+        'notification_hook_file_not_found' => 'Notification hook file not found!',
+    ],
+    'notification' => [
+        'registration_email_title' => 'Your Account Has Been Created!',
+        'registration_email_body' => 'Hi [USER], <br>Your account has been created. You can verify your email address with the link below. <br>[VERIFY_LINK]',
     ],
     'base' => [
         'sandbox' => 'Sandbox',
@@ -83,8 +91,9 @@ return [
         'username_is_already_used' => 'Username is already in use.',
         'registration_problem' => 'There was a problem during registration.',
         'registration_successful' => 'Registration successful!',
+        'verify_email' => 'Verify Email Address',
     ],
     'app' => [
         
-    ] 
+    ]
 ];

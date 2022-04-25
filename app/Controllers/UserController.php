@@ -9,9 +9,10 @@ declare(strict_types=1);
 
 namespace KN\Controllers;
 
-use KN\Controllers\Controller;
+use KN\Core\Controller;
 use KN\Helpers\Base;
 use KN\Model\Users;
+use KN\Core\Notification;
 
 final class UserController extends Controller {
 
@@ -84,7 +85,7 @@ final class UserController extends Controller {
                         if ($insert) {
 
                             $row['id'] = $insert;
-                            // (new Notification)->add('registration', $row);
+                            (new Notification($this->get()))->add('registration', $row);
 
                             $alerts[] = [
                                 'status' => 'success',

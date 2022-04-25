@@ -2,16 +2,16 @@
 
 /**
  * @package KN
- * @subpackage Controller
+ * @subpackage KN Middleware
  */
 
 declare(strict_types=1);
 
-namespace KN\Controllers;
+namespace KN\Core;
 
 use KN\Helpers\Base;
 
-class Controller {
+class Middleware {
 
 
     /**
@@ -25,9 +25,9 @@ class Controller {
 
     }
 
-    public function get($key = null) {
+    public function get($key) {
 
-        return is_null($key) ? $this->container : $this->container->{$key};
+        return $this->container->{$key};
 
     }
 

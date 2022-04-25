@@ -14,11 +14,6 @@ use KN\Helpers\Base;
 
 class Log {
 
-    public function __construct () {
-
-       
-    }
-
     public function add($args) {
 
         $args = Base::privateDataCleaner($args);
@@ -27,6 +22,9 @@ class Log {
         $model = new Model();
         return $model->insert([
             'endpoint'      => $args['request']->uri,
+            'method'        => $args['request']->method,
+            'middleware'    => $args['action']->middleware,
+            'controller'    => $args['action']->controller,
             'http_status'   => (string) $args['response']->statusCode,
             'auth_code'     => Base::authCode(),
             'ip'            => Base::getIp(),

@@ -6,6 +6,9 @@
  **/
 
 return [
+    'lang' => [
+        'code' => 'tr',
+    ],
     'err' => 'Hata',
     'error' => [
         'page_not_found' => 'Sayfa bulunamadı!',
@@ -16,6 +19,11 @@ return [
         'csrf_token_mismatch' => 'CSRF anahtarı uyuşmuyor.',
         'csrf_token_incorrect' => 'CSRF anahtarı geçersiz.',
         'username_is_already_used' => 'Kullanıcı adı zaten kullanımda.',
+        'notification_hook_file_not_found' => 'Bildirim kanca dosyası bulunamadı!',
+    ],
+    'notification' => [
+        'registration_email_title' => 'Hesabınız Oluşturuldu!',
+        'registration_email_body' => 'Selam [USER], <br>Hesabınız oluşturuldu. Aşağıdaki bağlantı ile eposta adresinizi doğrulayabilirsiniz. <br>[VERIFY_LINK]',
     ],
     'base' => [
         'sandbox' => 'Geliştirici Araçları',
@@ -83,8 +91,9 @@ return [
         'username_is_already_used' => 'Kullanıcı adı zaten kullanılıyor.',
         'registration_problem' => 'Kayıt esnasında bir sorun oluştu.',
         'registration_successful' => 'Kayıt başarılı!',
+        'verify_email' => 'Eposta Adresini Doğrula',
     ],
     'app' => [
         
-    ] 
+    ]
 ];
