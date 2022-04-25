@@ -2,12 +2,12 @@
 
 /**
  * @package KN
- * @subpackage Model
+ * @subpackage KN Model
  */
 
 declare(strict_types=1);
 
-namespace KN\Model;
+namespace KN\Core;
 
 use KN\Helpers\Base;
 use \Buki\Pdox;

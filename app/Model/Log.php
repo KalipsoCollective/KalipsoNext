@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace KN\Model;
 
-use KN\Model\Model;
+use KN\Core\Model;
 use KN\Helpers\Base;
 
 final class Log extends Model {

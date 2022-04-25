@@ -9,18 +9,45 @@ declare(strict_types=1);
 
 namespace KN\Core;
 
-use App\Core\DB;
-use App\Helpers\KN;
+use KN\Helpers\Base;
+use KN\Model\Notifications as NotificationsModel;
+use KN\Model\EmailLogs as EmailModel;
 
 class Notification {
 
+    /**
+     * Notification types from Resources/notifications
+     */
     public $types;
 
-    public function __construct () {
+    /**
+     * Factory class 
+     */
+    public $container;
+
+    /**
+     * @param object $container   It must be a factory object. 
+     * @return void
+     */
+    public function __construct ($container) {
+
+        if (file_exists($file = Base::path('app/Resources/notifications.php')))
+            $this->types = $file;
+        else
+            throw new \Exception(Base::lang('error.notification_hook_file_not_found'));
+
+        $this->container = $container;
+
     }
 
-    public function add($type, $data) {
+    public function add($type, $data = null) {
 
+        if (isset($this->types[$type]) !== false) {
+
+            return $this->types[$type]($this, $data);
+
+        }
+        /*
         switch ($type) {
 
             case 'registration':
@@ -126,10 +153,16 @@ class Notification {
                 ]);
                 break;
         }
+        */
         
     }
 
-    public function emailLogger($arguments) {
+    /**
+     * 
+     * @param array $arguments  email content 
+     * @return boolen|integer 
+     **/
+    public function addEmail($arguments) {
 
         $subTitle = $arguments['title'];
         $appName = KN::config('settings.name');

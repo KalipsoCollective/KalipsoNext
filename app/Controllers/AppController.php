@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace KN\Controllers;
 
-use KN\Controllers\Controller;
+use KN\Core\Controller;
 use KN\Helpers\Base;
 use KN\Model\Model;
 
