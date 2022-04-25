@@ -92,6 +92,9 @@ return [
         'registration_problem' => 'There was a problem during registration.',
         'registration_successful' => 'Registration successful!',
         'verify_email' => 'Verify Email Address',
+        'verify_email_not_found' => 'Email verification link is invalid!',
+        'verify_email_problem' => 'There was a problem verifying the email!',
+        'verify_email_success' => 'Email verification successful.',
     ],
     'app' => [
         

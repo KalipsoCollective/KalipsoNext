@@ -92,6 +92,9 @@ return [
         'registration_problem' => 'Kayıt esnasında bir sorun oluştu.',
         'registration_successful' => 'Kayıt başarılı!',
         'verify_email' => 'Eposta Adresini Doğrula',
+        'verify_email_not_found' => 'Eposta doğrulama bağlantısı geçersiz!',
+        'verify_email_problem' => 'Eposta doğrulaması yapılırken bir sorun oluştu!',
+        'verify_email_success' => 'Eposta doğrulama başarılı.',
     ],
     'app' => [
         

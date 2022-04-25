@@ -48,6 +48,19 @@ class Model extends Pdox {
 
     }
 
+    public function update(array $data, $type = false) {
+
+        if ($this->updated) {
+
+            $data['updated_at'] = isset($data['updated_at']) === false ? time() : $data['updated_at'];
+            $data['updated_by'] = isset($data['updated_at']) === false ? (Base::userData('id') ?? 0) : $data['updated_at'];
+
+        }
+
+        return parent::update($data, $type);
+
+    }
+
     protected function reset() {
 
         parent::reset();

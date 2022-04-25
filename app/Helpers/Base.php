@@ -453,6 +453,47 @@ class Base {
 
     }
 
+    /**
+     * Stored User Alert Generator
+     * @return string    
+     */
+    public static function sessionStoredAlert() {
+
+        /**
+         *   types:
+         *   - default
+         *   - success
+         *   - warning
+         *   - error
+         **/
+
+        $alert = '';
+        if (isset($_SESSION['alerts']) !== false AND count($_SESSION['alerts'])) {
+
+            $alert = '<div class="kn-toast-alert">';
+            foreach ($_SESSION['alerts'] as $a) {
+
+                switch ($a['status']) {
+                    case 'error':
+                        $a['status'] = 'danger';
+                        break;
+                    
+                    case 'default':
+                        $a['status'] = 'dark';
+                        break;
+                }
+
+                $alert .= '<div class="kn-alert kn-alert-' . $a['status'] . '">' . $a['message'] . '</div>';
+
+            }
+            $alert .= '</div>';
+
+        }
+
+        return $alert;
+
+    }
+
 
     /**
      * Language Translation

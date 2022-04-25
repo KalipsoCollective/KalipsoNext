@@ -549,9 +549,14 @@ final class Factory
 
              if ($this->response->redirect) {
 
+                $second = (is_array($this->response->redirect) ? $this->response->redirect[1] : null);
+                if (($second <= 0 OR is_null($second)) AND count($this->response->alerts)) {
+                    $_SESSION['alerts'] = $this->response->alerts;
+                }
+
                 Base::http('refresh', [
                     'url' => (is_array($this->response->redirect) ? $this->response->redirect[0] : $this->response->redirect),
-                    'second' => (is_array($this->response->redirect) ? $this->response->redirect[1] : null)
+                    'second' => $second
                 ]);
 
             }
@@ -579,20 +584,23 @@ final class Factory
 
             if ($this->response->redirect) {
 
+                $second = (is_array($this->response->redirect) ? $this->response->redirect[1] : null);
+                if (($second <= 0 OR is_null($second)) AND count($this->response->alerts)) {
+                    $_SESSION['alerts'] = $this->response->alerts;
+                }
+
                 Base::http('refresh', [
                     'url' => (is_array($this->response->redirect) ? $this->response->redirect[0] : $this->response->redirect),
-                    'second' => (is_array($this->response->redirect) ? $this->response->redirect[1] : null)
+                    'second' => $second
                 ]);
 
-            } else {
+            } 
 
-                $this->view(
-                    $this->response->statusCode, 
-                    $this->response->arguments, 
-                    'error'
-                );
-
-            }
+            $this->view(
+                $this->response->statusCode, 
+                $this->response->arguments, 
+                'error'
+            );
         }
         
         if ($this->log AND Base::config('settings.log')) {

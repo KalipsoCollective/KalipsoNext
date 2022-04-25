@@ -45,7 +45,7 @@ try {
     });
 
     // Single route
-    $app->route('GET', '/', 'AppController@index');
+    $app->route('GET', '/', 'AppController@index', ['Auth@verifyAccount']);
 
     // Do not remove this route for the KN script library.
     $app->route('GET,POST', '/script', 'AppController@script');
