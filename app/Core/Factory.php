@@ -694,7 +694,7 @@ final class Factory
      **/
     public function url($route) {
 
-        return $route;
+        return Base::base($route);
 
     }
 

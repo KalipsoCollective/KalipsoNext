@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace KN\Middlewares;
 
 use KN\Helpers\Base;
-use KN\Middlewares\Middleware;
+use KN\Core\Middleware;
 
 final class CSRF extends Middleware {
 

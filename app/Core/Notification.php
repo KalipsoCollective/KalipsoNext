@@ -12,6 +12,8 @@ namespace KN\Core;
 use KN\Helpers\Base;
 use KN\Model\Notifications as NotificationsModel;
 use KN\Model\EmailLogs as EmailModel;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception as PHPMailerException;
 
 class Notification {
 
@@ -26,17 +28,25 @@ class Notification {
     public $container;
 
     /**
+     * Email and Notifications Models
+     **/
+    public $emailModel;
+    public $notificationsModel;
+
+    /**
      * @param object $container   It must be a factory object. 
      * @return void
      */
     public function __construct ($container) {
 
         if (file_exists($file = Base::path('app/Resources/notifications.php')))
-            $this->types = $file;
+            $this->types = require $file;
         else
             throw new \Exception(Base::lang('error.notification_hook_file_not_found'));
 
         $this->container = $container;
+        $this->emailModel = (new EmailModel());
+        $this->notificationsModel = (new NotificationsModel());
 
     }
 
@@ -49,36 +59,6 @@ class Notification {
         }
         /*
         switch ($type) {
-
-            case 'registration':
-
-                $title = KN::lang('noti_email_register_title');
-                $name = (empty($data['f_name']) ? $data['u_name'] : $data['f_name']);
-                $link = '<a href="' . KN::base('account/?verify-account=' . $data['token']) . '">
-                    ' . KN::lang('verify_email') . '
-                </a>';
-                $body = str_replace(
-                    ['[USER]', '[VERIFY_LINK]'], 
-                    [$name, $link], 
-                    KN::lang('noti_email_register_body')
-                );
-
-                $this->emailLogger([
-                    'title' => $title,
-                    'body' => $body,
-                    'recipient' => $data['u_name'],
-                    'recipient_email' => $data['email'],
-                    'recipient_id' => $data['id'],
-                    'token' => $data['token']
-                ]);
-                    
-                (new DB())->table('notifications')
-                    ->insert([
-                        'user_id'       => $data['id'],
-                        'type'          => $type,
-                        'created_at'    => time()
-                    ]);
-                break;
 
             case 'recovery_request':
 
@@ -164,49 +144,41 @@ class Notification {
      **/
     public function addEmail($arguments) {
 
-        $subTitle = $arguments['title'];
-        $appName = KN::config('settings.name');
-        $title = $subTitle . ' - ' . $appName;
-        $content = $arguments['body'];
+        $title = $arguments['title'];
+        $app = Base::config('settings.name');
+        $body = $arguments['body'];
 
-        if (file_exists($template = KN::path('app/resources/template/email.html'))) { // with template
+        if (file_exists($template = Base::path('app/Resources/template/email.html'))) { // with template
 
-            $unsubscribe = str_replace(
-                ['[LINK]'], 
-                KN::base('account') . '?unsubscribe=' . $arguments['token'], 
-                KN::lang('noti_unsubscribe_footer')
-            );
-
-            $footer = $appName . ' (c) ' . date('Y');
-            $footer .= isset($arguments['unsubscribe']) !== false ? ' | ' . $unsubscribe : '';
+            $footer = $app . ' (c) ' . date('Y');
 
             $content = str_replace([
-                '{{TITLE}}',
-                '{{ALT_CONTENT}}',
-                '{{APP}}',
-                '{{SUB_TITLE}}',
-                '{{CONTENT}}',
-                '{{FOOTER}}'
+                '[TITLE]',
+                '[ALT_BODY]',
+                '[APP]',
+                '[BODY]',
+                '[FOOTER]'
             ], [
                 $title,
-                strip_tags($content),
-                $appName,
-                $subTitle,
-                $arguments['body'],
+                trim(strip_tags($body)),
+                $app,
+                $body,
                 $footer
             ], file_get_contents($template));
 
+        } else {
+            $content = $body;
         }
 
         $status = 'pending';
-        if (! KN::config('settings.mail_queue')) { // Direct sending
+        if (! Base::config('settings.mail_queue')) { // Direct sending
 
             $status = $this->sendEmail($arguments['recipient_email'], $arguments['recipient'], $content, $title) ? 
                 'completed' : 'uncompleted';
 
         }
 
-        if (! is_dir($path = KN::path('app/storage'))) mkdir($path);
+        if (! is_dir($path = Base::path('app/Storage'))) mkdir($path);
         if (! is_dir($path .= '/email')) mkdir($path);
         if (! is_dir($path .= '/' . $status)) mkdir($path);
 
@@ -216,8 +188,7 @@ class Notification {
 
         file_put_contents($path, $content);
 
-        return (new DB())->table('email_logs')
-            ->insert([
+        return $this->emailModel->insert([
                 'date'          => $date,
                 'email'         => $arguments['recipient_email'],
                 'name'          => $arguments['recipient'],
@@ -234,11 +205,11 @@ class Notification {
 
         $return = false;
 
-        if (KN::config('app.dev_mode')) $recipientMail = KN::config('settings.contact_email');
+        if (Base::config('app.dev_mode')) $recipientMail = Base::config('settings.contact_email');
         
-        $sendingType = KN::config('settings.mail_send_type');
+        $sendingType = Base::config('settings.mail_send_type');
 
-        if (KN::config('settings.dev_mode')) {
+        if (Base::config('app.dev_mode')) {
             $sendingType = 'server';
         }
 
@@ -246,27 +217,28 @@ class Notification {
 
             case 'smtp':
                 $mail = new PHPMailer(true);
-                $mail->setLanguage(lang('lang_code'));
+                if ($lang = Base::lang('lang.code') !== 'en') 
+                    $mail->setLanguage($lang);
 
                 try {
                     $mail->SMTPDebug = 0;
                     $mail->isSMTP();
-                    $mail->Host         = KN::config('settings.smtp_address');
+                    $mail->Host         = Base::config('settings.smtp_address');
                     $mail->SMTPAuth     = true;
-                    $mail->Username     = KN::config('settings.smtp_email_address');
-                    $mail->Password     = KN::config('settings.smtp_email_pass');
+                    $mail->Username     = Base::config('settings.smtp_email_address');
+                    $mail->Password     = Base::config('settings.smtp_email_pass');
                     $mail->SMTPSecure   = PHPMailer::ENCRYPTION_STARTTLS;
-                    $mail->Port         = KN::config('settings.smtp_port');
-                    $mail->CharSet      = KN::config('app.charset');
+                    $mail->Port         = Base::config('settings.smtp_port');
+                    $mail->CharSet      = Base::config('app.charset');
 
-                    $reply = KN::config('settings.contact_email');
+                    $reply = Base::config('settings.contact_email');
                     if (! $reply OR $reply == '') {
-                        $reply = KN::config('settings.smtp_email_address');
+                        $reply = Base::config('settings.smtp_email_address');
                     }
                     //Recipients
-                    $mail->setFrom(KN::config('settings.smtp_email_address'), KN::config('app.name'));
+                    $mail->setFrom(Base::config('settings.smtp_email_address'), Base::config('app.name'));
                     $mail->addAddress($recipientMail, $recipientName);      // Add a recipient
-                    $mail->addReplyTo($reply, KN::config('app.name') );
+                    $mail->addReplyTo($reply, Base::config('app.name') );
 
                     // Content
                     $mail->isHTML(true);                                    // Set email format to HTML
@@ -287,9 +259,9 @@ class Notification {
                 break;
             
             default:
-                $headers = "Reply-To: ". KN::config('settings.contact_email') . "\r\n";
+                $headers = "Reply-To: ". Base::config('settings.contact_email') . "\r\n";
                 $headers .= "MIME-Version: 1.0\r\n";
-                $headers .= "Content-Type: text/html; charset='".KN::config('app.charset')."'\r\n";
+                $headers .= "Content-Type: text/html; charset='".Base::config('app.charset')."'\r\n";
                 $return = mail($recipientMail, $title, $content, $headers);
                 break;
         }

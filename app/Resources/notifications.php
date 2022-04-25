@@ -12,7 +12,7 @@ return [
 
 		$title = Base::lang('notification.registration_email_title');
         $name = (empty($external['f_name']) ? $external['u_name'] : $external['f_name']);
-        $link = '<a href="' . $hook->container->url('/') . ' ?verify-account=' . $data['token'] . '">
+        $link = '<a href="' . $hook->container->url('/') . '?verify-account=' . $external['token'] . '">
             ' . Base::lang('base.verify_email') . '
         </a>';
         $body = str_replace(
@@ -21,21 +21,27 @@ return [
             Base::lang('notification.registration_email_body')
         );
 
-        $hook->addEmail([
+        $email = $hook->addEmail([
             'title' => $title,
             'body' => $body,
-            'recipient' => $data['u_name'],
-            'recipient_email' => $data['email'],
-            'recipient_id' => $data['id'],
-            'token' => $data['token']
+            'recipient' => $external['u_name'],
+            'recipient_email' => $external['email'],
+            'recipient_id' => $external['id'],
+            'token' => $external['token']
         ]);
             
-        (new DB())->table('notifications')
-            ->insert([
-                'user_id'       => $data['id'],
-                'type'          => $type,
-                'created_at'    => time()
-            ]);
+        $notification = $hook->notificationsModel->insert([
+            'user_id'       => $external['id'],
+            'type'          => 'registration',
+            'created_at'    => time()
+        ]);
+
+        if ($email AND $notification)
+        	return true;
+        elseif ($email OR $notification)
+        	return false;
+        else
+        	return null;
 
 	},
 

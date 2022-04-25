@@ -6,6 +6,9 @@
  **/
 
 return [
+    'lang' => [
+        'code' => 'en',
+    ],
     'err' => 'Error',
     'error' => [
         'page_not_found' => 'Page not found!',

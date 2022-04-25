@@ -12,13 +12,13 @@ namespace KN\Model;
 use KN\Core\Model;
 use KN\Helpers\Base;
 
-final class Log extends Model {
+final class EmailLogs extends Model {
 
     function __construct () {
 
         $this->table = 'email_logs';
-        $this->created = true;
-        $this->updated = true;
+        $this->created = false;
+        $this->updated = false;
 
         parent::__construct();
 

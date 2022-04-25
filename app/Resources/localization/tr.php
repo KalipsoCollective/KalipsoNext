@@ -6,6 +6,9 @@
  **/
 
 return [
+    'lang' => [
+        'code' => 'tr',
+    ],
     'err' => 'Hata',
     'error' => [
         'page_not_found' => 'Sayfa bulunamadı!',

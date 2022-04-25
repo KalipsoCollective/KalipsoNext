@@ -11,7 +11,7 @@ namespace KN\Controllers;
 
 use KN\Core\Controller;
 use KN\Helpers\Base;
-use KN\Model\Model;
+use KN\Core\Model;
 
 final class AppController extends Controller {
 
@@ -291,7 +291,7 @@ final class AppController extends Controller {
                         if ($glob AND count($glob)) {
                             foreach ($glob as $folder) {
                                 if (in_array(basename($folder), $deleteAction))
-                                    self::removeDir($folder);   
+                                    Base::removeDir($folder);   
                             }
                             echo '<p class="text-success">'.Base::lang('base.clear_storage_success').'</p>';
 
@@ -305,7 +305,7 @@ final class AppController extends Controller {
                         echo '
                         <form method="get">
                             <div class="table-responsive">
-                                <table class="table table-hover table-borderless table-striped">
+                                <table class="table table-hover table-dark table-borderless table-striped">
                                     <thead>
                                         <tr>
                                             <th scope="col" width="5%">#</th>
@@ -319,7 +319,7 @@ final class AppController extends Controller {
                                         if (! is_dir($folder)) 
                                             continue;
 
-                                        $size = self::dirSize($folder);
+                                        $size = Base::dirSize($folder);
                                         if (! $deleteBtn AND $size) 
                                             $deleteBtn = true;
 
