@@ -39,6 +39,15 @@
   background: var(--bs-primary);
 }
 
+@keyframes alertOpacityOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
 body {
   font-family: 'Manrope', sans-serif;
 }
@@ -79,28 +88,35 @@ a {
 }
 
 .kn-toast-alert {
-    position: sticky;
+    position: fixed;
     top: 0;
-    left: 0;
+    
     right: 0;
-    display: flex;
+    left: 0;margin: 0 auto;display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
-    align-content: stretch;
+    align-content: center;
     justify-content: flex-start;
-    align-items: stretch;
-    z-index: 1045;
-}
+    align-items: center;
+    padding: 1rem;z-index: 1045;
+pointer-events: none;}
 
 .kn-toast-alert .kn-alert {
     display: block;
-    width: 100%;
+    width: auto;
     padding: 0.5rem;
-    font-size: 1.2rem;
-    background: #000;
-    color: #fff;
+    font-size: 0.9rem;
+    border-radius: 0.5rem;background: #000;
+    box-shadow: 0 0.2rem 0.5rem #0005;color: #fff;
 }
 
+.kn-toast-alert .kn-alert + .kn-alert {
+    margin-top: 0.5rem;
+}
+
+.kn-toast-alert .kn-alert.out {
+    animation: alertOpacityOut 1s;
+}
 
 .kn-toast-alert .kn-alert-danger {
     background: var(--bs-danger);

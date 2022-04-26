@@ -31,4 +31,20 @@ NProgress.start();
 
 function init() {
 	
+	const alerts = document.querySelectorAll('.kn-alert');
+	if (alerts.length) {
+
+		for (var i = alerts.length - 1; i >= 0; i--) {
+			let element = alerts[i]
+			setTimeout(() => {
+				element.classList.add('out');
+				setTimeout(() => {
+					element.remove();
+				}, 800);
+			}, 5000);
+			
+		}
+
+	}
+
 }
