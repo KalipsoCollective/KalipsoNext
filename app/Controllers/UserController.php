@@ -137,7 +137,6 @@ final class UserController extends Controller {
 
         if (isset($redirect)) {
             $return['redirect'] = $redirect;
-            unset($return['view']);
         }
 
         return $return;
@@ -194,7 +193,8 @@ final class UserController extends Controller {
 
                             if (isset($this->get('request')->params['terminate']) !== false AND $record->id == $this->get('request')->params['terminate']) {
 
-                                if ($authCode != $record->auth_code AND $sessions->where('id', $record->id)->delete()) {
+                                $delete = $sessions->where('id', $record->id)->delete();
+                                if ($authCode != $record->auth_code AND $delete) {
                                     $alerts[] = [
                                         'status' => 'success',
                                         'message' => Base::lang('base.session_terminated')

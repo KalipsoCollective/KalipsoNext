@@ -11,6 +11,7 @@ namespace KN\Core;
 
 use KN\Helpers\Base;
 use KN\Core\Log;
+// use KN\Core\
 
 final class Factory 
 {
@@ -695,6 +696,7 @@ final class Factory
     public function authCheck() {
 
         $session = Base::getSession('user');
+        $dbSession = (new Model)
 
         if (isset($session) !== false AND ! empty($session->id))
             $this->auth = true;

@@ -20,7 +20,7 @@
 						</div>
 					</div>
 					<div class="col-12 col-lg-9">
-						<?php echo KN\Helpers\Base::alert(); ?>
+						<?php echo KN\Helpers\Base::alert($this->response->alerts); ?>
 						<h1><?php echo $head; ?></h1>
 						<h2 class="h4"><?php echo $description; ?></h2>
 						<?php 
