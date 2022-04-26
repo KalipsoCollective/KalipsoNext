@@ -114,6 +114,7 @@ return [
         'session_terminated' => 'Oturum sonlandırıldı.',
         'session_not_terminated' => 'Oturum sonlandırılamadı!',
         'signed_out' => 'Çıkış yapıldı.',
+        'login_information_updated' => 'Your login information has been updated.',
     ],
     'app' => [
         

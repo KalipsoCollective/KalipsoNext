@@ -11,7 +11,9 @@ namespace KN\Core;
 
 use KN\Helpers\Base;
 use KN\Core\Log;
-// use KN\Core\
+use KN\Model\Users;
+use KN\Model\UserRoles;
+use KN\Model\Sessions;
 
 final class Factory 
 {
@@ -79,12 +81,6 @@ final class Factory
          **/
         Base::sessionStart(); // It is created using KN_SESSION_NAME
         ob_start();
-
-
-        /**
-         *  Auth check 
-         **/
-        $this->authCheck();
 
         /**
          * 
@@ -172,6 +168,11 @@ final class Factory
         } else {
             throw new \Exception("Language file is not found!");
         }
+
+        /**
+         *  Auth check 
+         **/
+        $this->authCheck();
 
     }
 
@@ -695,14 +696,64 @@ final class Factory
      **/
     public function authCheck() {
 
+        $authCode = Base::authCode();
+        $dbSession = (new Sessions)->select('id, user_id, update_session')->where('auth_code', $authCode)->get();
         $session = Base::getSession('user');
-        $dbSession = (new Model)
 
-        if (isset($session) !== false AND ! empty($session->id))
+        if (! empty($dbSession)) {
+
+            /**
+             * Sync updated data
+             **/
+            if (empty($session) OR $dbSession->update_session === 'true') {
+
+                $users = (new Users());
+                $getUser = $users->select('id, u_name, f_name, l_name, email, password, token, role_id, b_date, status')
+                    ->where('id', $dbSession->user_id)
+                    ->get();
+
+                $userRoles = new UserRoles();
+                $getUserRole = $userRoles->select('view_points, action_points, name')->where('id', $getUser->role_id)->get();
+
+                $getUser->role_name = $getUserRole->name;
+                $getUser->view_points = (object) explode(',', $getUserRole->view_points);
+                $getUser->action_points = (object) explode(',', $getUserRole->action_points);
+
+                $getUser = Base::privateDataCleaner($getUser);
+
+                Base::setSession($getUser, 'user');
+                $this->response->alerts[] = [
+                    'status' => 'success',
+                    'message' => Base::lang('base.login_information_updated'),
+                ];
+                $this->response->redirect = ['/', 0];
+            }
+
+            /**
+             * Update check point 
+             **/
+            (new Sessions)->where('auth_code', $authCode)
+                ->update([
+                    'header' => Base::getHeader(),
+                    'ip' => Base::getIp(),
+                    'last_action_date' => time(),
+                    'update_session' => 'false',
+                    'last_action_point' => $this->request->uri
+                ]);
+
             $this->auth = true;
-        
-        else
+
+        } else {
+
+            /**
+             * Clear non-functional session data
+             **/
+            if (! empty($session)) {
+                Base::clearSession();
+            }
+
             $this->auth = false;
+        }
 
         return $this;
     }
