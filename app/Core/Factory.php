@@ -551,7 +551,7 @@ final class Factory
 
                 $second = (is_array($this->response->redirect) ? $this->response->redirect[1] : null);
                 if (($second <= 0 OR is_null($second)) AND count($this->response->alerts)) {
-                    $_SESSION['alerts'] = $this->response->alerts;
+                    Base::setSession($this->response->alerts, 'alerts');
                 }
 
                 Base::http('refresh', [
@@ -586,7 +586,7 @@ final class Factory
 
                 $second = (is_array($this->response->redirect) ? $this->response->redirect[1] : null);
                 if (($second <= 0 OR is_null($second)) AND count($this->response->alerts)) {
-                    $_SESSION['alerts'] = $this->response->alerts;
+                    Base::setSession($this->response->alerts, 'alerts');
                 }
 
                 Base::http('refresh', [
@@ -685,7 +685,9 @@ final class Factory
      **/
     public function authCheck() {
 
-        if (isset($_SESSION['user']->id) !== false AND $_SESSION['user']->id)
+        $session = Base::getSession('user');
+
+        if (isset($session) !== false AND ! empty($session->id))
             $this->auth = true;
         
         else

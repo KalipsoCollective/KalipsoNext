@@ -95,6 +95,11 @@ return [
         'verify_email_not_found' => 'Eposta doğrulama bağlantısı geçersiz!',
         'verify_email_problem' => 'Eposta doğrulaması yapılırken bir sorun oluştu!',
         'verify_email_success' => 'Eposta doğrulama başarılı.',
+        'your_account_has_been_blocked' => 'Hesabınız silinmiş, lütfen iletişime geçin.',
+        'account_not_found' => 'Hesap bulunamadı!',
+        'your_login_info_incorrect' => 'Giriş bilgileriniz hatalı!',
+        'welcome_back' => 'Tekrar hoş geldiniz!',
+        'login_problem' => 'Oturum başlatılırken bir sorun oluştu.',
     ],
     'app' => [
         

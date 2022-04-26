@@ -1164,18 +1164,24 @@ class Base {
 
     /**
      * Private data cleaner
-     * @param array $data
-     * @return array
+     * @param array|object $data
+     * @return array|object
      */
     public static function privateDataCleaner($data) {
 
-        $return = [];
+        $return = is_object($data) ? (object)[] : [];
         foreach ($data as $k => $v) {
 
             if (is_array($v)) {
-                $return[$k] = self::privateDataCleaner($v);
+                $v = self::privateDataCleaner($v);
             } else {
-                $return[$k] = in_array($k, ['password']) !== false ? '***' : $v;
+                $v = in_array($k, ['password']) !== false ? '***' : $v;
+            }
+
+            if (is_object($return)) {
+                $return->{$k} = $v;
+            } else {
+                $return[$k] = $v;
             }
 
         }

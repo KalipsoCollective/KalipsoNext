@@ -95,6 +95,11 @@ return [
         'verify_email_not_found' => 'Email verification link is invalid!',
         'verify_email_problem' => 'There was a problem verifying the email!',
         'verify_email_success' => 'Email verification successful.',
+        'your_account_has_been_blocked' => 'Your account has been deleted, please contact us.',
+        'account_not_found' => 'Account not found!',
+        'your_login_info_incorrect' => 'Your login information is incorrect!',
+        'welcome_back' => 'Welcome back!',
+        'login_problem' => 'There was a problem starting the session.',
     ],
     'app' => [
         
