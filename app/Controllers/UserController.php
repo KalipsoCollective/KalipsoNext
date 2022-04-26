@@ -144,14 +144,57 @@ final class UserController extends Controller {
 
     public function account() {
 
+        $steps = [
+            'profile' => [
+                'icon' => 'ti ti-tool', 'lang' => 'base.profile'
+            ], 
+            'sessions' => [
+                'icon' => 'ti ti ti-devices', 'lang' => 'base.sessions'
+            ],
+        ];
+
+        $action = '';
+        if (
+            isset($this->get('request')->attributes['action']) !== false AND 
+            in_array($this->get('request')->attributes['action'], array_keys($steps)))
+            $action = $this->get('request')->attributes['action'];
+
+        $title = Base::lang('base.account');
+        $output = '';
+
+        switch ($action) {
+            case 'profile':
+                $head = Base::lang('base.profile');
+                $title = $head . ' | ' . $title;
+                $description = Base::lang('base.profile_message');
+                $output = 'profile';
+                break;
+
+            case 'sessions':
+                $head = Base::lang('base.sessions');
+                $title = $head . ' | ' . $title;
+                $description = Base::lang('base.sessions_message');
+                $output = 'sessions';
+                break;
+
+            
+            default:
+                $head = Base::lang('base.account');
+                $description = Base::lang('base.account_message');
+                break;
+        }
+        
         return [
             'status' => true,
             'statusCode' => 200,
             'arguments' => [
-                'title' => Base::lang('base.account'),
-                'description' => Base::lang('base.account_message')
+                'title' => $title,
+                'head'  => $head,
+                'description' => $description,
+                'output' => $output,
+                'steps' => $steps
             ],
-            'view' => 'user.account',
+            'view' => 'user.account'
         ];
 
     }

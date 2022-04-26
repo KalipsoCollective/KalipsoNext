@@ -100,6 +100,10 @@ return [
         'your_login_info_incorrect' => 'Giriş bilgileriniz hatalı!',
         'welcome_back' => 'Tekrar hoş geldiniz!',
         'login_problem' => 'Oturum başlatılırken bir sorun oluştu.',
+        'profile' => 'Profil',
+        'profile_message' => 'Profilinizi bu sayfadan düzenleyebilirsiniz.',
+        'sessions' => 'Oturumlar',
+        'sessions_message' => 'Aktif oturumları bu sayfadan görüntüleyebilirsiniz.',
     ],
     'app' => [
         

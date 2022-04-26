@@ -27,8 +27,8 @@ try {
             ['GET,POST', '/login', 'UserController@login', ['Auth@withOut', 'CSRF@validate']],
             ['GET,POST', '/register', 'UserController@register', ['Auth@withOut', 'CSRF@validate']],
             ['GET,POST', '/recovery', 'UserController@recovery', ['Auth@withOut', 'CSRF@validate']],
-            ['GET,POST', '/settings', 'UserController@settings', ['Auth@with', 'CSRF@validate']],
-            ['GET,POST', '/sessions', 'UserController@sessions', ['Auth@with']],
+            ['GET,POST', '/logout', 'UserController@logout', ['Auth@with']],
+            ['GET,POST', '/:action', 'UserController@account', ['Auth@with', 'CSRF@validate']],
         ];
     });
 
