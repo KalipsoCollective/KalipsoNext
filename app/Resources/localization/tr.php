@@ -117,6 +117,8 @@ return [
         'login_information_updated' => 'Your login information has been updated.',
         'birth_date' => 'Doğum Tarihi',
         'update' => 'Güncelle',
+        'save_problem' => 'Kaydedilirken bir sorun oluştu.',
+        'save_success' => 'Başarıyla kaydedildi.',
     ],
     'app' => [
         

@@ -726,7 +726,7 @@ final class Factory
                     'status' => 'success',
                     'message' => Base::lang('base.login_information_updated'),
                 ];
-                $this->response->redirect = ['/', 0];
+                $this->response->redirect = [$this->request->uri, 0];
             }
 
             /**

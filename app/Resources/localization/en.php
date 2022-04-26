@@ -117,6 +117,8 @@ return [
         'login_information_updated' => 'Your login information has been updated.',
         'birth_date' => 'Birth Date',
         'update' => 'Update',
+        'save_problem' => 'There was a problem saving.',
+        'save_success' => 'Successfully saved.',
     ],
     'app' => [
         

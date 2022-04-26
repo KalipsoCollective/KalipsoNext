@@ -171,6 +171,59 @@ final class UserController extends Controller {
                 $title = $head . ' | ' . $title;
                 $description = Base::lang('base.profile_message');
                 $output = Base::getSession('user');
+
+                if ($this->get('request')->method === 'POST') {
+
+                    extract(Base::input([
+                        'email' => 'nulled_email', 
+                        'f_name' => 'nulled_text', 
+                        'l_name' => 'nulled_text',
+                        'b_date' => 'date',
+                        'password' => 'nulled_password'
+                    ], $this->get('request')->params));
+
+                    if (! is_null($email) AND ! is_null($f_name) AND ! is_null($l_name) AND ! is_null($b_date)) {
+
+                        $update = [
+                            'f_name' => $f_name,
+                            'l_name' => $l_name,
+                            'b_date' => $b_date,
+                            'email' => $email
+                        ];
+
+                        if ($password)
+                            $update['password'] = $password;
+
+                        $update = (new Users)->where('id', $output->id)->update($update);
+
+                        if ($update) {
+
+                            (new Sessions)->where('user_id', $output->id)->update(['update_session' => 'true']);
+                            $alerts[] = [
+                                'status' => 'success',
+                                'message' => Base::lang('base.save_success')
+                            ];
+                            $redirect = '/auth/profile';
+
+                        } else {
+
+                            $alerts[] = [
+                                'status' => 'warning',
+                                'message' => Base::lang('base.save_problem')
+                            ];
+                        }
+
+                    } else {
+
+                        $alerts[] = [
+                            'status' => 'warning',
+                            'message' => Base::lang('base.form_cannot_empty')
+                        ];
+
+                    }
+
+                }
+
                 break;
 
             case 'sessions':
@@ -215,7 +268,6 @@ final class UserController extends Controller {
                             $output[] = $record;
                         }
                     }
-
                 }
 
                 break;
@@ -247,6 +299,9 @@ final class UserController extends Controller {
 
         if (isset($authCode) !== false)
             $return['arguments']['auth_code'] = $authCode;
+
+        if (isset($redirect) !== false)
+            $return['redirect'] = $redirect;
 
         return $return;
 

@@ -38,14 +38,14 @@ return [
 					'type_values'   => 255,
 					'default'       => 'NULL',
 					'nullable'      => 'true',
-					'index'         => 'UNIQUE'
+					'index'         => 'INDEX'
 				],
 				'l_name' => [
 					'type'          => 'varchar',
 					'type_values'   => 255,
 					'default'       => 'NULL',
 					'nullable'      => 'true',
-					'index'         => 'UNIQUE'
+					'index'         => 'INDEX'
 				],
 				'email' => [
 					'type'          => 'varchar',

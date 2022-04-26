@@ -71,7 +71,6 @@
 							</div>';
 
 						} elseif ($action == 'profile') {
-							\KN\Helpers\Base::dump($output);
 							?>
 							<form method="post" class="row g-3 my-3" action="<?php echo \KN\Helpers\Base::base('auth/profile'); ?>" data-vpjax>
 								<?php echo \KN\Helpers\Base::createCSRF(); ?>
@@ -89,8 +88,14 @@
 								</div>
 								<div class="col-12 col-md-6">
 									<div class="form-floating">
-										<input type="text" name="b_date" class="form-control" id="b_date" placeholder="<?php echo \KN\Helpers\Base::lang('base.birth_date'); ?>" required <?php echo \KN\Helpers\Base::inputValue('b_date', $output); ?>>
+										<input type="date" name="b_date" class="form-control" id="b_date" placeholder="<?php echo \KN\Helpers\Base::lang('base.birth_date'); ?>" required <?php echo \KN\Helpers\Base::inputValue('b_date', $output, 'date'); ?>>
 										<label for="b_date"><?php echo \KN\Helpers\Base::lang('base.birth_date'); ?></label>
+									</div>
+								</div>
+								<div class="col-12 col-md-6">
+									<div class="form-floating">
+										<input type="email" name="email" class="form-control" id="email" placeholder="<?php echo \KN\Helpers\Base::lang('base.email'); ?>" required <?php echo \KN\Helpers\Base::inputValue('email', $output); ?>>
+										<label for="email"><?php echo \KN\Helpers\Base::lang('base.email'); ?></label>
 									</div>
 								</div>
 								<div class="col-12 col-md-6">

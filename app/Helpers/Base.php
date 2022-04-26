@@ -1141,16 +1141,22 @@ class Base {
      * Write the value of the submitted field.
      * @param string $name
      * @param array|object $parameters
+     * @param string $type  format parameter
      * @return string
      */
-    public static function inputValue($name, $parameters) {
+    public static function inputValue($name, $parameters, $type = '') {
 
         $return = '';
 
-        $parameters = (array) $parameters;
-        self::dump(isset($parameters[$name]));
+        $parameters = (array)$parameters;
         if (isset($parameters[$name]) !== false) {
-            $return = 'value="' . $parameters[$name] . '"';
+            $return = $parameters[$name];
+
+            if ($type == 'date' AND ! is_null($return)) {
+                $return = date('Y-m-d', (int) $return);
+            }
+
+            $return = 'value="' . $return . '"';
         }
         return $return;
 
