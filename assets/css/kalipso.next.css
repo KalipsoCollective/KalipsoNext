@@ -22,17 +22,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 0 1px var(--bs-dark);
+  background: var(--bs-gray-300);
   border-radius: 0
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--bs-gray-900);
-  border-radius: 15px
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--bs-gray-400)
+  background: var(--bs-gray-600)
 }
 
 ::selection {
@@ -80,7 +79,7 @@ a {
 }
 
 .kn-toast-alert {
-    position: fixed;
+    position: sticky;
     top: 0;
     left: 0;
     right: 0;
