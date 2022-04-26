@@ -155,6 +155,7 @@ final class UserController extends Controller {
         ];
 
         $action = '';
+
         if (
             isset($this->get('request')->attributes['action']) !== false AND 
             in_array($this->get('request')->attributes['action'], array_keys($steps)))
@@ -169,7 +170,7 @@ final class UserController extends Controller {
                 $head = Base::lang('base.profile');
                 $title = $head . ' | ' . $title;
                 $description = Base::lang('base.profile_message');
-                $output = 'profile';
+                $output = Base::getSession('user');
                 break;
 
             case 'sessions':
@@ -234,7 +235,8 @@ final class UserController extends Controller {
                 'head'  => $head,
                 'description' => $description,
                 'output' => $output,
-                'steps' => $steps
+                'steps' => $steps,
+                'action' => $action
             ],
             'alerts' => $alerts,
             'view' => 'user.account'

@@ -115,6 +115,8 @@ return [
         'session_not_terminated' => 'Oturum sonlandırılamadı!',
         'signed_out' => 'Çıkış yapıldı.',
         'login_information_updated' => 'Your login information has been updated.',
+        'birth_date' => 'Doğum Tarihi',
+        'update' => 'Güncelle',
     ],
     'app' => [
         

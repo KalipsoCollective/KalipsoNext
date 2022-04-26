@@ -24,8 +24,7 @@
 						<h1><?php echo $head; ?></h1>
 						<h2 class="h4"><?php echo $description; ?></h2>
 						<?php 
-
-						if (is_array($output)) {
+						if ($action == 'sessions' AND is_array($output)) {
 
 							echo '
 							<div class="table-responsive">
@@ -71,6 +70,43 @@
 								</table>
 							</div>';
 
+						} elseif ($action == 'profile') {
+							\KN\Helpers\Base::dump($output);
+							?>
+							<form method="post" class="row g-3 my-3" action="<?php echo \KN\Helpers\Base::base('auth/profile'); ?>" data-vpjax>
+								<?php echo \KN\Helpers\Base::createCSRF(); ?>
+								<div class="col-12 col-md-6">
+									<div class="form-floating">
+										<input type="text" name="f_name" class="form-control" id="f_name" placeholder="<?php echo \KN\Helpers\Base::lang('base.name'); ?>" required <?php echo \KN\Helpers\Base::inputValue('f_name', $output); ?>>
+										<label for="f_name"><?php echo \KN\Helpers\Base::lang('base.name'); ?></label>
+									</div>
+								</div>
+								<div class="col-12 col-md-6">
+									<div class="form-floating">
+										<input type="text" name="l_name" class="form-control" id="l_name" placeholder="<?php echo \KN\Helpers\Base::lang('base.surname'); ?>" required <?php echo \KN\Helpers\Base::inputValue('l_name', $output); ?>>
+										<label for="l_name"><?php echo \KN\Helpers\Base::lang('base.surname'); ?></label>
+									</div>
+								</div>
+								<div class="col-12 col-md-6">
+									<div class="form-floating">
+										<input type="text" name="b_date" class="form-control" id="b_date" placeholder="<?php echo \KN\Helpers\Base::lang('base.birth_date'); ?>" required <?php echo \KN\Helpers\Base::inputValue('b_date', $output); ?>>
+										<label for="b_date"><?php echo \KN\Helpers\Base::lang('base.birth_date'); ?></label>
+									</div>
+								</div>
+								<div class="col-12 col-md-6">
+									<div class="form-floating">
+										<input type="password" name="password" class="form-control" id="password" placeholder="<?php echo \KN\Helpers\Base::lang('base.password'); ?>">
+										<label for="password"><?php echo \KN\Helpers\Base::lang('base.password'); ?></label>
+									</div>
+								</div>
+								<div class="col-12">
+									<button type="submit" class="btn btn-primary d-flex ms-auto">
+										<?php echo \KN\Helpers\Base::lang('base.update'); ?> 
+										<span class="mdi mdi-arrow-right"></span>
+									</button>
+								</div>
+							</form>
+							<?php
 						} else {
 							echo $output; 
 						}	?>

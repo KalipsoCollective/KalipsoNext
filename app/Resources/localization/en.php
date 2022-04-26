@@ -115,6 +115,8 @@ return [
         'session_not_terminated' => 'The session could not be terminated!',
         'signed_out' => 'Signed out.',
         'login_information_updated' => 'Your login information has been updated.',
+        'birth_date' => 'Birth Date',
+        'update' => 'Update',
     ],
     'app' => [
         

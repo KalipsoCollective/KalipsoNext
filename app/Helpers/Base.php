@@ -1140,12 +1140,15 @@ class Base {
     /**
      * Write the value of the submitted field.
      * @param string $name
-     * @param array $parameters
+     * @param array|object $parameters
      * @return string
      */
     public static function inputValue($name, $parameters) {
 
         $return = '';
+
+        $parameters = (array) $parameters;
+        self::dump(isset($parameters[$name]));
         if (isset($parameters[$name]) !== false) {
             $return = 'value="' . $parameters[$name] . '"';
         }
