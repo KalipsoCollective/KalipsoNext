@@ -20,6 +20,7 @@ return [
         'csrf_token_incorrect' => 'CSRF anahtarı geçersiz.',
         'username_is_already_used' => 'Kullanıcı adı zaten kullanımda.',
         'notification_hook_file_not_found' => 'Bildirim kanca dosyası bulunamadı!',
+        'a_problem_occurred' => 'Bir sorun oluştu!',
     ],
     'notification' => [
         'registration_email_title' => 'Hesabınız Oluşturuldu!',
@@ -104,6 +105,15 @@ return [
         'profile_message' => 'Profilinizi bu sayfadan düzenleyebilirsiniz.',
         'sessions' => 'Oturumlar',
         'sessions_message' => 'Aktif oturumları bu sayfadan görüntüleyebilirsiniz.',
+        'device' => 'Cihaz',
+        'ip' => 'IP',
+        'last_action_point' => 'Son İşlem Noktası',
+        'last_action_date' => 'Son İşlem Tarihi',
+        'action' => 'İşlem',
+        'terminate' => 'Sonlandır',
+        'session_terminated' => 'Oturum sonlandırıldı.',
+        'session_not_terminated' => 'Oturum sonlandırılamadı!',
+        'signed_out' => 'Çıkış yapıldı.',
     ],
     'app' => [
         

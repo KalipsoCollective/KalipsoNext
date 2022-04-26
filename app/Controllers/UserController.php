@@ -81,7 +81,7 @@ final class UserController extends Controller {
                                     'message' => Base::lang('base.welcome_back'),
                                 ];
 
-                                $redirect = '/account';
+                                $redirect = '/auth';
 
                             } else {
 
@@ -161,6 +161,7 @@ final class UserController extends Controller {
 
         $title = Base::lang('base.account');
         $output = '';
+        $alerts = [];
 
         switch ($action) {
             case 'profile':
@@ -174,7 +175,46 @@ final class UserController extends Controller {
                 $head = Base::lang('base.sessions');
                 $title = $head . ' | ' . $title;
                 $description = Base::lang('base.sessions_message');
-                $output = 'sessions';
+                $output = [];
+                $sessions = new Sessions();
+
+                $session = Base::getSession('user');
+                $authCode = Base::authCode();
+                if (isset($session->id) !== false) {
+
+                    $records = $sessions->select('id, header, auth_code, ip, last_action_date, last_action_point')
+                        ->where('user_id', $session->id)
+                        ->getAll();
+
+                    if ($records) {
+                        $output = [];
+                        foreach ($records as $record) {
+
+                            if (isset($this->get('request')->params['terminate']) !== false AND $record->id == $this->get('request')->params['terminate']) {
+
+                                if ($authCode != $record->auth_code AND $sessions->where('id', $record->id)->delete()) {
+                                    $alerts[] = [
+                                        'status' => 'success',
+                                        'message' => Base::lang('base.session_terminated')
+                                    ];
+                                    continue;
+                                } else {
+
+                                    $alerts[] = [
+                                        'status' => 'warning',
+                                        'message' => Base::lang('base.session_not_terminated')
+                                    ];
+                                }
+                            }
+
+                            $record->device = Base::userAgentDetails($record->header);
+                            unset($record->header);
+                            $output[] = $record;
+                        }
+                    }
+
+                }
+
                 break;
 
             
@@ -183,8 +223,8 @@ final class UserController extends Controller {
                 $description = Base::lang('base.account_message');
                 break;
         }
-        
-        return [
+
+        $return = [
             'status' => true,
             'statusCode' => 200,
             'arguments' => [
@@ -194,8 +234,17 @@ final class UserController extends Controller {
                 'output' => $output,
                 'steps' => $steps
             ],
+            'alerts' => $alerts,
             'view' => 'user.account'
         ];
+
+        if (isset($session) !== false)
+            $return['arguments']['session'] = $session;
+
+        if (isset($authCode) !== false)
+            $return['arguments']['auth_code'] = $authCode;
+
+        return $return;
 
     }
 
@@ -301,6 +350,40 @@ final class UserController extends Controller {
             $return['redirect'] = $redirect;
 
         return $return;
+
+    }
+
+    public function logout() {
+
+        $deleteSession = (new Sessions)
+            ->where('auth_code', Base::authCode())
+            ->delete();
+
+        if ($deleteSession !== false AND $deleteSession !== null) {
+
+            Base::clearSession();
+            return [
+                'status' => true,
+                'alerts' => [[
+                    'status' => 'success',
+                    'message' => Base::lang('base.signed_out'),
+                ]],
+                'redirect' => '/'
+            ];
+
+        } else {
+
+            return [
+                'status' => false,
+                'statusCode' => 401,
+                'arguments' => [
+                    'title' => Base::lang('err'),
+                    'error' => '401',
+                    'output' => Base::lang('error.a_problem_occurred') . ' -> (logout)'
+                ],
+                'view' => ['error', 'error']
+            ];
+        }
 
     }
 

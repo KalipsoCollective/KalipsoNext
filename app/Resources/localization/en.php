@@ -20,6 +20,7 @@ return [
         'csrf_token_incorrect' => 'CSRF key invalid.',
         'username_is_already_used' => 'Username is already used.',
         'notification_hook_file_not_found' => 'Notification hook file not found!',
+        'a_problem_occurred' => 'A problem occurred!',
     ],
     'notification' => [
         'registration_email_title' => 'Your Account Has Been Created!',
@@ -100,6 +101,19 @@ return [
         'your_login_info_incorrect' => 'Your login information is incorrect!',
         'welcome_back' => 'Welcome back!',
         'login_problem' => 'There was a problem starting the session.',
+        'profile' => 'Profile',
+        'profile_message' => 'You can edit your profile from this page.',
+        'sessions' => 'Sessions',
+        'sessions_message' => 'You can view active sessions from this page.',
+        'device' => 'Device',
+        'ip' => 'IP',
+        'last_action_point' => 'Last Action Point',
+        'last_action_date' => 'Last Action Date',
+        'action' => 'Action',
+        'terminate' => 'Terminate',
+        'session_terminated' => 'Session terminated.',
+        'session_not_terminated' => 'The session could not be terminated!',
+        'signed_out' => 'Signed out.',
     ],
     'app' => [
         

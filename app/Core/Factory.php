@@ -547,7 +547,7 @@ final class Factory
 
         if ($this->response->statusCode === 200) {
 
-             if ($this->response->redirect) {
+            if (! empty($this->response->redirect)) {
 
                 $second = (is_array($this->response->redirect) ? $this->response->redirect[1] : null);
                 if (($second <= 0 OR is_null($second)) AND count($this->response->alerts)) {
@@ -582,7 +582,7 @@ final class Factory
 
         } else {
 
-            if ($this->response->redirect) {
+            if (! empty($this->response->redirect)) {
 
                 $second = (is_array($this->response->redirect) ? $this->response->redirect[1] : null);
                 if (($second <= 0 OR is_null($second)) AND count($this->response->alerts)) {
@@ -720,7 +720,7 @@ final class Factory
         
         $return = '';
         if ($this->request->uri === $link OR 
-            (! $exact AND strpos($this->request->uri, $link))
+            (! $exact AND strpos($this->request->uri, $link) !== false)
         ) {
             $return = ' ' . trim($class);
         }
