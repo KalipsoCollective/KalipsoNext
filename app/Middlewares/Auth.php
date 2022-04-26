@@ -62,7 +62,7 @@ final class Auth extends Middleware {
             $token = $this->get('request')->params['verify-account'];
 
             $userModel = (new Users());
-            $getUser = $userModel->where('status', 'passive')->where('token', $token.'d')->get();
+            $getUser = $userModel->where('status', 'passive')->where('token', $token)->get();
 
             if(! empty($getUser)) {
 
