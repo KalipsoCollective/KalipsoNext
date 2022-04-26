@@ -135,8 +135,10 @@ final class UserController extends Controller {
             'view' => 'user.login',
         ];
 
-        if (isset($redirect))
+        if (isset($redirect)) {
             $return['redirect'] = $redirect;
+            unset($return['view']);
+        }
 
         return $return;
 

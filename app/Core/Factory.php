@@ -544,14 +544,18 @@ final class Factory
     public function response() {
 
         Base::http($this->response->statusCode);
+        $next = true;
 
         if ($this->response->statusCode === 200) {
 
             if (! empty($this->response->redirect)) {
 
                 $second = (is_array($this->response->redirect) ? $this->response->redirect[1] : null);
-                if (($second <= 0 OR is_null($second)) AND count($this->response->alerts)) {
-                    Base::setSession($this->response->alerts, 'alerts');
+                if (empty($second)) {
+                    $next = false;
+                    if (count($this->response->alerts)) {
+                        Base::setSession($this->response->alerts, 'alerts');
+                    }
                 }
 
                 Base::http('refresh', [
@@ -561,7 +565,7 @@ final class Factory
 
             }
 
-            if ($this->response->view !== '') {
+            if ($next AND $this->response->view !== '') {
 
                 if (is_string($this->response->view)) {
                     $viewFile = $this->response->view;
@@ -585,8 +589,11 @@ final class Factory
             if (! empty($this->response->redirect)) {
 
                 $second = (is_array($this->response->redirect) ? $this->response->redirect[1] : null);
-                if (($second <= 0 OR is_null($second)) AND count($this->response->alerts)) {
-                    Base::setSession($this->response->alerts, 'alerts');
+                if (empty($second)) {
+                    $next = false;
+                    if (count($this->response->alerts)) {
+                        Base::setSession($this->response->alerts, 'alerts');
+                    }
                 }
 
                 Base::http('refresh', [
@@ -596,11 +603,13 @@ final class Factory
 
             } 
 
-            $this->view(
-                $this->response->statusCode, 
-                $this->response->arguments, 
-                'error'
-            );
+            if ($next) {
+                $this->view(
+                    $this->response->statusCode, 
+                    $this->response->arguments, 
+                    'error'
+                );
+            }
         }
         
         if ($this->log AND Base::config('settings.log')) {
