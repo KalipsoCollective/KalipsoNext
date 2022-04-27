@@ -18,9 +18,12 @@ final class Auth extends Middleware {
 
     public function with() {
 
-        // $authRoute
+        $authenticated = false;
+        if (in_array($this->get('endpoint'), (array)Base::userData('routes')) !== false) {
+            $authenticated = true;
+        }
 
-        if ($this->get('auth')) {
+        if ($this->get('auth') AND $authenticated) {
             return [
                 'status' => true,
                 'next'   => true

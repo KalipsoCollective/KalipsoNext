@@ -400,8 +400,6 @@ final class Factory
 
                 $route = $route[$this->request->method];
 
-                Base::dump($this->endpoint);
-
                 /**
                  * 
                  * Middleware step
