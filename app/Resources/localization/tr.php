@@ -84,6 +84,7 @@ return [
         'email_or_username' => 'Eposta ya da Kullanıcı Adı',
         'password' => 'Şifre',
         'recovery_account' => 'Hesabımı Kurtar',
+        'recovery_account_message' => 'Bu sayfadan eposta adresinizi girerek şifre sıfırlama bağlantısı alabilirsiniz.',
         'email' => 'Eposta Adresi',
         'username' => 'Kullanıcı Adı', 
         'name' => 'Ad',

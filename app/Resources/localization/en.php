@@ -84,6 +84,7 @@ return [
         'email_or_username' => 'Email or Username',
         'password' => 'Password',
         'recovery_account' => 'Recovery Account',
+        'recovery_account_message' => 'From this page, you can get a password reset link by entering your e-mail address.',
         'email' => 'Email Address',
         'username' => 'Username', 
         'name' => 'Name',

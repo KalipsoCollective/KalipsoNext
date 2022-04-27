@@ -454,4 +454,146 @@ final class UserController extends Controller {
 
     }
 
+    public function recovery() {
+
+        $alerts = [];
+
+        $step = 1;
+
+        if ($this->get('request')->method === 'POST') {
+
+            extract(Base::input([
+                'email' => 'nulled_email',
+                'password' => 'nulled_password',
+                'token' => 'nulled_text',
+            ], $this->get('request')->params));
+
+            if (! is_null($email)) { // Step 1: Query 
+
+                $users = (new Users());
+
+                $getUser = $users->select('token, status')->where('email', $email)->get();
+                if ( $getUser AND $getUser->status !== 'deleted' ) {
+
+                    if ($insert) {
+
+                        $row['id'] = $insert;
+                        (new Notification($this->get()))->add('registration', $row);
+
+                        $alerts[] = [
+                            'status' => 'success',
+                            'message' => Base::lang('base.registration_successful')
+                        ];
+                        $redirect = [$this->get()->url('/auth/login'), 4];
+
+                    } else {
+
+                        $alerts[] = [
+                            'status' => 'warning',
+                            'message' => Base::lang('base.registration_problem')
+                        ];
+
+                    }
+
+                } else {
+
+                    $alerts[] = [
+                        'status' => 'warning',
+                        'message' => Base::lang('base.account_not_found')
+                    ];
+
+                }
+
+            } elseif (! is_null($password) AND ! is_null($token)) {
+
+                $users = (new Users());
+
+                $getUser = $users->select('email')->where('email', $email)->get();
+                if ( $getUser) {
+
+                    $getWithUsername = $users->select('u_name')->where('u_name', $username)->get();
+                    if ( !$getWithUsername) {
+
+                        $row = [
+                            'u_name'    => $username,
+                            'f_name'    => $name,
+                            'l_name'    => $surname,
+                            'email'     => $email,
+                            'password'  => password_hash($password, PASSWORD_DEFAULT),
+                            'token'     => Base::tokenGenerator(80),
+                            'role_id'   => Base::config('settings.default_user_role'),
+                            'created_at'=> time(),
+                            'status'    => 'passive'
+                        ];
+
+                        $insert = $users->insert($row);
+
+                        if ($insert) {
+
+                            $row['id'] = $insert;
+                            (new Notification($this->get()))->add('registration', $row);
+
+                            $alerts[] = [
+                                'status' => 'success',
+                                'message' => Base::lang('base.registration_successful')
+                            ];
+                            $redirect = [$this->get()->url('/auth/login'), 4];
+
+                        } else {
+
+                            $alerts[] = [
+                                'status' => 'warning',
+                                'message' => Base::lang('base.registration_problem')
+                            ];
+
+                        }
+
+                    } else {
+
+                        $alerts[] = [
+                            'status' => 'warning',
+                            'message' => Base::lang('base.username_is_already_used')
+                        ];
+
+                    }
+
+                } else {
+
+                    $alerts[] = [
+                        'status' => 'warning',
+                        'message' => Base::lang('base.account_not_found')
+                    ];
+
+                }
+
+            } else {
+
+                $alerts[] = [
+                    'status' => 'warning',
+                    'message' => Base::lang('base.form_cannot_empty')
+                ];
+
+            }
+            
+        }
+
+        $return = [
+            'status' => true,
+            'statusCode' => 200,
+            'arguments' => [
+                'title' => Base::lang('base.recovery_account'),
+                'description' => Base::lang('base.recovery_account_message'),
+                'step' => $step,
+            ],
+            'alerts' => $alerts,
+            'view' => 'user.recovery',
+        ];
+
+        if (isset($redirect))
+            $return['redirect'] = $redirect;
+
+        return $return;
+
+    }
+
 }

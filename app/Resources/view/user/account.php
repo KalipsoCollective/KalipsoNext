@@ -63,7 +63,6 @@
 											</a>').'
 										</td>
 									</tr>';
-
 								}
 
 							echo '	</tbody>
@@ -72,7 +71,7 @@
 
 						} elseif ($action == 'profile') {
 							?>
-							<form method="post" class="row g-3 my-3" action="<?php echo \KN\Helpers\Base::base('auth/profile'); ?>" data-vpjax>
+							<form method="post" class="row g-3 my-3" action="<?php echo $this->url('auth/profile'); ?>" data-vpjax>
 								<?php echo \KN\Helpers\Base::createCSRF(); ?>
 								<div class="col-12 col-md-6">
 									<div class="form-floating">
