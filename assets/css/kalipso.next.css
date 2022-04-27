@@ -22,22 +22,30 @@
 }
 
 ::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 0 1px var(--bs-dark);
+  background: var(--bs-gray-300);
   border-radius: 0
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--bs-gray-900);
-  border-radius: 15px
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--bs-gray-400)
+  background: var(--bs-gray-600)
 }
 
 ::selection {
   color: #fff;
   background: var(--bs-primary);
+}
+
+@keyframes alertOpacityOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
 }
 
 body {
@@ -77,6 +85,50 @@ a {
 
 .navbar .vr {
   margin: 0.5rem;
+}
+
+.kn-toast-alert {
+    position: fixed;
+    top: 0;
+    
+    right: 0;
+    left: 0;margin: 0 auto;display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 1rem;z-index: 1045;
+pointer-events: none;}
+
+.kn-toast-alert .kn-alert {
+    display: block;
+    width: auto;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    border-radius: 0.5rem;background: #000;
+    box-shadow: 0 0.2rem 0.5rem #0005;color: #fff;
+}
+
+.kn-toast-alert .kn-alert + .kn-alert {
+    margin-top: 0.5rem;
+}
+
+.kn-toast-alert .kn-alert.out {
+    animation: alertOpacityOut 1s;
+}
+
+.kn-toast-alert .kn-alert-danger {
+    background: var(--bs-danger);
+}
+
+.kn-toast-alert .kn-alert-success {
+    background: var(--bs-success);
+}
+
+.kn-toast-alert .kn-alert-warning {
+    background: var(--bs-warning);
+    color: #000;
 }
 
 @media (max-width: 1200px) {

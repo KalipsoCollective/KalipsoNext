@@ -7,11 +7,11 @@
 								<h1 class="fw-bolder h6 m-0 text-center"><?php echo \KN\Helpers\Base::lang('base.login'); ?></h1>
 							</div>
 							<div class="card-body">
-								<?php echo \KN\Helpers\Base::alert(); ?>
+								<?php echo \KN\Helpers\Base::alert($this->response->alerts); ?>
 								<form method="post" action="<?php echo \KN\Helpers\Base::base('auth/login'); ?>" data-vpjax>
 									<?php echo \KN\Helpers\Base::createCSRF(); ?>
 									<div class="form-floating mb-3">
-										<input type="text" name="username" class="form-control" id="username" placeholder="<?php echo \KN\Helpers\Base::lang('email_or_username'); ?>" required <?php echo \KN\Helpers\Base::inputValue('username', $this->request->params); ?>>
+										<input type="text" name="username" class="form-control" id="username" placeholder="<?php echo \KN\Helpers\Base::lang('base.email_or_username'); ?>" required <?php echo \KN\Helpers\Base::inputValue('username', $this->request->params); ?>>
 										<label for="username"><?php echo \KN\Helpers\Base::lang('base.email_or_username'); ?></label>
 									</div>
 									<div class="form-floating mb-3">
