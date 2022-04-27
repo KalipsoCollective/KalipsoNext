@@ -11,11 +11,14 @@ namespace KN\Middlewares;
 
 use KN\Helpers\Base;
 use KN\Core\Middleware;
+use KN\Core\Auth as CoreAuth;
 use KN\Model\Users;
 
 final class Auth extends Middleware {
 
     public function with() {
+
+        // $authRoute
 
         if ($this->get('auth')) {
             return [

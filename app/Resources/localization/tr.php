@@ -21,6 +21,7 @@ return [
         'username_is_already_used' => 'Kullanıcı adı zaten kullanımda.',
         'notification_hook_file_not_found' => 'Bildirim kanca dosyası bulunamadı!',
         'a_problem_occurred' => 'Bir sorun oluştu!',
+        'endpoint_file_is_not_found' => 'Yetki kontrol noktası dosyası bulunamadı!'
     ],
     'notification' => [
         'registration_email_title' => 'Hesabınız Oluşturuldu!',

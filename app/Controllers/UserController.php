@@ -51,13 +51,12 @@ final class UserController extends Controller {
                         if (password_verify($password, $getUser->password)) {
 
                             $userRoles = new UserRoles();
-                            $getUserRole = $userRoles->select('view_points, action_points, name')->where('id', $getUser->role_id)->get();
+                            $getUserRole = $userRoles->select('routes, name')->where('id', $getUser->role_id)->get();
 
                             if (! empty($getUserRole)) {
 
                                 $getUser->role_name = $getUserRole->name;
-                                $getUser->view_points = (object) explode(',', $getUserRole->view_points);
-                                $getUser->action_points = (object) explode(',', $getUserRole->action_points);
+                                $getUser->routes = (object) explode(',', $getUserRole->routes);
 
                             }
                             $getUser = Base::privateDataCleaner($getUser);
@@ -156,14 +155,13 @@ final class UserController extends Controller {
 
         $action = '';
 
-        if (
-            isset($this->get('request')->attributes['action']) !== false AND 
-            in_array($this->get('request')->attributes['action'], array_keys($steps)))
+        if (isset($this->get('request')->attributes['action']) !== false)
             $action = $this->get('request')->attributes['action'];
 
         $title = Base::lang('base.account');
         $output = '';
         $alerts = [];
+        $statusCode = 200;
 
         switch ($action) {
             case 'profile':
@@ -272,16 +270,26 @@ final class UserController extends Controller {
 
                 break;
 
+            case '':
+                $head = Base::lang('base.account');
+                $description = Base::lang('base.account_message');
+                break;
             
             default:
                 $head = Base::lang('base.account');
                 $description = Base::lang('base.account_message');
+                $alerts[] = [
+                    'status' => 'warning',
+                    'message' => Base::lang('error.page_not_found')
+                ];
+                $redirect = '/auth';
+                $statusCode = 404;
                 break;
         }
 
         $return = [
             'status' => true,
-            'statusCode' => 200,
+            'statusCode' => $statusCode,
             'arguments' => [
                 'title' => $title,
                 'head'  => $head,

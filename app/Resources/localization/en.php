@@ -21,6 +21,7 @@ return [
         'username_is_already_used' => 'Username is already used.',
         'notification_hook_file_not_found' => 'Notification hook file not found!',
         'a_problem_occurred' => 'A problem occurred!',
+        'endpoint_file_is_not_found' => 'Authority endpoint file not found!'
     ],
     'notification' => [
         'registration_email_title' => 'Your Account Has Been Created!',
