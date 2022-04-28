@@ -134,6 +134,8 @@ return [
         'account_recovered' => 'The account has been recovered, you can log in with your new password.',
         'account_not_recovered' => 'There was a problem recovering the account.',
         'account_not_verified' => 'Account verification not done.',
+        'management' => 'Management',
+        'toggle_navigation' => 'Toggle Navigation',
     ],
     'app' => [
         

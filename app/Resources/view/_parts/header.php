@@ -9,3 +9,4 @@
 		<link rel="stylesheet" type="text/css" href="<?php echo KN\Helpers\Base::assets('css/kalipso.next.css'); ?>">
 	</head>
 	<body id="wrap">
+		<?php echo \KN\Helpers\Base::sessionStoredAlert(); ?>

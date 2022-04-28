@@ -134,6 +134,8 @@ return [
         'account_recovered' => 'Hesap kurtarıldı, yeni şifrenizle giriş yapabilirsiniz.',
         'account_not_recovered' => 'Hesap kurtarılırken bir sorun oluştu.',
         'account_not_verified' => 'Hesap doğrulaması yapılmamış.',
+        'management' => 'Yönetim',
+        'toggle_navigation' => 'Navigasyonu Aç',
     ],
     'app' => [
         

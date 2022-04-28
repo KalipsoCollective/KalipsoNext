@@ -758,4 +758,24 @@ final class Factory
         }
         return $return;
     }
+
+
+    /**
+     * Authority check for a endpoint
+     * @param string $endpoint  
+     * @return bool
+     */
+    public function authority($endpoint) {
+
+        $endpoint = trim($endpoint, '/');
+        $routes = Base::userData('routes');
+        if (! is_object($routes)) $routes = [];
+        else $routes = (array)$routes;
+
+        if (in_array($endpoint, $routes) !== false) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
