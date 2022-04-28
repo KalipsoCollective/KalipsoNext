@@ -57,61 +57,6 @@ class Notification {
             return $this->types[$type]($this, $data);
 
         }
-        /*
-        switch ($type) {
-
-
-            case 'recovery_account':
-
-                $title = KN::lang('noti_email_recovery_account_title');
-                $name = (empty($data['f_name']) ? $data['u_name'] : $data['f_name']);
-                $body = str_replace(
-                    ['[USER]'], 
-                    [$name], 
-                    KN::lang('noti_email_recovery_account_body')
-                );
-
-                $this->emailLogger([
-                    'title' => $title,
-                    'body' => $body,
-                    'recipient' => $data['u_name'],
-                    'recipient_email' => $data['email'],
-                    'recipient_id' => $data['id'],
-                    'token' => $data['token']
-                ]);
-                    
-                return (new DB())->table('notifications')
-                    ->insert([
-                        'user_id'       => $data['id'],
-                        'type'          => $type,
-                        'created_at'    => time()
-                    ]);
-                break;
-
-            case 'email_change':
-
-                $title = KN::lang('noti_email_change_title');
-                $name = (empty($data['f_name']) ? $data['u_name'] : $data['f_name']);
-                $link = '<a href="' . KN::base('account/?verify-account=' . $data['token']) . '">
-                    ' . KN::lang('verify_email') . '
-                </a>';
-                $body = str_replace(
-                    ['[USER]', '[VERIFY_LINK]'], 
-                    [$name, $link], 
-                    KN::lang('noti_email_change_body')
-                );
-
-                $this->emailLogger([
-                    'title' => $title,
-                    'body' => $body,
-                    'recipient' => $data['u_name'],
-                    'recipient_email' => $data['email'],
-                    'recipient_id' => $data['id'],
-                    'token' => $data['token']
-                ]);
-                break;
-        }
-        */
         
     }
 
