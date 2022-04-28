@@ -11,6 +11,9 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
+                        <?php
+                        /*if ($this->authority('/management')) {*/
+                        ?>
                         <li class="nav-item">
                             <a class="nav-link<?php echo $this->currentLink('/management'); ?>" href="<?php echo $this->url('/management'); ?>">
                                 <?php echo KN\Helpers\Base::lang('base.dashboard'); ?>
