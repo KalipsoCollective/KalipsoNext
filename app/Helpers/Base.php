@@ -282,7 +282,7 @@ class Base {
                     break;
 
                 case 'nulled_int': 
-                    $data  = (integer)$data  == 0 ? null : (integer)$data; 
+                    $data  = (integer)$data == 0 ? null : (integer)$data; 
                     break;
 
                 case 'float': 
@@ -294,7 +294,7 @@ class Base {
                     break;
 
                 case 'nulled_password': 
-                    $data = trim($data) != '' ? password_hash(trim($data), PASSWORD_DEFAULT) : null; 
+                    $data = ! empty($data) ? password_hash(trim($data), PASSWORD_DEFAULT) : null; 
                     break;
 
                 case 'date': 
@@ -302,16 +302,16 @@ class Base {
                     break;
 
                 case 'nulled_text': 
-                    $data = strip_tags(trim($data)) == '' ? null : strip_tags(trim($data)); 
+                    $data = empty($data) ? null : strip_tags(trim($data)); 
                     break;
 
                 case 'nulled_email': 
-                    $data = strip_tags(trim($data)) == '' ? null : strip_tags(trim($data));
+                    $data = empty($data) ? null : strip_tags(trim($data));
                     if ($data) $data = filter_var($data, FILTER_VALIDATE_EMAIL) ? $data : null; 
                     break;
 
                 case 'slug': 
-                    $data = strip_tags(trim($data)) == '' ? null : self::slugGenerator(strip_tags(trim($data))); 
+                    $data = empty($data) ? null : self::slugGenerator(strip_tags(trim($data))); 
                     break;
 
                 default: 

@@ -32,8 +32,7 @@
 									</div>
 									<div class="d-grid">
 										<button type="submit" class="btn btn-primary">
-											<?php echo \KN\Helpers\Base::lang('base.register'); ?> 
-											<span class="mdi mdi-arrow-right"></span>
+											<?php echo \KN\Helpers\Base::lang('base.register'); ?>
 										</button>
 									</div>
 								</form>

@@ -26,6 +26,10 @@ return [
     'notification' => [
         'registration_email_title' => 'Your Account Has Been Created!',
         'registration_email_body' => 'Hi [USER], <br>Your account has been created. You can verify your email address with the link below. <br>[VERIFY_LINK]',
+        'recovery_request_email_title' => 'Account Recovery',
+        'recovery_request_email_body' => 'Hi [USER], <br>We received your account recovery request. You can set your new password with the link below. <br>[RECOVERY_LINK]',
+        'account_recovered_email_title' => 'Your Account Has Been Recovered!',
+        'account_recovered_email_body' => 'Hi [USER], <br>Your account has been recovered. If you did not do this, please contact us.',
     ],
     'base' => [
         'sandbox' => 'Sandbox',
@@ -121,6 +125,12 @@ return [
         'update' => 'Update',
         'save_problem' => 'There was a problem saving.',
         'save_success' => 'Successfully saved.',
+        'recovery_request_successful' => 'We\'ve sent you the account recovery link, don\'t forget to check your email.',
+        'recovery_request_problem' => 'There was a problem sending the account recovery link.',
+        'new_password' => 'New Password',
+        'change_password' => 'Change Password',
+        'account_recovered' => 'The account has been recovered, you can log in with your new password.',
+        'account_not_recovered' => 'There was a problem recovering the account.',
     ],
     'app' => [
         

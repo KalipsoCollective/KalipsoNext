@@ -21,7 +21,6 @@
 									<div class="d-grid">
 										<button type="submit" class="btn btn-primary">
 											<?php echo \KN\Helpers\Base::lang('base.login'); ?> 
-											<span class="mdi mdi-arrow-right"></span>
 										</button>
 									</div>
 								</form>

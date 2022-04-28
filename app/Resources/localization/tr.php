@@ -26,6 +26,10 @@ return [
     'notification' => [
         'registration_email_title' => 'Hesabınız Oluşturuldu!',
         'registration_email_body' => 'Selam [USER], <br>Hesabınız oluşturuldu. Aşağıdaki bağlantı ile eposta adresinizi doğrulayabilirsiniz. <br>[VERIFY_LINK]',
+        'recovery_request_email_title' => 'Hesap Kurtarma',
+        'recovery_request_email_body' => 'Selam [USER], <br>Hesap kurtarma talebinizi aldık. Aşağıdaki bağlantı ile yeni şifrenizi ayarlayabilirsiniz. <br>[RECOVERY_LINK]',
+        'account_recovered_email_title' => 'Hesabınız Kurtarıldı!',
+        'account_recovered_email_body' => 'Selam [USER], <br>Hesabınız kurtarıldı. Bu işlemi siz yapmadıysanız lütfen bizimle iletişime geçin.',
     ],
     'base' => [
         'sandbox' => 'Geliştirici Araçları',
@@ -121,6 +125,12 @@ return [
         'update' => 'Güncelle',
         'save_problem' => 'Kaydedilirken bir sorun oluştu.',
         'save_success' => 'Başarıyla kaydedildi.',
+        'recovery_request_successful' => 'Hesap kurtarma bağlantısını gönderdik, eposta kutunuzu kontrol etmeyi unutmayın.',
+        'recovery_request_problem' => 'Hesap kurtarma bağlantısını gönderirken bir sorun oluştu.',
+        'new_password' => 'Yeni Şifre',
+        'change_password' => 'Şifreyi Değiştir',
+        'account_recovered' => 'Hesap kurtarıldı, yeni şifrenizle giriş yapabilirsiniz.',
+        'account_not_recovered' => 'Hesap kurtarılırken bir sorun oluştu.',
     ],
     'app' => [
         

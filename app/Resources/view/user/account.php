@@ -105,8 +105,7 @@
 								</div>
 								<div class="col-12">
 									<button type="submit" class="btn btn-primary d-flex ms-auto">
-										<?php echo \KN\Helpers\Base::lang('base.update'); ?> 
-										<span class="mdi mdi-arrow-right"></span>
+										<?php echo \KN\Helpers\Base::lang('base.update'); ?>
 									</button>
 								</div>
 							</form>

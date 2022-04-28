@@ -457,7 +457,6 @@ final class UserController extends Controller {
     public function recovery() {
 
         $alerts = [];
-
         $step = 1;
 
         if ($this->get('request')->method === 'POST') {
@@ -468,29 +467,26 @@ final class UserController extends Controller {
                 'token' => 'nulled_text',
             ], $this->get('request')->params));
 
-            if (! is_null($email)) { // Step 1: Query 
+            if (! is_null($email) AND (is_null($password) AND is_null($token))) { // Step 1: Request 
 
                 $users = (new Users());
+                $getUser = $users->select('id, token, status, f_name, u_name, email')->where('email', $email)->get();
+                if ( ! empty($getUser) AND $getUser->status !== 'deleted' ) {
 
-                $getUser = $users->select('token, status')->where('email', $email)->get();
-                if ( $getUser AND $getUser->status !== 'deleted' ) {
-
-                    if ($insert) {
-
-                        $row['id'] = $insert;
-                        (new Notification($this->get()))->add('registration', $row);
+                    $sendLink = (new Notification($this->get()))->add('recovery_request', $getUser);
+                    if ($sendLink) {
 
                         $alerts[] = [
                             'status' => 'success',
-                            'message' => Base::lang('base.registration_successful')
+                            'message' => Base::lang('base.recovery_request_successful')
                         ];
-                        $redirect = [$this->get()->url('/auth/login'), 4];
+                        $redirect = $this->get()->url('/auth/login');
 
                     } else {
 
                         $alerts[] = [
                             'status' => 'warning',
-                            'message' => Base::lang('base.registration_problem')
+                            'message' => Base::lang('base.recovery_request_problem')
                         ];
 
                     }
@@ -504,66 +500,42 @@ final class UserController extends Controller {
 
                 }
 
-            } elseif (! is_null($password) AND ! is_null($token)) {
+            } elseif (is_null($email) AND (! is_null($password) AND ! is_null($token))) { // Step 3: Reset
 
                 $users = (new Users());
+                $getUser = $users->select('id, token, status, f_name, u_name, email')->where('token', $token)->notWhere('status', 'deleted')->get();
+                if (! empty($getUser)) {
 
-                $getUser = $users->select('email')->where('email', $email)->get();
-                if ( $getUser) {
+                    $update = $users->where('id', $getUser->id)
+                        ->update([
+                            'password' => $password,
+                            'token' => Base::tokenGenerator(80)
+                        ]);
 
-                    $getWithUsername = $users->select('u_name')->where('u_name', $username)->get();
-                    if ( !$getWithUsername) {
+                    if ($update) {
 
-                        $row = [
-                            'u_name'    => $username,
-                            'f_name'    => $name,
-                            'l_name'    => $surname,
-                            'email'     => $email,
-                            'password'  => password_hash($password, PASSWORD_DEFAULT),
-                            'token'     => Base::tokenGenerator(80),
-                            'role_id'   => Base::config('settings.default_user_role'),
-                            'created_at'=> time(),
-                            'status'    => 'passive'
+                        (new Notification($this->get()))->add('account_recovered', $getUser);
+                        $alerts[] = [
+                            'status' => 'success',
+                            'message' => Base::lang('base.account_recovered')
                         ];
-
-                        $insert = $users->insert($row);
-
-                        if ($insert) {
-
-                            $row['id'] = $insert;
-                            (new Notification($this->get()))->add('registration', $row);
-
-                            $alerts[] = [
-                                'status' => 'success',
-                                'message' => Base::lang('base.registration_successful')
-                            ];
-                            $redirect = [$this->get()->url('/auth/login'), 4];
-
-                        } else {
-
-                            $alerts[] = [
-                                'status' => 'warning',
-                                'message' => Base::lang('base.registration_problem')
-                            ];
-
-                        }
+                        $redirect = $this->get()->url('/auth/login');
 
                     } else {
 
                         $alerts[] = [
                             'status' => 'warning',
-                            'message' => Base::lang('base.username_is_already_used')
+                            'message' => Base::lang('base.account_not_recovered')
                         ];
-
                     }
 
                 } else {
 
                     $alerts[] = [
-                        'status' => 'warning',
+                        'status' => 'error',
                         'message' => Base::lang('base.account_not_found')
                     ];
-
+                    $redirect = $this->get()->url('/auth/recovery');
                 }
 
             } else {
@@ -575,6 +547,26 @@ final class UserController extends Controller {
 
             }
             
+        } elseif (isset($this->get('request')->params['token']) !== false) { // Step 2: Verify
+
+            extract(Base::input([
+                'token' => 'nulled_text',
+            ], $this->get('request')->params));
+
+            $users = (new Users());
+            $getUser = $users->select('id')->where('token', $token)->notWhere('status', 'deleted')->get();
+            if (! empty($getUser)) {
+
+                $step = 2;
+
+            } else {
+
+                $alerts[] = [
+                    'status' => 'error',
+                    'message' => Base::lang('base.account_not_found')
+                ];
+                $redirect = $this->get()->url('/auth/recovery');
+            }
         }
 
         $return = [
@@ -591,6 +583,9 @@ final class UserController extends Controller {
 
         if (isset($redirect))
             $return['redirect'] = $redirect;
+
+        if (isset($token))
+            $return['arguments']['token'] = $token;
 
         return $return;
 
