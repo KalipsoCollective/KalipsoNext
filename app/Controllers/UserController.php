@@ -182,26 +182,51 @@ final class UserController extends Controller {
 
                     if (! is_null($email) AND ! is_null($f_name) AND ! is_null($l_name) AND ! is_null($b_date)) {
 
-                        $update = [
-                            'f_name' => $f_name,
-                            'l_name' => $l_name,
-                            'b_date' => $b_date,
-                            'email' => $email
-                        ];
+                        $check = (new Users)->select('id')
+                            ->where('email', $email)
+                            ->notWhere('id', Base::userData('id'))
+                            ->get();
 
-                        if ($password)
-                            $update['password'] = $password;
+                        if (empty($check)) {
 
-                        $update = (new Users)->where('id', $output->id)->update($update);
+                            $newData = [
+                                'f_name' => $f_name,
+                                'l_name' => $l_name,
+                                'b_date' => $b_date
+                            ];
+
+                            if ($password)
+                                $newData['password'] = $password;
+
+                            if (Base::userData('email') !== $email) {
+                                $newData['email'] = $email;
+                                $newData['status'] = 'passive';
+                                $sendLink = true;
+                            }
+
+                            $update = (new Users)->where('id', $output->id)->update($newData);
+
+                        } else 
+                            $update = false;
 
                         if ($update) {
-
                             (new Sessions)->where('user_id', $output->id)->update(['update_session' => 'true']);
                             $alerts[] = [
                                 'status' => 'success',
                                 'message' => Base::lang('base.save_success')
                             ];
                             $redirect = '/auth/profile';
+
+                            if (isset($sendLink)) {
+
+                                $args = (array) Base::getSession('user');
+                                $args['changes'] = '
+                                <span style="color: red;">' . Base::userData('email') . '</span> → 
+                                <span style="color: green;">' . $email . '</span>';
+                                $args = array_merge($args, $newData);
+                                (new Notification($this->get()))->add('email_change', $args);
+
+                            }
 
                         } else {
 
@@ -470,23 +495,38 @@ final class UserController extends Controller {
             if (! is_null($email) AND (is_null($password) AND is_null($token))) { // Step 1: Request 
 
                 $users = (new Users());
-                $getUser = $users->select('id, token, status, f_name, u_name, email')->where('email', $email)->get();
-                if ( ! empty($getUser) AND $getUser->status !== 'deleted' ) {
+                $getUser = $users->select('id, token, status, f_name, u_name, email')
+                    ->where('email', $email)
+                    ->notWhere('status', 'deleted')
+                    ->get();
 
-                    $sendLink = (new Notification($this->get()))->add('recovery_request', $getUser);
-                    if ($sendLink) {
+                if ( ! empty($getUser) ) {
 
-                        $alerts[] = [
-                            'status' => 'success',
-                            'message' => Base::lang('base.recovery_request_successful')
-                        ];
-                        $redirect = $this->get()->url('/auth/login');
+                    if ($getUser->status === 'active') {
+
+                        $sendLink = (new Notification($this->get()))->add('recovery_request', $getUser);
+                        if ($sendLink) {
+
+                            $alerts[] = [
+                                'status' => 'success',
+                                'message' => Base::lang('base.recovery_request_successful')
+                            ];
+                            $redirect = $this->get()->url('/auth/login');
+
+                        } else {
+
+                            $alerts[] = [
+                                'status' => 'warning',
+                                'message' => Base::lang('base.recovery_request_problem')
+                            ];
+
+                        }
 
                     } else {
 
                         $alerts[] = [
                             'status' => 'warning',
-                            'message' => Base::lang('base.recovery_request_problem')
+                            'message' => Base::lang('base.account_not_verified')
                         ];
 
                     }
@@ -503,7 +543,7 @@ final class UserController extends Controller {
             } elseif (is_null($email) AND (! is_null($password) AND ! is_null($token))) { // Step 3: Reset
 
                 $users = (new Users());
-                $getUser = $users->select('id, token, status, f_name, u_name, email')->where('token', $token)->notWhere('status', 'deleted')->get();
+                $getUser = $users->select('id, token, status, f_name, u_name, email')->where('token', $token)->where('status', 'active')->get();
                 if (! empty($getUser)) {
 
                     $update = $users->where('id', $getUser->id)
@@ -554,7 +594,7 @@ final class UserController extends Controller {
             ], $this->get('request')->params));
 
             $users = (new Users());
-            $getUser = $users->select('id')->where('token', $token)->notWhere('status', 'deleted')->get();
+            $getUser = $users->select('id')->where('token', $token)->where('status', 'active')->get();
             if (! empty($getUser)) {
 
                 $step = 2;

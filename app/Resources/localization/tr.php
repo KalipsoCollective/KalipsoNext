@@ -30,6 +30,8 @@ return [
         'recovery_request_email_body' => 'Selam [USER], <br>Hesap kurtarma talebinizi aldık. Aşağıdaki bağlantı ile yeni şifrenizi ayarlayabilirsiniz. <br>[RECOVERY_LINK]',
         'account_recovered_email_title' => 'Hesabınız Kurtarıldı!',
         'account_recovered_email_body' => 'Selam [USER], <br>Hesabınız kurtarıldı. Bu işlemi siz yapmadıysanız lütfen bizimle iletişime geçin.',
+        'email_change_email_title' => 'Eposta Adresiniz Güncellendi!',
+        'email_change_email_body' => 'Selam [USER], <br>Eposta adresiniz güncellendi. Aşağıdaki bağlantı ile doğrulama yapabilirsiniz. <br>[VERIFY_LINK] <br>[CHANGES]',
     ],
     'base' => [
         'sandbox' => 'Geliştirici Araçları',
@@ -131,6 +133,7 @@ return [
         'change_password' => 'Şifreyi Değiştir',
         'account_recovered' => 'Hesap kurtarıldı, yeni şifrenizle giriş yapabilirsiniz.',
         'account_not_recovered' => 'Hesap kurtarılırken bir sorun oluştu.',
+        'account_not_verified' => 'Hesap doğrulaması yapılmamış.',
     ],
     'app' => [
         

@@ -108,7 +108,36 @@ return [
             return false;
         else
             return null;
-    }
+    },
 
+    // Emal Change -> Again Verify
+    'email_change' => function($hook, $external = null) {
+
+        $title = Base::lang('notification.email_change_email_title');
+        $name = (empty($external['f_name']) ? $external['u_name'] : $external['f_name']);
+        $link = '<a href="' . $hook->container->url('/') . '?verify-account=' . $external['token'] . '">
+            ' . Base::lang('base.verify_email') . '
+        </a>';
+        $body = str_replace(
+            ['[USER]', '[VERIFY_LINK]', '[CHANGES]'], 
+            [$name, $link, $external['changes']], 
+            Base::lang('notification.email_change_email_body')
+        );
+
+        $email = $hook->addEmail([
+            'title' => $title,
+            'body' => $body,
+            'recipient' => $external['u_name'],
+            'recipient_email' => $external['email'],
+            'recipient_id' => $external['id'],
+            'token' => $external['token']
+        ]);
+
+        if ($email)
+            return true;
+        else
+            return null;
+
+    },
 
 ];

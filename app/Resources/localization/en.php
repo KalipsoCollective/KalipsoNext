@@ -30,6 +30,8 @@ return [
         'recovery_request_email_body' => 'Hi [USER], <br>We received your account recovery request. You can set your new password with the link below. <br>[RECOVERY_LINK]',
         'account_recovered_email_title' => 'Your Account Has Been Recovered!',
         'account_recovered_email_body' => 'Hi [USER], <br>Your account has been recovered. If you did not do this, please contact us.',
+        'email_change_email_title' => 'Your Email Address Has Been Updated!',
+        'email_change_email_body' => 'Hi [USER], <br>Your email address has been updated. You can verify with the link below. <br>[VERIFY_LINK] <br>[CHANGES]',
     ],
     'base' => [
         'sandbox' => 'Sandbox',
@@ -131,6 +133,7 @@ return [
         'change_password' => 'Change Password',
         'account_recovered' => 'The account has been recovered, you can log in with your new password.',
         'account_not_recovered' => 'There was a problem recovering the account.',
+        'account_not_verified' => 'Account verification not done.',
     ],
     'app' => [
         
