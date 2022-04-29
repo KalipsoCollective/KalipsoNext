@@ -136,6 +136,13 @@ return [
         'account_not_verified' => 'Account verification not done.',
         'management' => 'Management',
         'toggle_navigation' => 'Toggle Navigation',
+        'dashboard' => 'Dashboard',
+        'dashboard_message' => 'The dashboard is the shortest way to see a summary of what\'s going on.',
+        'users' => 'Users',
+        'user_roles' => 'User Roles',
+        'logs' => 'Logs',
+        'settings' => 'Settings',
+        'view' => 'View',
     ],
     'app' => [
         

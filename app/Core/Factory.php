@@ -769,6 +769,7 @@ final class Factory
 
         $endpoint = trim($endpoint, '/');
         $routes = Base::userData('routes');
+
         if (! is_object($routes)) $routes = [];
         else $routes = (array)$routes;
 

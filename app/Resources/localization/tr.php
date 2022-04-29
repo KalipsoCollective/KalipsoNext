@@ -136,6 +136,13 @@ return [
         'account_not_verified' => 'Hesap doğrulaması yapılmamış.',
         'management' => 'Yönetim',
         'toggle_navigation' => 'Navigasyonu Aç',
+        'dashboard' => 'Kontrol Paneli',
+        'dashboard_message' => 'Kontrol paneli neler olup bittiğini özet olarak görmenin en kısa yoludur.',
+        'users' => 'Kullanıcılar',
+        'user_roles' => 'Kullanıcı Rolleri',
+        'logs' => 'Kayıtlar',
+        'settings' => 'Ayarlar',
+        'view' => 'Görüntüle',
     ],
     'app' => [
         

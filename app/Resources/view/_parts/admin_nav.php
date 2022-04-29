@@ -12,38 +12,60 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <?php
-                        /*if ($this->authority('/management')) {*/
+                        if ($this->authority('/management')) 
+                        {   ?>
+                            <li class="nav-item">
+                                <a class="nav-link<?php echo $this->currentLink('/management'); ?>" href="<?php echo $this->url('/management'); ?>">
+                                    <?php echo KN\Helpers\Base::lang('base.dashboard'); ?>
+                                </a>
+                            </li>
+                        <?php
+                        } 
+                        if ($this->authority('/management/users')) {
                         ?>
-                        <li class="nav-item">
-                            <a class="nav-link<?php echo $this->currentLink('/management'); ?>" href="<?php echo $this->url('/management'); ?>">
-                                <?php echo KN\Helpers\Base::lang('base.dashboard'); ?>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link<?php echo $this->currentLink('/management/users'); ?>" href="<?php echo $this->url('/management/users'); ?>">
-                                <?php echo KN\Helpers\Base::lang('base.users'); ?>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link<?php echo $this->currentLink('/management/roles'); ?>" href="<?php echo $this->url('/management/roles'); ?>">
-                                <?php echo KN\Helpers\Base::lang('base.user_roles'); ?>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link<?php echo $this->currentLink('/management/sessions'); ?>" href="<?php echo $this->url('/management/sessions'); ?>">
-                                <?php echo KN\Helpers\Base::lang('base.sessions'); ?>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link<?php echo $this->currentLink('/management/logs'); ?>" href="<?php echo $this->url('/management/logs'); ?>">
-                                <?php echo KN\Helpers\Base::lang('base.logs'); ?>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link<?php echo $this->currentLink('/management/settings'); ?>" href="<?php echo $this->url('/management/settings'); ?>">
-                                <?php echo KN\Helpers\Base::lang('base.settings'); ?>
-                            </a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link<?php echo $this->currentLink('/management/users'); ?>" href="<?php echo $this->url('/management/users'); ?>">
+                                    <?php echo KN\Helpers\Base::lang('base.users'); ?>
+                                </a>
+                            </li>
+                        <?php
+                        } 
+                        if ($this->authority('/management/roles')) {
+                        ?>
+                            <li class="nav-item">
+                                <a class="nav-link<?php echo $this->currentLink('/management/roles'); ?>" href="<?php echo $this->url('/management/roles'); ?>">
+                                    <?php echo KN\Helpers\Base::lang('base.user_roles'); ?>
+                                </a>
+                            </li>
+                        <?php
+                        } 
+                        if ($this->authority('/management/sessions')) {
+                        ?>
+                            <li class="nav-item">
+                                <a class="nav-link<?php echo $this->currentLink('/management/sessions'); ?>" href="<?php echo $this->url('/management/sessions'); ?>">
+                                    <?php echo KN\Helpers\Base::lang('base.sessions'); ?>
+                                </a>
+                            </li>
+                        <?php
+                        } 
+                        if ($this->authority('/management/logs')) {
+                        ?>
+                            <li class="nav-item">
+                                <a class="nav-link<?php echo $this->currentLink('/management/logs'); ?>" href="<?php echo $this->url('/management/logs'); ?>">
+                                    <?php echo KN\Helpers\Base::lang('base.logs'); ?>
+                                </a>
+                            </li>
+                        <?php
+                        } 
+                        if ($this->authority('/management/settings')) {
+                        ?>
+                            <li class="nav-item">
+                                <a class="nav-link<?php echo $this->currentLink('/management/settings'); ?>" href="<?php echo $this->url('/management/settings'); ?>">
+                                    <?php echo KN\Helpers\Base::lang('base.settings'); ?>
+                                </a>
+                            </li>
+                        <?php
+                        }   ?>
                     </ul>
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">

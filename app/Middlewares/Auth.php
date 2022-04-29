@@ -19,7 +19,7 @@ final class Auth extends Middleware {
     public function with() {
 
         $authenticated = false;
-        if (in_array($this->get('endpoint'), (array)Base::userData('routes')) !== false) {
+        if ($this->get()->authority($this->get('endpoint'))) {
             $authenticated = true;
         }
 
