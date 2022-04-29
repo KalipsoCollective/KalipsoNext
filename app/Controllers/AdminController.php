@@ -65,11 +65,11 @@ final class AdminController extends Controller {
             'status' => true,
             'statusCode' => 200,
             'arguments' => [
-                'title' => Base::lang('base.dashboard') . ' | ' . Base::lang('base.management'),
-                'description' => Base::lang('base.dashboard_message'),
+                'title' => Base::lang('base.users') . ' | ' . Base::lang('base.management'),
+                'description' => Base::lang('base.users_message'),
                 'count' => $count,
             ],
-            'view' => ['admin.dashboard', 'admin']
+            'view' => ['admin.users', 'admin']
         ];
 
     }

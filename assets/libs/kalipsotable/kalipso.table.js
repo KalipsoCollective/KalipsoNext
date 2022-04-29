@@ -102,7 +102,7 @@ class KalipsoTable {
 
     } else if (typeof options === 'object') {
 
-      this.options =  this.mergeObject(defaultOptions, options)
+      this.options = this.mergeObject(defaultOptions, options)
 
     } else {
 

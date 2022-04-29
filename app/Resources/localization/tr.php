@@ -139,6 +139,7 @@ return [
         'dashboard' => 'Kontrol Paneli',
         'dashboard_message' => 'Kontrol paneli neler olup bittiğini özet olarak görmenin en kısa yoludur.',
         'users' => 'Kullanıcılar',
+        'users_message' => 'Kullanıcıları yönetebileceğiniz sayfadır.',
         'user_roles' => 'Kullanıcı Rolleri',
         'logs' => 'Kayıtlar',
         'settings' => 'Ayarlar',

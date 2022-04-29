@@ -139,6 +139,7 @@ return [
         'dashboard' => 'Dashboard',
         'dashboard_message' => 'The dashboard is the shortest way to see a summary of what\'s going on.',
         'users' => 'Users',
+        'users_message' => 'This is the page where you can manage users.',
         'user_roles' => 'User Roles',
         'logs' => 'Logs',
         'settings' => 'Settings',
