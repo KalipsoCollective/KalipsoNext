@@ -64,26 +64,22 @@ final class AdminController extends Controller {
 
     public function userList() {
 
-        $users = (new Users)->select('COUNT(id) as total')->notWhere('status', 'deleted')->get();
-        $userRoles = (new UserRoles)->select('COUNT(id) as total')->notWhere('status', 'deleted')->get();
-        $sessions = (new Sessions)->select('COUNT(id) as total')->get();
-        $logs = (new Logs)->select('COUNT(id) as total')->get();
+        $tableOp = (new KalipsoTable())
+            ->db((new Users)->pdo)
+            ->table('users')
+            ->process(function() {
 
-        $count = [
-            'users' => $users->total,
-            'user_roles' => $userRoles->total,
-            'sessions' => $sessions->total,
-            'logs' => $logs->total
-        ];
 
-        $arguments = [
-            'data' => '',
-        ];
+
+            })
+            ->output();
+
+        //$arguments = (new KalipsoTable()->);
 
         return [
             'status' => true,
             'statusCode' => 200,
-            'arguments' => $arguments,
+            'arguments' => $tableOp,
             'view' => null
         ];
 
