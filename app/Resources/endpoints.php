@@ -6,6 +6,7 @@
  */
 
 return [
+	// Basic Auth
 	'auth' => [
 		'default' => true,
 		'name' => 'auth.auth',
@@ -18,6 +19,8 @@ return [
 		'default' => true,
 		'name' => 'auth.auth_logout',
 	],
+
+	// Management
 	'management' => [
 		'default' => false,
 		'name' => 'auth.management',
@@ -26,9 +29,49 @@ return [
 		'default' => false,
 		'name' => 'auth.management_users',
 	],
+	'management/users/list' => [
+		'default' => false,
+		'name' => 'auth.management_users_list',
+	],
+	'management/users/add' => [
+		'default' => false,
+		'name' => 'auth.management_users_add',
+	],
+	'management/users/:id' => [
+		'default' => false,
+		'name' => 'auth.management_users_detail',
+	],
+	'management/users/:id/update' => [
+		'default' => false,
+		'name' => 'auth.management_users_update',
+	],
+	'management/users/:id/delete' => [
+		'default' => false,
+		'name' => 'auth.management_users_delete',
+	],
 	'management/roles' => [
 		'default' => false,
 		'name' => 'auth.management_roles',
+	],
+	'management/roles/list' => [
+		'default' => false,
+		'name' => 'auth.management_roles_list',
+	],
+	'management/roles/add' => [
+		'default' => false,
+		'name' => 'auth.management_roles_add',
+	],
+	'management/roles/:id' => [
+		'default' => false,
+		'name' => 'auth.management_roles_detail',
+	],
+	'management/roles/:id/delete' => [
+		'default' => false,
+		'name' => 'auth.management_roles_delete',
+	],
+	'management/roles/:id/update' => [
+		'default' => false,
+		'name' => 'auth.management_roles_update',
 	],
 	'management/sessions' => [
 		'default' => false,

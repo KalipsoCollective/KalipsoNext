@@ -1,7 +1,7 @@
 /*!
- * Copyright 2021, Halil Ibrahim Ercelik
+ * Copyright 2022, KalipsoCollective
  * Released under the MIT License
- * {@link https://github.com/halillusion/KalipsoTable GitHub}
+ * {@link https://github.com/KalipsoCollective/KalipsoTable GitHub}
  * Inspired by jQuery.DataTables
  */
 
@@ -9,7 +9,7 @@
 class KalipsoTable {
 
   // The class is started with the default options and definitions.
-  constructor (options, data = null) {
+  constructor(options, data = null) {
 
     this.version = '0.0.1'
     this.loading = false
@@ -37,27 +37,28 @@ class KalipsoTable {
       "next": "Next",
       "first": "First",
       "last": "Last",
+      "search": "search",
     }
 
     let defaultOptions = {
       language: "en",
-      schema: '<div class="table-row">' + 
+      schema: '<div class="table-row">' +
         '<div class="column-25">[L]</div>' + // Listing option select
         '<div class="column-25">[S]</div>' + // Full search input
         '<div class="column-100">[T]</div>' + // Table
         '<div class="column-50">[I]</div>' + // Info
         '<div class="column-50">[P]</div>' + // Pagination
-      '</div>',
+        '</div>',
       columns: [
         {
-          "searchable": {
-            "type": "number", // (number | text | date | select)
-            "min": 1,
-            "max": 999
+          searchable: {
+            type: "number", // (number | text | date | select)
+            min: 1,
+            max: 999
           },
-          "orderable": true,
-          "title": "#",
-          "key": "id"
+          orderable: true,
+          title: "#",
+          key: "id"
         }
       ],
       order: ["id", "asc"],
@@ -93,7 +94,7 @@ class KalipsoTable {
     }
 
     this.data = []
-    this.bomb( this.version, "debug" )
+    this.bomb(this.version, "debug")
 
     if (typeof options === 'string') {
 
@@ -117,17 +118,17 @@ class KalipsoTable {
     }
 
   }
-  
+
   // Provides synchronization of setting data.
   mergeObject(defaultObj, overridedObj, key = null) {
-    
+
     if (defaultObj !== null && overridedObj !== null) {
       const keys = Object.keys(overridedObj)
       let key = null
 
       for (let i = 0; i < keys.length; i++) {
         key = keys[i]
-        if (! defaultObj.hasOwnProperty(key) || typeof overridedObj[key] !== 'object') defaultObj[key] = overridedObj[key];
+        if (!defaultObj.hasOwnProperty(key) || typeof overridedObj[key] !== 'object') defaultObj[key] = overridedObj[key];
         else {
           defaultObj[key] = this.mergeObject(defaultObj[key], overridedObj[key], key);
         }
@@ -141,7 +142,7 @@ class KalipsoTable {
   }
 
   // Returns translation using key according to active language.
-  l10n (key) {
+  l10n(key) {
 
     const dir = this.options !== undefined ? this.options.language : "en"
 
@@ -251,7 +252,7 @@ class KalipsoTable {
 
     } else { // server-side
 
-
+      this.loading = true
 
     }
   }
@@ -298,17 +299,17 @@ class KalipsoTable {
       }
 
       pagination = pagination + `<li` + (this.options.customize.paginationUlClass ? ` class="` + this.options.customize.paginationUlClass + `"` : ``) + `>` +
-      `<a` + (this.options.customize.paginationAClass ? ` class="` + this.options.customize.paginationAClass + `"` : ``) + ` href="javascript:;"` + firstAttr + `>` + this.l10n("first") + `</a>` +
-      `</li>`
-      
+        `<a` + (this.options.customize.paginationAClass ? ` class="` + this.options.customize.paginationAClass + `"` : ``) + ` href="javascript:;"` + firstAttr + `>` + this.l10n("first") + `</a>` +
+        `</li>`
+
       let prevAttr = ` disabled`
       if (page > 1) {
         prevAttr = ` data-page="` + (page - 1) + `"`
       }
 
       pagination = pagination + `<li` + (this.options.customize.paginationUlClass ? ` class="` + this.options.customize.paginationUlClass + `"` : ``) + `>` +
-      `<a` + (this.options.customize.paginationAClass ? ` class="` + this.options.customize.paginationAClass + `"` : ``) + ` href="javascript:;"` + prevAttr + `>` + this.l10n("prev") + `</a>` +
-      `</li>`
+        `<a` + (this.options.customize.paginationAClass ? ` class="` + this.options.customize.paginationAClass + `"` : ``) + ` href="javascript:;"` + prevAttr + `>` + this.l10n("prev") + `</a>` +
+        `</li>`
 
       for (let i = 1; i <= pageCount; i++) {
         let aClass = page === i ? `active` : ``
@@ -316,8 +317,8 @@ class KalipsoTable {
         aClass = aClass + (this.options.customize.paginationAClass ? (aClass === `` ? `` : ` `) + this.options.customize.paginationAClass : ``)
 
         pagination = pagination + `<li` + (this.options.customize.paginationUlClass ? ` class="` + this.options.customize.paginationUlClass + `"` : ``) + `>` +
-        `<a` + (aClass !== `` ? ` class="` + aClass + `"` : ``) + ` href="javascript:;" data-page="` + i + `">` + i + `</a>` +
-        `</li>`
+          `<a` + (aClass !== `` ? ` class="` + aClass + `"` : ``) + ` href="javascript:;" data-page="` + i + `">` + i + `</a>` +
+          `</li>`
       }
 
       let nextAttr = ` disabled`
@@ -326,8 +327,8 @@ class KalipsoTable {
       }
 
       pagination = pagination + `<li` + (this.options.customize.paginationUlClass ? ` class="` + this.options.customize.paginationUlClass + `"` : ``) + `>` +
-      `<a` + (this.options.customize.paginationAClass ? ` class="` + this.options.customize.paginationAClass + `"` : ``) + ` href="javascript:;"` + nextAttr + `>` + this.l10n("next") + `</a>` +
-      `</li>`
+        `<a` + (this.options.customize.paginationAClass ? ` class="` + this.options.customize.paginationAClass + `"` : ``) + ` href="javascript:;"` + nextAttr + `>` + this.l10n("next") + `</a>` +
+        `</li>`
 
       let lastAttr = ` disabled`
       if (page < pageCount) {
@@ -335,8 +336,8 @@ class KalipsoTable {
       }
 
       pagination = pagination + `<li` + (this.options.customize.paginationUlClass ? ` class="` + this.options.customize.paginationUlClass + `"` : ``) + `>` +
-      `<a` + (this.options.customize.paginationAClass ? ` class="` + this.options.customize.paginationAClass + `"` : ``) + ` href="javascript:;"` + lastAttr + `>` + this.l10n("last") + `</a>` +
-      `</li>`
+        `<a` + (this.options.customize.paginationAClass ? ` class="` + this.options.customize.paginationAClass + `"` : ``) + ` href="javascript:;"` + lastAttr + `>` + this.l10n("last") + `</a>` +
+        `</li>`
     }
 
     pagination = pagination + `</ul>`
@@ -345,7 +346,7 @@ class KalipsoTable {
   }
 
   // The table structure is created.
-  init (element) {
+  init(element) {
 
     this.prepareBody()
     const sorting = this.sorting()
@@ -354,14 +355,14 @@ class KalipsoTable {
     const pagination = this.pagination()
 
     let schema = this.options.schema
-    const table = `<div`+(this.options.customize.tableWrapClass ? ` class="` + this.options.customize.tableWrapClass + `"` : ``)+`>` + 
-      `<table`+(this.options.customize.tableClass ? ` class="kalipso-table ` + this.options.customize.tableClass + `"` : ` class="kalipso-table"`) + `>` +
-        this.head() +
-        this.body() +
-        this.footer() +
-      `</table>` + 
-    `</div>`
-    
+    const table = `<div` + (this.options.customize.tableWrapClass ? ` class="` + this.options.customize.tableWrapClass + `"` : ``) + `>` +
+      `<table` + (this.options.customize.tableClass ? ` class="kalipso-table ` + this.options.customize.tableClass + `"` : ` class="kalipso-table"`) + `>` +
+      this.head() +
+      this.body() +
+      this.footer() +
+      `</table>` +
+      `</div>`
+
     schema = schema.replace("[T]", table)
     schema = schema.replace("[L]", sorting)
     schema = schema.replace("[S]", fullSearch)
@@ -379,7 +380,7 @@ class KalipsoTable {
 
     let area = ``
     if (this.options.fullSearch) {
-      area = `<input data-full-search type="text" class="` + this.options.customize.inputClass + `"/>`
+      area = `<input data-full-search type="text" placeholder="` + this.l10n("search") + `" class="` + this.options.customize.inputClass + `"/>`
     }
     return area
   }
@@ -399,7 +400,7 @@ class KalipsoTable {
 
   }
 
-  switchPage (el) {
+  switchPage(el) {
 
     let param = parseInt(el.getAttribute("data-page"))
 
@@ -415,7 +416,7 @@ class KalipsoTable {
     this.prepareBody(true)
   }
 
-  sort (element, index) {
+  sort(element, index) {
 
     if (Array.from(element.classList).indexOf("asc") !== -1) { // asc
 
@@ -439,7 +440,7 @@ class KalipsoTable {
 
     }
 
-    let thAreas =  document.querySelectorAll(this.options.selector + ' thead th.sort')
+    let thAreas = document.querySelectorAll(this.options.selector + ' thead th.sort')
     if (thAreas.length) {
       for (let thIndex = 0; thIndex < thAreas.length; thIndex++) {
         if (thIndex !== index) thAreas[thIndex].classList.remove("asc", "desc")
@@ -450,7 +451,7 @@ class KalipsoTable {
 
   }
 
-  sorting () {
+  sorting() {
 
     let sortingDom = ``
 
@@ -458,8 +459,8 @@ class KalipsoTable {
       let defaultSelected = false
       let selected = ``
 
-      sortingDom = `<select data-perpage` + 
-        (this.options.customize.selectClass !== undefined && this.options.customize.selectClass 
+      sortingDom = `<select data-perpage` +
+        (this.options.customize.selectClass !== undefined && this.options.customize.selectClass
           ? ` class="` + this.options.customize.selectClass + `" ` : ` `) +
         `>`
 
@@ -496,7 +497,7 @@ class KalipsoTable {
   // Prepares the table header.
   head() {
 
-    let thead = `<thead`+(this.options.customize.tableHeadClass ? ` class="` + this.options.customize.tableHeadClass + `"` : ``)+`><tr>`
+    let thead = `<thead` + (this.options.customize.tableHeadClass ? ` class="` + this.options.customize.tableHeadClass + `"` : ``) + `><tr>`
 
     for (const [index, col] of Object.entries(this.options.columns)) {
 
@@ -507,7 +508,7 @@ class KalipsoTable {
         sortingTitle = this.l10n("sorting_" + (this.options.order[1] === "desc" ? "asc" : "desc"))
       }
 
-      thead +=  `<th` + (col.orderable ? ` class="` + thClass + `" data-sort="` + col.key + `" title="` + sortingTitle + `"` : ``) + `>` + col.title + `</th>`
+      thead += `<th` + (col.orderable ? ` class="` + thClass + `" data-sort="` + col.key + `" title="` + sortingTitle + `"` : ``) + `>` + col.title + `</th>`
 
     }
 
@@ -516,10 +517,10 @@ class KalipsoTable {
       thead += `</tr><tr>`
 
       for (const [index, col] of Object.entries(this.options.columns)) {
-        
-        thead +=  this.options.tableFooter.searchBar ? `<th>` + 
-          (! col.searchable ? `` : this.generateSearchArea(col.searchable, col.key)) + 
-        `</th>` : `<th></th>`
+
+        thead += this.options.tableFooter.searchBar ? `<th>` +
+          (!col.searchable ? `` : this.generateSearchArea(col.searchable, col.key)) +
+          `</th>` : `<th></th>`
 
       }
 
@@ -560,7 +561,7 @@ class KalipsoTable {
 
         tbody += `<tr>`
         for (const [index, col] of Object.entries(this.options.columns)) {
-        
+
           if (row[col.key] !== undefined) tbody += `<td>` + row[col.key] + `</td>`
           else tbody += `<td></td>`
 
@@ -570,7 +571,7 @@ class KalipsoTable {
 
     }
 
-    return withBodyTag ? `<tbody`+(this.options.customize.tableBodyClass ? ` class="` + this.options.customize.tableBodyClass + `"` : ``)+`>` + tbody + `</tbody>` : tbody
+    return withBodyTag ? `<tbody` + (this.options.customize.tableBodyClass ? ` class="` + this.options.customize.tableBodyClass + `"` : ``) + `>` + tbody + `</tbody>` : tbody
 
   }
 
@@ -580,13 +581,13 @@ class KalipsoTable {
     let tfoot = ``
     if (this.options.tableFooter.visible) {
 
-      tfoot = `<tfoot`+(this.options.customize.tableFooterClass ? ` class="` + this.options.customize.tableFooterClass + `"` : ``)+`><tr>`
+      tfoot = `<tfoot` + (this.options.customize.tableFooterClass ? ` class="` + this.options.customize.tableFooterClass + `"` : ``) + `><tr>`
 
       for (const [index, col] of Object.entries(this.options.columns)) {
-        
-        tfoot +=  this.options.tableFooter.searchBar ? `<td>` + 
-          (! col.searchable ? col.title : this.generateSearchArea(col.searchable, col.key)) + 
-        `</td>` : `<td>` + col.title + `</td>`
+
+        tfoot += this.options.tableFooter.searchBar ? `<td>` +
+          (!col.searchable ? col.title : this.generateSearchArea(col.searchable, col.key)) +
+          `</td>` : `<td>` + col.title + `</td>`
 
       }
 
@@ -614,18 +615,18 @@ class KalipsoTable {
       case "number":
       case "text":
       case "date":
-        bar = `<input data-search="` + key + `" type="` + areaDatas.type + `"` + 
-        (this.options.customize.inputClass !== undefined && this.options.customize.inputClass ? ` class="` + this.options.customize.inputClass + `" ` : ` `) +
-        (areaDatas.min !== undefined && areaDatas.min ? ` min="` + areaDatas.min + `" ` : ` `) + 
-        (areaDatas.max !== undefined && areaDatas.max ? ` max="` + areaDatas.max + `" ` : ` `) + 
-        (areaDatas.maxlenght !== undefined && areaDatas.maxlenght ? ` maxlenght="` + areaDatas.maxlenght + `" ` : ` `) + 
-        `/>`
+        bar = `<input data-search="` + key + `" type="` + areaDatas.type + `"` +
+          (this.options.customize.inputClass !== undefined && this.options.customize.inputClass ? ` class="` + this.options.customize.inputClass + `" ` : ` `) +
+          (areaDatas.min !== undefined && areaDatas.min ? ` min="` + areaDatas.min + `" ` : ` `) +
+          (areaDatas.max !== undefined && areaDatas.max ? ` max="` + areaDatas.max + `" ` : ` `) +
+          (areaDatas.maxlenght !== undefined && areaDatas.maxlenght ? ` maxlenght="` + areaDatas.maxlenght + `" ` : ` `) +
+          `/>`
         break;
 
       case "select":
-        bar = `<select data-search="` + key + `"` + 
-        (this.options.customize.selectClass !== undefined && this.options.customize.selectClass ? ` class="` + this.options.customize.selectClass + `" ` : ` `) +
-        `><option value=""></option>`
+        bar = `<select data-search="` + key + `"` +
+          (this.options.customize.selectClass !== undefined && this.options.customize.selectClass ? ` class="` + this.options.customize.selectClass + `" ` : ` `) +
+          `><option value=""></option>`
 
         for (const [index, option] of Object.entries(areaDatas.datas)) {
           bar += `<option value="` + option.value + `">` + option.name + `</option>`
@@ -639,7 +640,7 @@ class KalipsoTable {
 
   }
 
-  event (event, attrSelector, callback) {
+  event(event, attrSelector, callback) {
 
     document.body.addEventListener(event, e => {
       if (e.target.getAttributeNames().indexOf(attrSelector) !== -1) {
@@ -657,20 +658,20 @@ class KalipsoTable {
   }
 
   // Prepares event listeners so that table actions can be listened to.
-  eventListener (searchEvents = true, pageEvents = true, sortingEvents = true, paginationEvents = true) {
+  eventListener(searchEvents = true, pageEvents = true, sortingEvents = true, paginationEvents = true) {
 
     if (searchEvents) {
 
-      this.event("input", 'data-search', () => {})
-      this.event("change", 'data-search', () => {})
+      this.event("input", 'data-search', () => { })
+      this.event("change", 'data-search', () => { })
 
       if (this.options.fullSearch) {
 
         let searchInput = document.querySelector(this.options.selector + ' [data-full-search]')
         if (searchInput) {
 
-          this.event("input", 'data-full-search', () => {})
-          this.event("change", 'data-full-search', () => {})
+          this.event("input", 'data-full-search', () => { })
+          this.event("change", 'data-full-search', () => { })
         }
       }
     }
@@ -678,14 +679,14 @@ class KalipsoTable {
     if (pageEvents) {
       let perPage = document.querySelector(this.options.selector + ' [data-perpage]')
       if (perPage) {
-        this.event("change", 'data-perpage', () => {})
+        this.event("change", 'data-perpage', () => { })
       }
     }
 
     if (paginationEvents) {
       let pageSwitch = document.querySelectorAll(this.options.selector + ' [data-page]')
       if (pageSwitch.length) {
-        this.event("click", 'data-page', () => {})
+        this.event("click", 'data-page', () => { })
       }
     }
 
@@ -694,7 +695,7 @@ class KalipsoTable {
       if (sortingTh.length) {
 
         for (let th = 0; th < sortingTh.length; th++) {
-          
+
           sortingTh[th].addEventListener("click", a => {
             sortingTh[th].removeEventListener("click", this, true)
             this.sort(sortingTh[th], th)
@@ -711,7 +712,7 @@ class KalipsoTable {
   fieldSynchronizer(field) {
     const searchAttr = field.getAttribute("data-search")
     const targetElements = document.querySelectorAll(this.options.selector + ` [data-search="` + searchAttr + `"]`)
-    targetElements.forEach( (input) => {
+    targetElements.forEach((input) => {
       input.value = field.value
     })
     this.options.params[searchAttr] = field.value

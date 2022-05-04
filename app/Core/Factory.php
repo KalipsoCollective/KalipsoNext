@@ -89,10 +89,9 @@ final class Factory
         $this->response = (object)[
             'statusCode'    => 200,
             'status'        => true,
-            'data'          => [],
             'alerts'        => [],
             'redirect'      => [], // link, second, http status code
-            'view'          => [] // view parameters -> [0] = page, [1] = layout
+            'view'          => [] // as array: view parameters -> [0] = page, [1] = layout, as string: view_file, as json: null
         ];
         $this->request = (object)[];
         $this->request->params = [];
@@ -508,6 +507,12 @@ final class Factory
                             $this->response->arguments = $controller['arguments'];
 
                         /**
+                         * Output 
+                         **/
+                        if (isset($controller['output']) !== false)
+                            $this->response->output = $controller['output'];
+
+                        /**
                          * Log 
                          **/
                         if (isset($controller['log']) !== false)
@@ -524,7 +529,7 @@ final class Factory
                          **/
                         $this->response->status = $controller['status'];
 
-                        if (isset($controller['view']) !== false)
+                        if (isset($controller['view']) !== false OR is_null($controller['view']))
                             $this->response->view = $controller['view'];
 
                     } else {
@@ -592,6 +597,9 @@ final class Factory
                 } elseif (is_array($this->response->view) AND count($this->response->view) === 2) {
                     $viewFile = $this->response->view[0];
                     $viewLayout = $this->response->view[1];
+                } elseif (is_null($this->response->view)) {
+                    $viewFile = null;
+                    $viewLayout = null;
                 } else {
                     throw new \Exception(Base::lang('error.view_definition_not_found'));
                 }
@@ -656,7 +664,7 @@ final class Factory
      * @return this
      **/
 
-    public function view($file, $arguments = [], $layout = 'app') {
+    public function view($file = null, $arguments = [], $layout = 'app') {
 
 
         /**
@@ -666,39 +674,49 @@ final class Factory
 
         Base::http($this->response->statusCode);
 
+        if (is_null($file)) {
 
-        /**
-         * 
-         * Arguments are extracted and the title is defined.
-         **/
+            /**
+             * for API or Fetch/XHR output 
+             **/
+            Base::http('content_type', ['content' => 'json', 'write' => json_encode($arguments)]);
 
-        $arguments['title'] = isset($arguments['title']) !== false ? 
-            str_replace(
-                ['[TITLE]', '[APP]'], 
-                [$arguments['title'], 
-                Base::config('settings.name')], Base::config('app.title_format')) 
-                : Base::config('settings.name');
+        } else {
 
-        extract($arguments);
+            /**
+             * 
+             * Arguments are extracted and the title is defined.
+             **/
+
+            $arguments['title'] = isset($arguments['title']) !== false ? 
+                str_replace(
+                    ['[TITLE]', '[APP]'], 
+                    [$arguments['title'], 
+                    Base::config('settings.name')], Base::config('app.title_format')) 
+                    : Base::config('settings.name');
+
+            extract($arguments);
 
 
-        /**
-         * 
-         * Prepare the page structure according to the format.
-         **/
+            /**
+             * 
+             * Prepare the page structure according to the format.
+             **/
 
-        $layoutVars = Base::path('app/Resources/view/_layouts/_' . $layout . '.php');
-        $layout = file_exists($layoutVars) ? (require $layoutVars) : ['_'];
+            $layoutVars = Base::path('app/Resources/view/_layouts/_' . $layout . '.php');
+            $layout = file_exists($layoutVars) ? (require $layoutVars) : ['_'];
 
-        foreach ($layout as $part) {
+            foreach ($layout as $part) {
 
-            if ($part === '_')
-                $part = strpos($file, '.') !== false ? str_replace('.', '/', $file) : $file;
-            else
-                $part = '_parts/' . $part;
+                if ($part === '_')
+                    $part = strpos($file, '.') !== false ? str_replace('.', '/', $file) : $file;
+                else
+                    $part = '_parts/' . $part;
 
-            if (file_exists($req = Base::path('app/Resources/view/' . $part . '.php'))) {
-                require $req;
+                if (file_exists($req = Base::path('app/Resources/view/' . $part . '.php'))) {
+                    require $req;
+                }
+
             }
 
         }

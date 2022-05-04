@@ -144,6 +144,11 @@ return [
         'logs' => 'Kayıtlar',
         'settings' => 'Ayarlar',
         'view' => 'Görüntüle',
+        'status' => 'Durum',
+        'all' => 'Tümü',
+        'active' => 'Aktif',
+        'passive' => 'Pasif',
+        'deleted' => 'Silinmiş',
     ],
     'app' => [
         

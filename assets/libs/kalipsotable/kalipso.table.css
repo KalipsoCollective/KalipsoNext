@@ -46,6 +46,7 @@
 
 table.kalipso-table {
 	margin-bottom: 0;
+	color: #727272;
 }
 
 table.kalipso-table thead th.sort {
@@ -150,4 +151,19 @@ table.kalipso-table thead th.sort.desc:after {
 
 .kalipso-pagination ul li:not(:last-child) a {
 	border-right-color: #cdcdcd
+}
+
+.kalipso-information {
+	font-weight: bold;
+	font-size: 0.8rem;
+}
+
+.no_result_info {
+	font-weight: bold;
+	font-size: 1.2rem;
+	text-align: center;
+}
+
+.kalipso-table>:not(:first-child) {
+	border-top: 1px solid currentColor;
 }

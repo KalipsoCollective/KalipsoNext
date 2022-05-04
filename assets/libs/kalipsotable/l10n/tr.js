@@ -1,8 +1,8 @@
 /*!
  * KalipsoTable Turkish Language File
- * Copyright 2021, Halil Ibrahim Ercelik
+ * Copyright 2022, Halil Ibrahim Ercelik
  * Released under the MIT License
- * {@link https://github.com/halillusion/KalipsoTable GitHub}
+ * {@link https://github.com/KalipsoCollective/KalipsoTable GitHub}
  */
 
 (function() {
@@ -29,6 +29,7 @@
         "next": "Sonraki",
         "first": "İlk",
         "last": "Son",
+        "search": "ara",
     }
 
 })()

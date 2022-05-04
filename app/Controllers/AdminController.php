@@ -11,6 +11,7 @@ namespace KN\Controllers;
 
 use KN\Core\Controller;
 use KN\Helpers\Base;
+use KN\Helpers\KalipsoTable;
 use KN\Core\Model;
 use KN\Model\Users;
 use KN\Model\UserRoles;
@@ -49,6 +50,20 @@ final class AdminController extends Controller {
 
     public function users() {
 
+        return [
+            'status' => true,
+            'statusCode' => 200,
+            'arguments' => [
+                'title' => Base::lang('base.users') . ' | ' . Base::lang('base.management'),
+                'description' => Base::lang('base.users_message'),
+            ],
+            'view' => ['admin.users', 'admin']
+        ];
+
+    }
+
+    public function userList() {
+
         $users = (new Users)->select('COUNT(id) as total')->notWhere('status', 'deleted')->get();
         $userRoles = (new UserRoles)->select('COUNT(id) as total')->notWhere('status', 'deleted')->get();
         $sessions = (new Sessions)->select('COUNT(id) as total')->get();
@@ -61,15 +76,15 @@ final class AdminController extends Controller {
             'logs' => $logs->total
         ];
 
+        $arguments = [
+            'data' => '',
+        ];
+
         return [
             'status' => true,
             'statusCode' => 200,
-            'arguments' => [
-                'title' => Base::lang('base.users') . ' | ' . Base::lang('base.management'),
-                'description' => Base::lang('base.users_message'),
-                'count' => $count,
-            ],
-            'view' => ['admin.users', 'admin']
+            'arguments' => $arguments,
+            'view' => null
         ];
 
     }

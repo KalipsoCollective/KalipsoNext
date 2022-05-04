@@ -144,6 +144,11 @@ return [
         'logs' => 'Logs',
         'settings' => 'Settings',
         'view' => 'View',
+        'status' => 'Status',
+        'all' => 'All',
+        'active' => 'Active',
+        'passive' => 'Passive',
+        'deleted' => 'Deleted',
     ],
     'app' => [
         

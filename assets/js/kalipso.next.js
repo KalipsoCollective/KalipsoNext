@@ -31,6 +31,7 @@ NProgress.start();
 
 function init() {
 	
+	// Stored alert remove action
 	const alerts = document.querySelectorAll('.kn-alert');
 	if (alerts.length) {
 
@@ -44,56 +45,15 @@ function init() {
 			}, 5000);
 			
 		}
-
 	}
 
+	/*
 	let tableVariables = {
 
 		usersTable: {
 			selector: "#usersTable",
 			language: "en",
-			source: [
-				{
-					"id": 1,
-					"username": "test1",
-					"email": "test1@example.com",
-					"birthday": "07.07.2021",
-					"status": "active",
-					"action": "action"
-				},
-				{
-					"id": 5,
-					"username": "test5",
-					"email": "test5@example.com",
-					"birthday": "01.01.2021",
-					"status": "passive",
-					"action": "action"
-				},
-				{
-					"id": 4,
-					"username": "test4",
-					"email": "test4@example.com",
-					"birthday": "05.05.2021",
-					"status": "deleted",
-					"action": "action"
-				},
-				{
-					"id": 2,
-					"username": "test2",
-					"email": "test2@example.com",
-					"birthday": "09.12.2021",
-					"status": "active",
-					"action": "action"
-				},
-				{
-					"id": 3,
-					"username": "<div>test3</div>",
-					"email": "test3@example.com",
-					"birthday": "10.12.2021",
-					"status": "passive",
-					"action": "action"
-				}
-			],
+			source: '/',
 			columns: [ 
 				{
 					"searchable": {
@@ -188,11 +148,11 @@ function init() {
                 paginationAClass: null
 			},
 			tableHeader: {
-				"searchBar": true
+				searchBar: true
 			},
 			tableFooter: {
-				"visible": true,
-				"searchBar": true
+				visible: true,
+				searchBar: true
 			}
 		}
 
@@ -201,5 +161,6 @@ function init() {
 	for(const [key, value] of Object.entries(tableVariables)) {
 		window[key] = new KalipsoTable(value);
 	}
+	*/
 
 }

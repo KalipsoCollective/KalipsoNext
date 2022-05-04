@@ -421,7 +421,7 @@ return [
 		'user_roles' => [
 			[
 				'name'                  => 'admin',
-				'routes'                => 'auth,auth/:action,auth/logout,management,management/users,management/roles,management/sessions,management/settings,management/logs',
+				'routes'                => 'auth,auth/:action,auth/logout,management,management/users,management/roles,management/sessions,management/settings,management/logs,management/users/list,management/users/add,management/users/:id,management/users/:id/delete,management/users/:id/update,management/roles/list,management/roles/add,management/roles/:id,management/roles/:id/delete,management/roles/:id/update',
 				'created_at'            => time(),
 				'created_by'            => 1,
 				'status'                => 'active'
