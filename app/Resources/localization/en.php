@@ -149,6 +149,9 @@ return [
         'active' => 'Active',
         'passive' => 'Passive',
         'deleted' => 'Deleted',
+        'role' => 'Role',
+        'created_at' => 'Created',
+        'updated_at' => 'Updated'
     ],
     'app' => [
         

@@ -284,7 +284,6 @@ class Model extends Pdox {
             return $this->pdo->exec($sql);
 
         } catch(PDOException $e) {
-
             throw new Exception('DB Seed action is not completed. ' . $e->getMessage());
 
         }

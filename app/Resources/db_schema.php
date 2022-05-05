@@ -409,6 +409,8 @@ return [
 		'users' => [
 			[
 				'u_name'                => 'root',
+				'f_name'				=> NULL,
+				'l_name'				=> NULL,
 				'email'                 => 'hello@koalapix.com',
 				'password'              => '$2y$10$1i5w0tYbExemlpAAsospSOZ.n06NELYooYa5UJhdytvBEn85U8lly', // 1234
 				'token'                 => 'Hl7kojH2fLdsbMUO8T0lZdTcMwCjvOGIbBk8cndJSsh2IcpN',

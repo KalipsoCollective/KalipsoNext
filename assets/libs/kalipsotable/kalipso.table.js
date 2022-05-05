@@ -49,18 +49,7 @@ class KalipsoTable {
         '<div class="column-50">[I]</div>' + // Info
         '<div class="column-50">[P]</div>' + // Pagination
         '</div>',
-      columns: [
-        {
-          searchable: {
-            type: "number", // (number | text | date | select)
-            min: 1,
-            max: 999
-          },
-          orderable: true,
-          title: "#",
-          key: "id"
-        }
-      ],
+      columns: [],
       order: ["id", "asc"],
       source: null, // object or string (url)
       lengthOptions: [
@@ -82,11 +71,11 @@ class KalipsoTable {
         paginationAClass: 'paginate-item-link'
       },
       tableFooter: {
-        "visible": false,
-        "searchBar": true
+        visible: false,
+        searchBar: true
       },
       params: [],
-      pageLenght: 0,
+      pageLenght: 10,
       page: 1,
       fullSearch: true,
       fullSearchParam: "",

@@ -149,6 +149,9 @@ return [
         'active' => 'Aktif',
         'passive' => 'Pasif',
         'deleted' => 'Silinmiş',
+        'role' => 'Rol',
+        'created_at' => 'Eklenme',
+        'updated_at' => 'Güncellenme'
     ],
     'app' => [
         

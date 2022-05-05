@@ -46,7 +46,7 @@
 
 table.kalipso-table {
 	margin-bottom: 0;
-	color: #727272;
+	font-size: 0.7rem;color: #727272;
 }
 
 table.kalipso-table thead th.sort {

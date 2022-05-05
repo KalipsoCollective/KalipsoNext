@@ -468,12 +468,10 @@ class Base {
          *   - error
          **/
 
-        $alert = '';
+        $alert = '<div class="kn-toast-alert">';
         if (isset($_SESSION['alerts']) !== false AND count($_SESSION['alerts'])) {
 
-            $alert = '<div class="kn-toast-alert">';
             foreach ($_SESSION['alerts'] as $k => $a) {
-
                 switch ($a['status']) {
                     case 'error':
                         $a['status'] = 'danger';
@@ -483,15 +481,11 @@ class Base {
                         $a['status'] = 'dark';
                         break;
                 }
-
                 $alert .= '<div class="kn-alert kn-alert-' . $a['status'] . '">' . $a['message'] . '</div>';
-
                 unset($_SESSION['alerts'][$k]);
-
             }
-            $alert .= '</div>';
-
         }
+        $alert .= '</div>';
 
         return $alert;
 
