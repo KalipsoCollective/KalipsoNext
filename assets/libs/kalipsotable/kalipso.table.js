@@ -8,12 +8,26 @@
 
 class KalipsoTable {
 
-  // The class is started with the default options and definitions.
-  constructor(options, data = null) {
+  /**
+   * Prepare and start
+   * @param object options 
+   * @return void
+   */
+  constructor(options) {
 
-    this.version = '0.0.1'
-    this.loading = false
-    this.result = []
+    this.version = '0.0.1';
+    this.result = [];
+    this.server = false;
+    this.selector = null;
+    this.parent = null;
+    this.customize = null;
+    this.total = 0;
+    this.current = 0;
+    this.totalPage = 1;
+    this.page = 1;
+    this.searchParams = {};
+    this.search = "";
+
 
     if (window.KalipsoTable === undefined) {
       window.KalipsoTable = {}
@@ -42,6 +56,7 @@ class KalipsoTable {
 
     let defaultOptions = {
       language: "en",
+      server: false,
       schema: '<div class="table-row">' +
         '<div class="column-25">[L]</div>' + // Listing option select
         '<div class="column-25">[S]</div>' + // Full search input
@@ -51,69 +66,90 @@ class KalipsoTable {
         '</div>',
       columns: [],
       order: ["id", "asc"],
-      source: null, // object or string (url)
+      source: null, // object or string(url)
       lengthOptions: [
+        {
+          "name": "5",
+          "value": 5,
+          "default": true
+        },
+        {
+          "name": "10",
+          "value": 10,
+        },
+        {
+          "name": "50",
+          "value": 50,
+        },
+        {
+          "name": "100",
+          "value": 100
+        },
+        {
+          "name": this.l10n('all'),
+          "value": 0,
+        }
       ],
       selector: null,
       tableHeader: {
         searchBar: true
       },
       customize: {
-        tableWrapClass: "kalipso-table-wrapper",
-        tableClass: "kalipso-table",
+        tableWrapClass: null,
+        tableClass: null,
         tableHeadClass: null,
         tableBodyClass: null,
         tableFooterClass: null,
-        inputClass: 'form-input',
-        selectClass: 'form-input',
-        paginationUlClass: 'paginate',
-        paginationLiClass: 'paginate-item',
-        paginationAClass: 'paginate-item-link'
+        inputClass: null,
+        selectClass: null,
+        paginationUlClass: null,
+        paginationLiClass: null,
+        paginationAClass: null,
       },
       tableFooter: {
         visible: false,
         searchBar: true
       },
-      params: [],
-      pageLenght: 10,
-      page: 1,
-      fullSearch: true,
-      fullSearchParam: "",
-      totalRecord: 0
+      params: {},
+      length: 10,
+      fullSearch: true
     }
 
-    this.data = []
-    this.bomb(this.version, "debug")
+    this.bomb(this.version, "debug");
 
-    if (typeof options === 'string') {
+    if (typeof options === 'object') {
 
-      defaultOptions.selector = options
-      this.options = defaultOptions
+      this.options = this.mergeObject(defaultOptions, options);
+      this.server = this.options.server;
+      this.selector = this.options.selector;
+      this.customize = this.options.customize;
 
-    } else if (typeof options === 'object') {
-
-      this.options = this.mergeObject(defaultOptions, options)
+      if (this.selector !== null && document.querySelector(this.selector)) {
+        this.parent = document.querySelector(this.options.selector);
+        this.init();
+      } else {
+        this.bomb(this.l10n("target_selector_not_found") + ' (' + this.options.selector + ')', "debug");
+      }
 
     } else {
 
-      this.bomb(this.l10n("init_option_error"), "error")
-      this.options = defaultOptions
+      this.bomb(this.l10n("init_option_error"), "error");
     }
-
-    if (this.options.selector !== undefined && document.querySelector(this.options.selector)) {
-      this.init(document.querySelector(this.options.selector))
-    } else {
-      this.bomb(this.l10n("target_selector_not_found") + ' (' + this.options.selector + ')', "debug")
-    }
-
   }
 
-  // Provides synchronization of setting data.
+  // 
+  /**
+   * Provides synchronization of setting data.
+   * @param object defaultObj  main object data
+   * @param object overridedObj  overrided object data
+   * @param string key multidimension key attribute
+   * @return object
+   */
   mergeObject(defaultObj, overridedObj, key = null) {
 
     if (defaultObj !== null && overridedObj !== null) {
       const keys = Object.keys(overridedObj)
-      let key = null
+      // let key = null
 
       for (let i = 0; i < keys.length; i++) {
         key = keys[i]
@@ -127,10 +163,13 @@ class KalipsoTable {
       defaultObj = overridedObj
     }
     return defaultObj;
-
   }
 
-  // Returns translation using key according to active language.
+  /**
+   * Returns translation using key according to active language.
+   * @param string key   language key  
+   * @return string
+   */
   l10n(key) {
 
     const dir = this.options !== undefined ? this.options.language : "en"
@@ -142,12 +181,16 @@ class KalipsoTable {
     if (window.KalipsoTable.languages[dir][key] !== undefined) {
       return window.KalipsoTable.languages[dir][key]
     } else {
-      return false
+      return key
     }
-
   }
 
-  // It sends an output to the console by attributes.
+  /**
+   * It sends an output to the console by attributes.
+   * @param string warn  console message
+   * @param string type  console message type
+   * @return void
+   */
   bomb(warn, type = "log") {
 
     warn = "KalipsoTable: " + warn
@@ -172,180 +215,23 @@ class KalipsoTable {
       default:
         console.log(warn)
         break;
-
-    }
-
-  }
-
-  // Prepare content with options
-  prepareBody(push = false) {
-
-    if (typeof this.options.source === 'object') { // client-side
-
-      this.options.totalRecord = Object.keys(this.options.source).length
-
-      let results = [] // this.options.source
-      if (Object.keys(this.options.params).length) { // search
-
-        this.options.source.forEach((p) => {
-          for (const [key, value] of Object.entries(this.options.params)) {
-
-            if (p[key] !== undefined) {
-              let string = p[key]
-              string = string.toString()
-              if (string.indexOf(value) >= 0) {
-                results.push(p)
-              }
-            }
-          }
-        })
-      } else {
-        results = this.options.source
-      }
-
-      if (results.length && this.options.fullSearch && this.options.fullSearchParam) { // full search
-        let tempResults = []
-        results.forEach((p) => {
-          for (const [key, value] of Object.entries(p)) {
-            let string = value.toString()
-            if (string.indexOf(this.options.fullSearchParam) >= 0) {
-              tempResults.push(p)
-              break;
-            }
-          }
-        })
-        results = tempResults
-      }
-
-      if (results.length && this.options.order.length) { // order
-
-        results = results.sort((a, b) => {
-          const key = this.options.order[0]
-          if (this.options.order[1] === 'desc') {
-            return this.strip(b[key]) > this.strip(a[key]) ? 1 : -1
-          } else {
-            return this.strip(a[key]) > this.strip(b[key]) ? 1 : -1
-          }
-        })
-
-      }
-
-      this.result = results
-      this.options.totalRecord = this.result.length
-
-      if (push) {
-        document.querySelector(this.options.selector + ' tbody').innerHTML = this.body(false)
-        document.querySelector(this.options.selector + ' [data-info]').innerHTML = this.information(false)
-        document.querySelector(this.options.selector + ' [data-pagination]').innerHTML = this.pagination(false)
-      }
-
-    } else { // server-side
-
-      this.loading = true
-
     }
   }
 
-  // table information text
-  information(withParent = true) {
+  /**
+   * The table structure is created.
+   * @return void
+   */
+  async init() {
 
-    let info = ``
-
-    if (this.result && this.result.length !== 0) {
-      info = this.l10n("showing_x_out_of_y_records").replace("[X]", this.result.length)
-      info = info.replace("[Y]", "1-1");
-    } else {
-      info = this.l10n("no_record");
-    }
-
-    if (this.options.totalRecord > 0 || this.result.length !== this.options.totalRecord) {
-      info = info + ` (` + this.l10n("out_of_x_records").replace("[X]", this.options.source.length) + `)`
-    }
-
-    return withParent ? `<span class="kalipso-information" data-info>` + info + `</span>` : info
-  }
-
-  // table pagination
-  pagination(withParent = true) {
-
-    let pagination = ``
-    let page = this.options.page
-
-    let pageCount = this.options.pageLenght <= 0 ? 1 : Math.ceil(this.options.totalRecord / this.options.pageLenght)
-
-    if (pageCount < page) {
-      page = pageCount
-      this.options.page = page
-    }
-
-    pagination = `<ul` + (this.options.customize.paginationUlClass ? ` class="` + this.options.customize.paginationUlClass + `"` : ``) + `>`
-
-    if (this.result && this.result.length !== 0) {
-
-      let firstAttr = ` disabled`
-      if (page > 1) {
-        firstAttr = ` data-page="` + 1 + `"`
-      }
-
-      pagination = pagination + `<li` + (this.options.customize.paginationUlClass ? ` class="` + this.options.customize.paginationUlClass + `"` : ``) + `>` +
-        `<a` + (this.options.customize.paginationAClass ? ` class="` + this.options.customize.paginationAClass + `"` : ``) + ` href="javascript:;"` + firstAttr + `>` + this.l10n("first") + `</a>` +
-        `</li>`
-
-      let prevAttr = ` disabled`
-      if (page > 1) {
-        prevAttr = ` data-page="` + (page - 1) + `"`
-      }
-
-      pagination = pagination + `<li` + (this.options.customize.paginationUlClass ? ` class="` + this.options.customize.paginationUlClass + `"` : ``) + `>` +
-        `<a` + (this.options.customize.paginationAClass ? ` class="` + this.options.customize.paginationAClass + `"` : ``) + ` href="javascript:;"` + prevAttr + `>` + this.l10n("prev") + `</a>` +
-        `</li>`
-
-      for (let i = 1; i <= pageCount; i++) {
-        let aClass = page === i ? `active` : ``
-
-        aClass = aClass + (this.options.customize.paginationAClass ? (aClass === `` ? `` : ` `) + this.options.customize.paginationAClass : ``)
-
-        pagination = pagination + `<li` + (this.options.customize.paginationUlClass ? ` class="` + this.options.customize.paginationUlClass + `"` : ``) + `>` +
-          `<a` + (aClass !== `` ? ` class="` + aClass + `"` : ``) + ` href="javascript:;" data-page="` + i + `">` + i + `</a>` +
-          `</li>`
-      }
-
-      let nextAttr = ` disabled`
-      if (page < pageCount) {
-        nextAttr = ` data-page="` + (page + 1) + `"`
-      }
-
-      pagination = pagination + `<li` + (this.options.customize.paginationUlClass ? ` class="` + this.options.customize.paginationUlClass + `"` : ``) + `>` +
-        `<a` + (this.options.customize.paginationAClass ? ` class="` + this.options.customize.paginationAClass + `"` : ``) + ` href="javascript:;"` + nextAttr + `>` + this.l10n("next") + `</a>` +
-        `</li>`
-
-      let lastAttr = ` disabled`
-      if (page < pageCount) {
-        lastAttr = ` data-page="` + pageCount + `"`
-      }
-
-      pagination = pagination + `<li` + (this.options.customize.paginationUlClass ? ` class="` + this.options.customize.paginationUlClass + `"` : ``) + `>` +
-        `<a` + (this.options.customize.paginationAClass ? ` class="` + this.options.customize.paginationAClass + `"` : ``) + ` href="javascript:;"` + lastAttr + `>` + this.l10n("last") + `</a>` +
-        `</li>`
-    }
-
-    pagination = pagination + `</ul>`
-
-    return withParent ? `<nav class="kalipso-pagination" data-pagination>` + pagination + `</nav>` : pagination
-  }
-
-  // The table structure is created.
-  init(element) {
-
-    this.prepareBody()
     const sorting = this.sorting()
     const fullSearch = this.fullSearchArea()
     const info = this.information()
     const pagination = this.pagination()
 
     let schema = this.options.schema
-    const table = `<div` + (this.options.customize.tableWrapClass ? ` class="` + this.options.customize.tableWrapClass + `"` : ``) + `>` +
-      `<table` + (this.options.customize.tableClass ? ` class="kalipso-table ` + this.options.customize.tableClass + `"` : ` class="kalipso-table"`) + `>` +
+    const table = `<div` + (this.customize.tableWrapClass ? ` class="` + this.customize.tableWrapClass + `"` : ``) + `>` +
+      `<table class="kalipso-table` + (this.customize.tableClass ? ` ` + this.customize.tableClass : ``) + `">` +
       this.head() +
       this.body() +
       this.footer() +
@@ -359,128 +245,166 @@ class KalipsoTable {
     schema = schema.replace("[P]", pagination)
 
 
-    element.innerHTML = schema
+    this.parent.innerHTML = schema
 
-    this.eventListener()
-
-  }
-
-  fullSearchArea() {
-
-    let area = ``
-    if (this.options.fullSearch) {
-      area = `<input data-full-search type="text" placeholder="` + this.l10n("search") + `" class="` + this.options.customize.inputClass + `"/>`
-    }
-    return area
-  }
-
-  fullSearch(el) {
-
-    this.options.fullSearchParam = el.value
-    this.prepareBody(true)
+    await this.prepareBody();
+    this.eventListener();
 
   }
 
-  perPage(el) {
 
-    this.options.pageLenght = parseInt(el.value)
-    this.options.page = 1
-    this.prepareBody(true)
-
-  }
-
-  switchPage(el) {
-
-    let param = parseInt(el.getAttribute("data-page"))
-
-    let pageCount = this.options.pageLenght <= 0 ? 1 : Math.ceil(this.options.totalRecord / this.options.pageLenght)
-    if (param > pageCount) {
-      this.options.page = pageCount
-    } else if (param < 1) {
-      this.options.page = 1
-    } else {
-      this.options.page = param
-    }
-
-    this.prepareBody(true)
-  }
-
-  sort(element, index) {
-
-    if (Array.from(element.classList).indexOf("asc") !== -1) { // asc
-
-      element.classList.remove("asc")
-      element.classList.add("desc")
-      element.setAttribute("title", this.l10n("sorting_asc"))
-      this.options.order = [element.getAttribute("data-sort"), "desc"]
-
-    } else if (Array.from(element.classList).indexOf("desc") !== -1) { // desc
-
-      element.classList.remove("desc")
-      element.classList.add("asc")
-      element.setAttribute("title", this.l10n("sorting_desc"))
-      this.options.order = [element.getAttribute("data-sort"), "asc"]
-
-    } else { // default
-
-      element.classList.add("asc")
-      element.setAttribute("title", this.l10n("sorting_desc"))
-      this.options.order = [element.getAttribute("data-sort"), "asc"]
-
-    }
-
-    let thAreas = document.querySelectorAll(this.options.selector + ' thead th.sort')
-    if (thAreas.length) {
-      for (let thIndex = 0; thIndex < thAreas.length; thIndex++) {
-        if (thIndex !== index) thAreas[thIndex].classList.remove("asc", "desc")
-      }
-    }
-
-    this.prepareBody(true)
-
-  }
-
+  /**
+   * Prepare sorting DOM. 
+   * @return string
+   */
   sorting() {
 
-    let sortingDom = ``
-
-    if (this.options.lengthOptions.length) {
-      let defaultSelected = false
-      let selected = ``
+    let sortingDom = ``;
+    if (this.options.lengthOptions) {
+      let defaultSelected = false;
+      let selected = ``;
 
       sortingDom = `<select data-perpage` +
-        (this.options.customize.selectClass !== undefined && this.options.customize.selectClass
-          ? ` class="` + this.options.customize.selectClass + `" ` : ` `) +
-        `>`
+        (this.customize.selectClass !== undefined && this.customize.selectClass
+          ? ` class="` + this.customize.selectClass + `" ` : ` `) +
+        `>`;
 
       for (let i = 0; i < this.options.lengthOptions.length; i++) {
         if (this.options.lengthOptions[i].default !== undefined && this.options.lengthOptions[i].default) {
-          defaultSelected = this.options.lengthOptions[i].value
+          defaultSelected = this.options.lengthOptions[i].value;
         }
       }
 
       for (let i = 0; i < this.options.lengthOptions.length; i++) {
 
-        const val = this.options.lengthOptions[i].value.toString()
-        const name = this.options.lengthOptions[i].name
-        selected = ``
+        const val = this.options.lengthOptions[i].value.toString();
+        const name = this.options.lengthOptions[i].name;
+        selected = ``;
 
         if (defaultSelected === this.options.lengthOptions[i].value || (defaultSelected === false && i === 0)) {
-          selected = ` selected`
+          selected = ` selected`;
           if (defaultSelected === false && i === 0) {
-            defaultSelected = this.options.lengthOptions[i].value
+            defaultSelected = this.options.lengthOptions[i].value;
           }
         }
 
-        sortingDom = sortingDom.concat(`<option value="` + val + `"` + selected + `>` + name + `</option>`)
+        sortingDom = sortingDom.concat(`<option value="` + val + `"` + selected + `>` + name + `</option>`);
       }
 
-      sortingDom = sortingDom.concat(`</select>`)
-
-      this.options.pageLenght = defaultSelected
+      sortingDom = sortingDom.concat(`</select>`);
+      this.options.length = defaultSelected;
     }
 
-    return sortingDom
+    return sortingDom;
+  }
+
+
+  /**
+   * Prepare sorting DOM. 
+   * @return string
+   */
+  fullSearchArea() {
+
+    let area = ``;
+    if (this.options.fullSearch) {
+      area = `<input data-full-search type="text" placeholder="` + this.l10n("search") + `" class="` + this.options.customize.inputClass + `"/>`;
+    }
+    return area;
+  }
+
+
+  /**
+   * Table information text.
+   * @param boolean withParent  parent element option
+   * @return string
+   */
+  information(withParent = true) {
+
+    let info = ``;
+    if (this.result && this.current !== 0) {
+      info = this.l10n("showing_x_out_of_y_records").replace("[X]", this.current)
+      info = info.replace("[Y]", this.total);
+    } else {
+      info = this.l10n("no_record");
+    }
+
+    if (this.current > 0 || this.current !== this.total) {
+      info = info + ` (` + this.l10n("out_of_x_records").replace("[X]", this.options.source.length) + `)`;
+    }
+    return withParent ? `<span class="kalipso-information" data-info>` + info + `</span>` : info;
+  }
+
+
+  /**
+   * Prepare pagination DOM. 
+   * @param boolean withParent  parent element option
+   */
+  pagination(withParent = true) {
+
+    let pagination = ``
+    let page = this.page
+
+    let pageCount = this.options.length <= 0 ? 1 : Math.ceil(this.total / this.options.length)
+
+    if (pageCount < page) {
+      page = pageCount
+      this.options.page = page
+    }
+
+    pagination = `<ul` + (this.customize.paginationUlClass ? ` class="` + this.customize.paginationUlClass + `"` : ``) + `>`
+
+    if (this.result && this.current !== 0) {
+
+      let firstAttr = ` disabled`
+      if (page > 1) {
+        firstAttr = ` data-page="` + 1 + `"`
+      }
+
+      pagination = pagination + `<li` + (this.customize.paginationUlClass ? ` class="` + this.customize.paginationUlClass + `"` : ``) + `>` +
+        `<a` + (this.customize.paginationAClass ? ` class="` + this.customize.paginationAClass + `"` : ``) + ` href="javascript:;"` + firstAttr + `>` + this.l10n("first") + `</a>` +
+        `</li>`
+
+      let prevAttr = ` disabled`
+      if (page > 1) {
+        prevAttr = ` data-page="` + (page - 1) + `"`
+      }
+
+      pagination = pagination + `<li` + (this.customize.paginationUlClass ? ` class="` + this.customize.paginationUlClass + `"` : ``) + `>` +
+        `<a` + (this.customize.paginationAClass ? ` class="` + this.customize.paginationAClass + `"` : ``) + ` href="javascript:;"` + prevAttr + `>` + this.l10n("prev") + `</a>` +
+        `</li>`
+
+      for (let i = 1; i <= pageCount; i++) {
+        let aClass = page === i ? `active` : ``
+
+        aClass = aClass + (this.customize.paginationAClass ? (aClass === `` ? `` : ` `) + this.customize.paginationAClass : ``)
+
+        pagination = pagination + `<li` + (this.customize.paginationUlClass ? ` class="` + this.customize.paginationUlClass + `"` : ``) + `>` +
+          `<a` + (aClass !== `` ? ` class="` + aClass + `"` : ``) + ` href="javascript:;" data-page="` + i + `">` + i + `</a>` +
+          `</li>`
+      }
+
+      let nextAttr = ` disabled`
+      if (page < pageCount) {
+        nextAttr = ` data-page="` + (page + 1) + `"`
+      }
+
+      pagination = pagination + `<li` + (this.customize.paginationUlClass ? ` class="` + this.customize.paginationUlClass + `"` : ``) + `>` +
+        `<a` + (this.customize.paginationAClass ? ` class="` + this.customize.paginationAClass + `"` : ``) + ` href="javascript:;"` + nextAttr + `>` + this.l10n("next") + `</a>` +
+        `</li>`
+
+      let lastAttr = ` disabled`
+      if (page < pageCount) {
+        lastAttr = ` data-page="` + pageCount + `"`
+      }
+
+      pagination = pagination + `<li` + (this.customize.paginationUlClass ? ` class="` + this.customize.paginationUlClass + `"` : ``) + `>` +
+        `<a` + (this.customize.paginationAClass ? ` class="` + this.customize.paginationAClass + `"` : ``) + ` href="javascript:;"` + lastAttr + `>` + this.l10n("last") + `</a>` +
+        `</li>`
+    }
+
+    pagination = pagination + `</ul>`
+
+    return withParent ? `<nav class="kalipso-pagination" data-pagination>` + pagination + `</nav>` : pagination
   }
 
   // Prepares the table header.
@@ -533,11 +457,11 @@ class KalipsoTable {
 
       let bodyResult = []
 
-      if (typeof this.options.source !== 'object' || this.options.pageLenght === 0) {
+      if (typeof this.options.source !== 'object' || this.options.length === 0) {
         bodyResult = this.result
       } else {
-        let gap = this.options.pageLenght
-        let page = this.options.page
+        let gap = this.options.length;
+        let page = this.page;
 
         let start = page === 1 ? 0 : ((page * gap) - 1)
         let end = gap === 1 ? start + gap : (start + gap) - 1
@@ -586,9 +510,209 @@ class KalipsoTable {
 
   }
 
-  // Clean tags.
-  strip(text) {
+  /**
+   * Prepare content with options
+   * @return Promise
+   */
+  prepareBody() {
 
+    return new Promise(async (resolve) => {
+
+      if (!this.server) { // client-side
+
+        let results = [] // this.options.source
+        if (Object.keys(this.searchParams).length) { // search
+
+          this.options.source.forEach((p) => {
+            for (const [key, value] of Object.entries(this.searchParams)) {
+
+              if (p[key] !== undefined) {
+                let string = p[key]
+                string = string.toString()
+                if (string.indexOf(value) >= 0) {
+                  results.push(p)
+                }
+              }
+            }
+          })
+        } else {
+          results = this.options.source
+        }
+
+        if (results.length && this.options.fullSearch && this.search) { // full search
+          let tempResults = []
+          results.forEach((p) => {
+            for (const [key, value] of Object.entries(p)) {
+              let string = value.toString()
+              if (string.indexOf(this.search) >= 0) {
+                tempResults.push(p)
+                break;
+              }
+            }
+          })
+          results = tempResults
+        }
+
+        if (results.length && this.options.order.length) { // order
+
+          results = results.sort((a, b) => {
+            const key = this.options.order[0]
+            if (this.options.order[1] === 'desc') {
+              return this.strip(b[key]) > this.strip(a[key]) ? 1 : -1
+            } else {
+              return this.strip(a[key]) > this.strip(b[key]) ? 1 : -1
+            }
+          })
+
+        }
+
+        this.total = Object.keys(this.options.source).length
+        this.result = results;
+        this.totalPage = this.result.length <= 0 ? 1 : Math.ceil(this.total / this.options.length);
+        this.current = results.length;
+
+        console.log(this);
+
+        document.querySelector(this.selector + ' tbody').innerHTML = this.body(false)
+        document.querySelector(this.selector + ' [data-info]').innerHTML = this.information(false)
+        document.querySelector(this.selector + ' [data-pagination]').innerHTML = this.pagination(false)
+
+        await resolve(true);
+
+      } else { // server-side
+
+        // for future
+        const controller = new AbortController();
+
+        let fetchOptions = {
+          method: 'GET',
+          mode: 'cors',
+          cache: 'no-cache',
+          credentials: 'same-origin',
+          headers: {
+            'X-KALIPSOTABLE': true
+          },
+          redirect: 'follow',
+          referrerPolicy: 'same-origin',
+          signal: controller.signal,
+        }
+
+        const form = {};
+        form.per_page = this.options.length;
+        form.order = this.options.order[0] + ',' + this.options.order[1];
+        if (this.search) {
+          form.full_search = this.options.search;
+        }
+        // Object.keys(this.options.params).length
+        form.search = encodeURI(JSON.stringify(this.searchParams));
+
+        console.log(this.options);
+        console.log(form);
+
+        const result = await fetch(this.options.source, fetchOptions).then(function (response) {
+
+          return response.ok ? response.json() : false
+
+        }).then(function (response) {
+
+          return response
+
+        }).catch(function (err) {
+          return false
+        })
+
+        if (result) {
+
+          this.results = result.records;
+          this.page = result.current_page;
+          this.total = result.record_count;
+          this.totalPage = result.total_page;
+          this.current = result.filtered_count;
+
+          document.querySelector(this.selector + ' tbody').innerHTML = this.body(false)
+          document.querySelector(this.selector + ' [data-info]').innerHTML = this.information(false)
+          document.querySelector(this.selector + ' [data-pagination]').innerHTML = this.pagination(false)
+
+        }
+
+        await resolve(true);
+
+      }
+    })
+  }
+
+  async fullSearch(el) {
+
+    this.options.fullSearchParam = el.value
+    await this.prepareBody(true)
+
+  }
+
+  async perPage(el) {
+
+    this.options.length = parseInt(el.value)
+    this.page = 1
+    await this.prepareBody(true)
+
+  }
+
+  async switchPage(el) {
+
+    let param = parseInt(el.getAttribute("data-page"))
+
+    let pageCount = this.options.length <= 0 ? 1 : Math.ceil(this.total / this.options.length)
+    if (param > pageCount) {
+      this.options.page = pageCount
+    } else if (param < 1) {
+      this.options.page = 1
+    } else {
+      this.options.page = param
+    }
+
+    await this.prepareBody(true)
+  }
+
+  async sort(element, index) {
+
+    if (Array.from(element.classList).indexOf("asc") !== -1) { // asc
+
+      element.classList.remove("asc")
+      element.classList.add("desc")
+      element.setAttribute("title", this.l10n("sorting_asc"))
+      this.options.order = [element.getAttribute("data-sort"), "desc"]
+
+    } else if (Array.from(element.classList).indexOf("desc") !== -1) { // desc
+
+      element.classList.remove("desc")
+      element.classList.add("asc")
+      element.setAttribute("title", this.l10n("sorting_desc"))
+      this.options.order = [element.getAttribute("data-sort"), "asc"]
+
+    } else { // default
+
+      element.classList.add("asc")
+      element.setAttribute("title", this.l10n("sorting_desc"))
+      this.options.order = [element.getAttribute("data-sort"), "asc"]
+
+    }
+
+    let thAreas = document.querySelectorAll(this.options.selector + ' thead th.sort')
+    if (thAreas.length) {
+      for (let thIndex = 0; thIndex < thAreas.length; thIndex++) {
+        if (thIndex !== index) thAreas[thIndex].classList.remove("asc", "desc")
+      }
+    }
+
+    await this.prepareBody(true)
+
+  }
+
+  /**
+   * Clean tags.
+   * @param string text  content
+   * @return string
+   */
+  strip(text) {
     let tmp = document.createElement("DIV");
     tmp.innerHTML = text;
     return tmp.textContent || tmp.innerText || "";
@@ -608,7 +732,7 @@ class KalipsoTable {
           (this.options.customize.inputClass !== undefined && this.options.customize.inputClass ? ` class="` + this.options.customize.inputClass + `" ` : ` `) +
           (areaDatas.min !== undefined && areaDatas.min ? ` min="` + areaDatas.min + `" ` : ` `) +
           (areaDatas.max !== undefined && areaDatas.max ? ` max="` + areaDatas.max + `" ` : ` `) +
-          (areaDatas.maxlenght !== undefined && areaDatas.maxlenght ? ` maxlenght="` + areaDatas.maxlenght + `" ` : ` `) +
+          (areaDatas.maxlength !== undefined && areaDatas.maxlength ? ` maxlength="` + areaDatas.maxlength + `" ` : ` `) +
           `/>`
         break;
 
@@ -698,7 +822,7 @@ class KalipsoTable {
   }
 
   // If there is more than one of the changing search fields, it ensures that all search fields are synchronized with the same data.
-  fieldSynchronizer(field) {
+  async fieldSynchronizer(field) {
     const searchAttr = field.getAttribute("data-search")
     const targetElements = document.querySelectorAll(this.options.selector + ` [data-search="` + searchAttr + `"]`)
     targetElements.forEach((input) => {
@@ -707,14 +831,14 @@ class KalipsoTable {
     this.options.params[searchAttr] = field.value
 
     // clear empty string parameters
-    let tempParams = []
+    let tempParams = {}
     for (const [key, value] of Object.entries(this.options.params)) {
 
       if (value !== "") tempParams[key] = value
     }
     this.options.params = tempParams
 
-    this.prepareBody(true)
+    await this.prepareBody(true)
 
   }
 
