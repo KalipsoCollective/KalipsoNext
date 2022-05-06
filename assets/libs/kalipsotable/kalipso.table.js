@@ -16,6 +16,7 @@ class KalipsoTable {
   constructor(options) {
 
     this.version = '0.0.1';
+    this.loading = false;
     this.result = [];
     this.server = false;
     this.selector = null;
@@ -86,7 +87,7 @@ class KalipsoTable {
           "value": 100
         },
         {
-          "name": this.l10n('all'),
+          "name": '[ALL]',
           "value": 0,
         }
       ],
@@ -224,10 +225,12 @@ class KalipsoTable {
    */
   async init() {
 
-    const sorting = this.sorting()
-    const fullSearch = this.fullSearchArea()
-    const info = this.information()
-    const pagination = this.pagination()
+    this.loading = true;
+
+    const sorting = this.sortingSelect();
+    const fullSearch = this.fullSearchArea();
+    const info = this.information();
+    const pagination = this.pagination();
 
     let schema = this.options.schema
     const table = `<div` + (this.customize.tableWrapClass ? ` class="` + this.customize.tableWrapClass + `"` : ``) + `>` +
@@ -236,18 +239,27 @@ class KalipsoTable {
       this.body() +
       this.footer() +
       `</table>` +
-      `</div>`
+      `</div>`;
 
-    schema = schema.replace("[T]", table)
-    schema = schema.replace("[L]", sorting)
-    schema = schema.replace("[S]", fullSearch)
-    schema = schema.replace("[I]", info)
-    schema = schema.replace("[P]", pagination)
+    schema = schema.replace("[T]", table);
+    schema = schema.replace("[L]", sorting);
+    schema = schema.replace("[S]", fullSearch);
+    schema = schema.replace("[I]", info);
+    schema = schema.replace("[P]", pagination);
 
 
-    this.parent.innerHTML = schema
+    this.parent.innerHTML = schema;
 
     await this.prepareBody();
+    this.loading = false;
+    /*
+    let gap = this.options.length;
+    let page = this.page;
+
+    let start = page === 1 ? 0 : ((page * gap) - 1)
+    let end = gap === 1 ? start + gap : (start + gap) - 1
+
+    bodyResult = this.result.slice(start, end)*/
     this.eventListener();
 
   }
@@ -257,7 +269,7 @@ class KalipsoTable {
    * Prepare sorting DOM. 
    * @return string
    */
-  sorting() {
+  sortingSelect() {
 
     let sortingDom = ``;
     if (this.options.lengthOptions) {
@@ -288,7 +300,7 @@ class KalipsoTable {
           }
         }
 
-        sortingDom = sortingDom.concat(`<option value="` + val + `"` + selected + `>` + name + `</option>`);
+        sortingDom = sortingDom.concat(`<option value="` + val + `"` + selected + `>` + (name === '[ALL]' ? this.l10n('all') : name) + `</option>`);
       }
 
       sortingDom = sortingDom.concat(`</select>`);
@@ -328,7 +340,7 @@ class KalipsoTable {
       info = this.l10n("no_record");
     }
 
-    if (this.current > 0 || this.current !== this.total) {
+    if (this.current > 0 && this.current !== this.total) {
       info = info + ` (` + this.l10n("out_of_x_records").replace("[X]", this.options.source.length) + `)`;
     }
     return withParent ? `<span class="kalipso-information" data-info>` + info + `</span>` : info;
@@ -449,29 +461,25 @@ class KalipsoTable {
 
     let tbody = ``
 
-    if (this.result.length === 0) {
+    if (this.loading) {
+
+      for (let i = 1; i <= this.options.length; i++) {
+        tbody += `<tr class="kn-loading-body">`;
+        for (const [index, col] of Object.entries(this.options.columns)) {
+
+          tbody += `<td><div class="kt-skeleton-bar"></div></td>`;
+
+        }
+        tbody += `</tr>`;
+      }
+
+    } else if (this.result.length === 0) {
 
       tbody = `<tr><td colspan="100%" class="no_result_info">` + this.l10n("no_record") + `</td></tr>`
 
     } else {
 
-      let bodyResult = []
-
-      if (typeof this.options.source !== 'object' || this.options.length === 0) {
-        bodyResult = this.result
-      } else {
-        let gap = this.options.length;
-        let page = this.page;
-
-        let start = page === 1 ? 0 : ((page * gap) - 1)
-        let end = gap === 1 ? start + gap : (start + gap) - 1
-
-        bodyResult = this.result.slice(start, end)
-
-      }
-
-      bodyResult.forEach((row) => {
-
+      this.result.forEach((row) => {
         tbody += `<tr>`
         for (const [index, col] of Object.entries(this.options.columns)) {
 
@@ -484,7 +492,11 @@ class KalipsoTable {
 
     }
 
-    return withBodyTag ? `<tbody` + (this.options.customize.tableBodyClass ? ` class="` + this.options.customize.tableBodyClass + `"` : ``) + `>` + tbody + `</tbody>` : tbody
+    return withBodyTag ? 
+      `<tbody` + (this.options.customize.tableBodyClass ? ` class="` + this.options.customize.tableBodyClass + `"` : ``) + `>` + 
+        tbody + 
+      `</tbody>` 
+      : tbody
 
   }
 
@@ -555,14 +567,24 @@ class KalipsoTable {
 
         if (results.length && this.options.order.length) { // order
 
-          results = results.sort((a, b) => {
+          let collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+          results = results.sort(collator.compare);
+
+          if (this.options.order[1] === 'desc') {
+            results.reverse();
+          }
+
+          console.log(this.options.order[1]);
+
+          /*
+          .sort((a, b) => {
             const key = this.options.order[0]
             if (this.options.order[1] === 'desc') {
               return this.strip(b[key]) > this.strip(a[key]) ? 1 : -1
             } else {
               return this.strip(a[key]) > this.strip(b[key]) ? 1 : -1
             }
-          })
+          })*/
 
         }
 
@@ -590,7 +612,7 @@ class KalipsoTable {
           cache: 'no-cache',
           credentials: 'same-origin',
           headers: {
-            'X-KALIPSOTABLE': true
+            'X-KALIPSOTABLE': this.version
           },
           redirect: 'follow',
           referrerPolicy: 'same-origin',
@@ -703,7 +725,7 @@ class KalipsoTable {
       }
     }
 
-    await this.prepareBody(true)
+    await this.prepareBody()
 
   }
 
@@ -838,7 +860,7 @@ class KalipsoTable {
     }
     this.options.params = tempParams
 
-    await this.prepareBody(true)
+    this.prepareBody(true)
 
   }
 
