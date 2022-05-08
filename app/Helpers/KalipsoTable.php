@@ -174,6 +174,7 @@ class KalipsoTable {
             $whereString . ' ORDER BY ' . $order[0] . ' ' . $order[1] . ' 
             LIMIT ' . $perPage . ' OFFSET ' . (($page > 0 ? $page : 1) - 1) * $perPage;
         $result = $this->db->query($resultSql);
+
         if ($result === false) {
             $err = $this->db->errorInfo();
             die('<pre>#' . $err[1] . ': ' . $err[2] . '</pre>');

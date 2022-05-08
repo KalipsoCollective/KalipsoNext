@@ -28,6 +28,7 @@ class KalipsoTable {
     this.page = 1;
     this.searchParams = {};
     this.search = "";
+    this.listeners = [];
 
 
     if (window.KalipsoTable === undefined) {
@@ -41,6 +42,7 @@ class KalipsoTable {
     window.KalipsoTable.languages["en"] = {
       "init_option_error": "KalipsoTable cannot be initialized without default options!",
       "target_selector_not_found": "Target selector not found!",
+      "server_response_problem": "There was a problem with the server response!",
 
       "all": "All",
       "sorting_asc": "Sorting (A-Z)",
@@ -67,7 +69,7 @@ class KalipsoTable {
         '</div>',
       columns: [],
       order: ["id", "asc"],
-      source: null, // object or string(url)
+      source: [], // object or string(url)
       lengthOptions: [
         {
           "name": "5",
@@ -148,6 +150,8 @@ class KalipsoTable {
    */
   mergeObject(defaultObj, overridedObj, key = null) {
 
+    return Object.assign({}, defaultObj, overridedObj);
+    /*
     if (defaultObj !== null && overridedObj !== null) {
       const keys = Object.keys(overridedObj)
       // let key = null
@@ -164,6 +168,7 @@ class KalipsoTable {
       defaultObj = overridedObj
     }
     return defaultObj;
+    */
   }
 
   /**
@@ -225,8 +230,6 @@ class KalipsoTable {
    */
   async init() {
 
-    this.loading = true;
-
     const sorting = this.sortingSelect();
     const fullSearch = this.fullSearchArea();
     const info = this.information();
@@ -251,17 +254,6 @@ class KalipsoTable {
     this.parent.innerHTML = schema;
 
     await this.prepareBody();
-    this.loading = false;
-    /*
-    let gap = this.options.length;
-    let page = this.page;
-
-    let start = page === 1 ? 0 : ((page * gap) - 1)
-    let end = gap === 1 ? start + gap : (start + gap) - 1
-
-    bodyResult = this.result.slice(start, end)*/
-    this.eventListener();
-
   }
 
 
@@ -334,33 +326,39 @@ class KalipsoTable {
 
     let info = ``;
     if (this.result && this.current !== 0) {
-      info = this.l10n("showing_x_out_of_y_records").replace("[X]", this.current)
-      info = info.replace("[Y]", this.total);
+      info = this.l10n("showing_x_out_of_y_records").replace("[X]", this.total)
+      let range = (this.current - this.options.length);
+      range = range <= 0 ? 1 : range;
+      info = info.replace("[Y]", range + ' - ' + this.current);
     } else {
       info = this.l10n("no_record");
     }
 
     if (this.current > 0 && this.current !== this.total) {
-      info = info + ` (` + this.l10n("out_of_x_records").replace("[X]", this.options.source.length) + `)`;
+      info = info + ` (` + this.l10n("out_of_x_records").replace("[X]", this.current) + `)`;
+    } else if (this.total > 0 && this.current !== this.total) {
+      info = info + ` (` + this.l10n("out_of_x_records").replace("[X]", this.total) + `)`;
     }
     return withParent ? `<span class="kalipso-information" data-info>` + info + `</span>` : info;
   }
 
 
   /**
-   * Prepare pagination DOM. 
+   * Prepare pagination DOM.    
    * @param boolean withParent  parent element option
+   * @return string
    */
   pagination(withParent = true) {
 
     let pagination = ``
-    let page = this.page
+    let page = this.page;
 
-    let pageCount = this.options.length <= 0 ? 1 : Math.ceil(this.total / this.options.length)
+    let pageCount = this.options.length <= 0 ? 1 : Math.ceil(this.total / this.options.length);
+    if (pageCount <= 0) pageCount = 1;
 
-    if (pageCount < page) {
-      page = pageCount
-      this.options.page = page
+    if (pageCount < page && page > 0) {
+      page = pageCount;
+      this.page = page;
     }
 
     pagination = `<ul` + (this.customize.paginationUlClass ? ` class="` + this.customize.paginationUlClass + `"` : ``) + `>`
@@ -419,7 +417,10 @@ class KalipsoTable {
     return withParent ? `<nav class="kalipso-pagination" data-pagination>` + pagination + `</nav>` : pagination
   }
 
-  // Prepares the table header.
+  /**
+   * Prepares the table header.
+   * @return string
+   */
   head() {
 
     let thead = `<thead` + (this.options.customize.tableHeadClass ? ` class="` + this.options.customize.tableHeadClass + `"` : ``) + `><tr>`
@@ -453,10 +454,13 @@ class KalipsoTable {
 
     thead += `</tr></thead>`
     return thead
-
   }
 
-  // Prepares the table body.
+  /**
+   * Prepares the table body.
+   * @param boolean withBodyTag   
+   * @return string
+   */
   body(withBodyTag = true) {
 
     let tbody = ``
@@ -497,10 +501,12 @@ class KalipsoTable {
         tbody + 
       `</tbody>` 
       : tbody
-
   }
 
-  // Prepares the table footer.
+  /**
+   * Prepares the table footer.
+   * @return string
+   */
   footer() {
 
     let tfoot = ``
@@ -519,8 +525,8 @@ class KalipsoTable {
       tfoot += `</tr></tfoot>`
     }
     return tfoot
-
   }
+
 
   /**
    * Prepare content with options
@@ -531,24 +537,24 @@ class KalipsoTable {
     return new Promise(async (resolve) => {
 
       if (!this.server) { // client-side
-
-        let results = [] // this.options.source
+        this.loading = true;
+        document.querySelector(this.selector + ' tbody').innerHTML = this.body(false);
+        
+        let results = [...this.options.source];
         if (Object.keys(this.searchParams).length) { // search
-
-          this.options.source.forEach((p) => {
-            for (const [key, value] of Object.entries(this.searchParams)) {
-
+          for (const [key, value] of Object.entries(this.searchParams)) {
+            let _result = [];
+            results.forEach((p) => {
               if (p[key] !== undefined) {
-                let string = p[key]
-                string = string.toString()
+                let string = p[key];
+                string = string.toString();
                 if (string.indexOf(value) >= 0) {
-                  results.push(p)
+                  _result.push(p)
                 }
               }
-            }
-          })
-        } else {
-          results = this.options.source
+            });
+            results = [...new Set(_result)];
+          }
         }
 
         if (results.length && this.options.fullSearch && this.search) { // full search
@@ -566,44 +572,42 @@ class KalipsoTable {
         }
 
         if (results.length && this.options.order.length) { // order
-
-          let collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
-          results = results.sort(collator.compare);
-
-          if (this.options.order[1] === 'desc') {
-            results.reverse();
-          }
-
-          console.log(this.options.order[1]);
-
-          /*
-          .sort((a, b) => {
-            const key = this.options.order[0]
-            if (this.options.order[1] === 'desc') {
-              return this.strip(b[key]) > this.strip(a[key]) ? 1 : -1
-            } else {
-              return this.strip(a[key]) > this.strip(b[key]) ? 1 : -1
-            }
-          })*/
-
+          const orderKey = this.options.order[0];
+          const orderType = this.options.order[1];
+          results = results.sort((a, b) => {
+            let x = a[orderKey];
+            let y = b[orderKey];
+            return orderType === 'asc' 
+              ? ((x < y) ? -1 : ((x > y) ? 1 : 0))
+              : ((x > y) ? -1 : ((x < y) ? 1 : 0));
+          });
         }
 
-        this.total = Object.keys(this.options.source).length
+        let start = this.page <= 1 ? 0 : ((this.page-1) * this.options.length)
+        results = results.slice(start, (start + this.options.length));
+        console.log(start, this.options.length)
+
+        this.loading = false;
+        this.total = this.options.source.length
         this.result = results;
         this.totalPage = this.result.length <= 0 ? 1 : Math.ceil(this.total / this.options.length);
-        this.current = results.length;
+        this.current = this.result.length;
 
         console.log(this);
 
-        document.querySelector(this.selector + ' tbody').innerHTML = this.body(false)
-        document.querySelector(this.selector + ' [data-info]').innerHTML = this.information(false)
-        document.querySelector(this.selector + ' [data-pagination]').innerHTML = this.pagination(false)
+        await resolve(setTimeout(() => {
+          document.querySelector(this.selector + ' tbody').innerHTML = this.body(false);
+          document.querySelector(this.selector + ' [data-info]').innerHTML = this.information(false);
+          document.querySelector(this.selector + ' [data-pagination]').innerHTML = this.pagination(false);
 
-        await resolve(true);
+          this.eventListener();
+        }, 100));
 
       } else { // server-side
 
-        // for future
+        this.loading = true;
+        document.querySelector(this.selector + ' tbody').innerHTML = this.body(false);
+
         const controller = new AbortController();
 
         let fetchOptions = {
@@ -623,15 +627,13 @@ class KalipsoTable {
         form.per_page = this.options.length;
         form.order = this.options.order[0] + ',' + this.options.order[1];
         if (this.search) {
-          form.full_search = this.options.search;
+          form.full_search = this.search;
         }
-        // Object.keys(this.options.params).length
         form.search = encodeURI(JSON.stringify(this.searchParams));
 
-        console.log(this.options);
-        console.log(form);
-
-        const result = await fetch(this.options.source, fetchOptions).then(function (response) {
+        const link = this.options.source + '?' + (new URLSearchParams(form));
+        console.log(link);
+        const result = await fetch(link, fetchOptions).then(function (response) {
 
           return response.ok ? response.json() : false
 
@@ -643,57 +645,78 @@ class KalipsoTable {
           return false
         })
 
+        this.loading = false;
         if (result) {
-
-          this.results = result.records;
+          this.result = result.records;
           this.page = result.current_page;
           this.total = result.record_count;
           this.totalPage = result.total_page;
           this.current = result.filtered_count;
-
-          document.querySelector(this.selector + ' tbody').innerHTML = this.body(false)
-          document.querySelector(this.selector + ' [data-info]').innerHTML = this.information(false)
-          document.querySelector(this.selector + ' [data-pagination]').innerHTML = this.pagination(false)
-
+        } else {
+          this.result = [];
+          this.page = 1;
+          this.total = 0;
+          this.totalPage = 0;
+          this.current = 0;
+          this.bomb(this.l10n('server_response_problem'), 'error');
         }
 
-        await resolve(true);
+        document.querySelector(this.selector + ' tbody').innerHTML = this.body(false);
+        document.querySelector(this.selector + ' [data-info]').innerHTML = this.information(false);
+        document.querySelector(this.selector + ' [data-pagination]').innerHTML = this.pagination(false);
 
+        await resolve(this.eventListener());
       }
     })
   }
 
+
+  /**
+   * Full search action.
+   * @param object el    search input
+   */
   async fullSearch(el) {
-
-    this.options.fullSearchParam = el.value
+    this.search = el.value
+    this.page = 1;
     await this.prepareBody(true)
-
   }
 
-  async perPage(el) {
 
+  /**
+   * Record lenght action.
+   * @param object el    per page select
+   */
+  async perPage(el) {
     this.options.length = parseInt(el.value)
     this.page = 1
     await this.prepareBody(true)
-
   }
 
+  
+  /**
+   * Switch page.
+   * @param object el    page button
+   */
   async switchPage(el) {
 
     let param = parseInt(el.getAttribute("data-page"))
 
     let pageCount = this.options.length <= 0 ? 1 : Math.ceil(this.total / this.options.length)
     if (param > pageCount) {
-      this.options.page = pageCount
+      this.page = pageCount
     } else if (param < 1) {
-      this.options.page = 1
+      this.page = 1
     } else {
-      this.options.page = param
+      this.page = param
     }
-
     await this.prepareBody(true)
   }
 
+  /**
+   * Ordering the records.
+   * @param object el       clicked button
+   * @param integer index   for change action
+   */
   async sort(element, index) {
 
     if (Array.from(element.classList).indexOf("asc") !== -1) { // asc
@@ -724,9 +747,7 @@ class KalipsoTable {
         if (thIndex !== index) thAreas[thIndex].classList.remove("asc", "desc")
       }
     }
-
-    await this.prepareBody()
-
+    await this.prepareBody();
   }
 
   /**
@@ -740,13 +761,18 @@ class KalipsoTable {
     return tmp.textContent || tmp.innerText || "";
   }
 
-  // Prepares search fields for in-table searches.
+
+  /**
+   * Prepares search fields for in-table searches.
+   * @param object areaDatas  search area attributes
+   * @param string key        area keyword
+   * @return string
+   */
   generateSearchArea(areaDatas, key) {
 
     // number | text | date | select
     let bar = ``
     switch (areaDatas.type) {
-
       case "number":
       case "text":
       case "date":
@@ -770,14 +796,21 @@ class KalipsoTable {
         bar += `</select>`
         break;
     }
-
     return bar
-
   }
 
-  event(event, attrSelector, callback) {
 
-    document.body.addEventListener(event, e => {
+  /**
+   * Create event listener. 
+   * @param string event          type
+   * @param string attrSelector   data attribute
+   * @param object callback       callback function
+   */
+  event(event, attrSelector, callback) {
+    if (this.listeners['other_' + event] !== undefined) {
+      this.listeners['other_' + event].removeEventListener(event);
+    }
+    this.listeners['other_' + event] = document.body.addEventListener(event, e => {
       if (e.target.getAttributeNames().indexOf(attrSelector) !== -1) {
         if (attrSelector === "data-search") {
           callback.call(this.fieldSynchronizer(e.target))
@@ -792,19 +825,24 @@ class KalipsoTable {
     })
   }
 
-  // Prepares event listeners so that table actions can be listened to.
+
+  /**
+   * Prepares event listeners so that table actions can be listened to.
+   * @param boolean searchEvents
+   * @param boolean pageEvents
+   * @param boolean sortingEvents
+   * @param boolean paginationEvents
+   * 
+   */
   eventListener(searchEvents = true, pageEvents = true, sortingEvents = true, paginationEvents = true) {
 
     if (searchEvents) {
-
       this.event("input", 'data-search', () => { })
       this.event("change", 'data-search', () => { })
 
       if (this.options.fullSearch) {
-
         let searchInput = document.querySelector(this.options.selector + ' [data-full-search]')
         if (searchInput) {
-
           this.event("input", 'data-full-search', () => { })
           this.event("change", 'data-full-search', () => { })
         }
@@ -828,40 +866,41 @@ class KalipsoTable {
     if (sortingEvents) {
       let sortingTh = document.querySelectorAll(this.options.selector + ' thead th[data-sort]')
       if (sortingTh.length) {
-
         for (let th = 0; th < sortingTh.length; th++) {
-
-          sortingTh[th].addEventListener("click", a => {
-            sortingTh[th].removeEventListener("click", this, true)
+          if (this.listeners['sort_' + th] !== undefined) {
+            this.listeners['sort_' + th].removeEventListener('click');
+          }
+          this.listeners['sort_' + th] = sortingTh[th].addEventListener("click", a => {
             this.sort(sortingTh[th], th)
           })
-
         }
-
       }
     }
-
   }
 
-  // If there is more than one of the changing search fields, it ensures that all search fields are synchronized with the same data.
+
+  /**
+   * If there is more than one of the changing search fields, it ensures that all search fields are synchronized with the same data.
+   * @param object field
+   */
   async fieldSynchronizer(field) {
-    const searchAttr = field.getAttribute("data-search")
+    let searchAttr = field.getAttribute("data-search");
     const targetElements = document.querySelectorAll(this.options.selector + ` [data-search="` + searchAttr + `"]`)
     targetElements.forEach((input) => {
       input.value = field.value
     })
-    this.options.params[searchAttr] = field.value
+    let val = field.value;
+    if (field.getAttribute('type') === 'date') {
+      val = val.replaceAll('-', '.');
+    }
+    this.searchParams[searchAttr] = val
 
     // clear empty string parameters
     let tempParams = {}
-    for (const [key, value] of Object.entries(this.options.params)) {
-
+    for (const [key, value] of Object.entries(this.searchParams)) {
       if (value !== "") tempParams[key] = value
     }
-    this.options.params = tempParams
-
-    this.prepareBody(true)
-
+    this.searchParams = tempParams
+    await this.prepareBody()
   }
-
 }

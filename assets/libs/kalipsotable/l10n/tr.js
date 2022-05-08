@@ -18,6 +18,7 @@
     window.KalipsoTable.languages["tr"] = {
         "init_option_error": "KalipsoTable varsayılan ayarlar olmadan başlayamaz!",
         "target_selector_not_found": "Hedef seçici bulunamadı!",
+        "server_response_problem": "Sunucu yanıtında bir sorun oluştu!",
 
         "all": "Tümü",
         "sorting_asc": "Sıralama (A-Z)",

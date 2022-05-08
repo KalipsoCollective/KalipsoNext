@@ -25,16 +25,17 @@
 						server: false,
 						//source: '<?php echo $this->url('/management/users/list') ?>',
 						source: [
-							{id: 1, u_name: 'alonzo', name: 'Alonzo Forza', email: 'alonzof@gmail.com', birth_date: '14.08.1996', role: 'admin', created: '05.05.2022', updated: '05.05.2022', status: 'active', action: '<button class="btn btn-danger btn-sm">Delete</button>'},
-							{id: 2, u_name: 'carlb', name: 'Carl Ben', email: 'carlb@gmail.com', birth_date: '14.08.1996', role: 'admin', created: '06.05.2022', updated: '05.05.2022', status: 'passive', action: '<button class="btn btn-danger btn-sm">Delete</button>'},
-							{id: 3, u_name: 'dan14edward', name: 'Dan Edward', email: 'dan14edward@outlook.com', birth_date: '14.08.1996', role: 'admin', created: '08.05.2022', updated: '05.05.2022', status: 'active', action: '<button class="btn btn-danger btn-sm">Delete</button>'},
-							{id: 4, u_name: 'hankfrank', name: 'Frank Hank', email: 'hankfrank@gmail.com', birth_date: '14.08.1996', role: 'admin', created: '09.05.2022', updated: '05.05.2022', status: 'active', action: '<button class="btn btn-danger btn-sm">Delete</button>'},
-							{id: 5, u_name: 'thomopeter22', name: 'Thomas Peter', email: 'thomopeter@hotmail.com', birth_date: '14.08.1996', role: 'admin', created: '22.08.2022', updated: '05.05.2022', status: 'passive', action: '<button class="btn btn-danger btn-sm">Delete</button>'},
-							{id: 6, u_name: 'time', name: 'Edward Tim', email: 'tim.edward@gmail.com', birth_date: '14.08.1996', role: 'admin', created: '13.04.2021', updated: '05.05.2022', status: 'active', action: '<button class="btn btn-danger btn-sm">Delete</button>'},
-							{id: 7, u_name: 'wm', name: 'Walter Monte', email: 'waltermontee@outlook.com', birth_date: '14.08.1996', role: 'admin', created: '10.09.2021', updated: '05.05.2022', status: 'active', action: '<button class="btn btn-danger btn-sm">Delete</button>'},
-							{id: 8, u_name: 'george.c', name: 'George Corte', email: 'george.c@gmail.com', birth_date: '14.08.1996', role: 'admin', created: '12.07.2022', updated: '05.05.2022', status: 'deleted', action: ''},
-							{id: 9, u_name: 'hi.ben', name: 'Ben Thomas', email: 'ben_thomas@gmail.com', birth_date: '14.08.1996', role: 'admin', created: '24.05.2020', updated: '05.05.2022', status: 'active', action: '<button class="btn btn-danger btn-sm">Delete</button>'},
-							{id: 10, u_name: 'otto_dan', name: 'Dan Otto', email: 'otto_dan@gmail.com', birth_date: '14.08.1996', role: 'admin', created: '28.03.2022', updated: '05.05.2022', status: 'deleted', action: ''}
+							{id: 1, u_name: 'alonzo', name: 'Alonzo Forza', email: 'alonzof@gmail.com', birth_date: '1996.08.14', role: 'admin', created: '2022.05.05', updated: '2022.05.05', status: 'active', action: '<button class="btn btn-danger btn-sm">Delete</button>'},
+							{id: 2, u_name: 'carlb', name: 'Carl Ben', email: 'carlb@gmail.com', birth_date: '1996.08.14', role: 'admin', created: '2022.05.06', updated: '2022.05.05', status: 'passive', action: '<button class="btn btn-danger btn-sm">Delete</button>'},
+							{id: 3, u_name: 'dan14edward', name: 'Dan Edward', email: 'dan14edward@outlook.com', birth_date: '1996.08.14', role: 'admin', created: '2022.05.08', updated: '2022.05.05', status: 'active', action: '<button class="btn btn-danger btn-sm">Delete</button>'},
+							{id: 4, u_name: 'hankfrank', name: 'Frank Hank', email: 'hankfrank@gmail.com', birth_date: '1996.08.14', role: 'admin', created: '2022.05.09', updated: '2022.05.05', status: 'active', action: '<button class="btn btn-danger btn-sm">Delete</button>'},
+							{id: 5, u_name: 'thomopeter22', name: 'Thomas Peter', email: 'thomopeter@hotmail.com', birth_date: '1996.08.14', role: 'admin', created: '2022.08.22', updated: '2022.05.05', status: 'passive', action: '<button class="btn btn-danger btn-sm">Delete</button>'},
+							{id: 6, u_name: 'time', name: 'Edward Tim', email: 'tim.edward@gmail.com', birth_date: '1996.08.14', role: 'admin', created: '2021.04.13', updated: '2022.05.05', status: 'active', action: '<button class="btn btn-danger btn-sm">Delete</button>'},
+							{id: 7, u_name: 'wm', name: 'Walter Monte', email: 'waltermontee@outlook.com', birth_date: '1996.08.14', role: 'admin', created: '2021.09.10', updated: '2022.05.05', status: 'active', action: '<button class="btn btn-danger btn-sm">Delete</button>'},
+							{id: 8, u_name: 'george.c', name: 'George Corte', email: 'george.c@gmail.com', birth_date: '1996.08.14', role: 'admin', created: '2022.07.12', updated: '2022.05.05', status: 'deleted', action: ''},
+							{id: 9, u_name: 'hi.ben', name: 'Ben Thomas', email: 'ben_thomas@gmail.com', birth_date: '1996.08.14', role: 'admin', created: '2020.05.24', updated: '2022.05.05', status: 'active', action: '<button class="btn btn-danger btn-sm">Delete</button>'},
+							{id: 10, u_name: 'otto_dan', name: 'Dan Otto', email: 'otto_dan@gmail.com', birth_date: '1996.08.14', role: 'admin', created: '2022.03.28', updated: '2022.05.05', status: 'deleted', action: ''},
+							{id: 11, u_name: 'kotto_dan', name: 'Kenau Dan Otto', email: 'kotto_dan@gmail.com', birth_date: '1996.08.14', role: 'admin', created: '2022.03.28', updated: '2022.05.05', status: 'deleted', action: ''}
 						],
 						columns: [ 
 							{
