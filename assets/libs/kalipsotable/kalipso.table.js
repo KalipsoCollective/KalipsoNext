@@ -49,7 +49,7 @@ class KalipsoTable {
       "sorting_desc": "Sorting (Z-A)",
       "no_record": "No record!",
       "out_of_x_records": "out of [X] records",
-      "showing_x_out_of_y_records": "Showing [X] out of [Y] records.",
+      "showing_x_records_from_y_records": "Showing [X] records from [Y].",
       "prev": "Previous",
       "next": "Next",
       "first": "First",
@@ -254,6 +254,7 @@ class KalipsoTable {
     this.parent.innerHTML = schema;
 
     await this.prepareBody();
+    this.eventListener(true, false, true, true);
   }
 
 
@@ -326,7 +327,7 @@ class KalipsoTable {
 
     let info = ``;
     if (this.result && this.current !== 0) {
-      info = this.l10n("showing_x_out_of_y_records").replace("[X]", this.total)
+      info = this.l10n("showing_x_records_from_y_records").replace("[X]", this.current)
       let range = (this.current - this.options.length);
       range = range <= 0 ? 1 : range;
       info = info.replace("[Y]", range + ' - ' + this.current);
@@ -335,8 +336,6 @@ class KalipsoTable {
     }
 
     if (this.current > 0 && this.current !== this.total) {
-      info = info + ` (` + this.l10n("out_of_x_records").replace("[X]", this.current) + `)`;
-    } else if (this.total > 0 && this.current !== this.total) {
       info = info + ` (` + this.l10n("out_of_x_records").replace("[X]", this.total) + `)`;
     }
     return withParent ? `<span class="kalipso-information" data-info>` + info + `</span>` : info;
@@ -554,6 +553,7 @@ class KalipsoTable {
               }
             });
             results = [...new Set(_result)];
+            this.page = 1;
           }
         }
 
@@ -569,6 +569,7 @@ class KalipsoTable {
             }
           })
           results = tempResults
+          this.page = 1;
         }
 
         if (results.length && this.options.order.length) { // order
@@ -585,23 +586,12 @@ class KalipsoTable {
 
         let start = this.page <= 1 ? 0 : ((this.page-1) * this.options.length)
         results = results.slice(start, (start + this.options.length));
-        console.log(start, this.options.length)
 
         this.loading = false;
         this.total = this.options.source.length
         this.result = results;
         this.totalPage = this.result.length <= 0 ? 1 : Math.ceil(this.total / this.options.length);
         this.current = this.result.length;
-
-        console.log(this);
-
-        await resolve(setTimeout(() => {
-          document.querySelector(this.selector + ' tbody').innerHTML = this.body(false);
-          document.querySelector(this.selector + ' [data-info]').innerHTML = this.information(false);
-          document.querySelector(this.selector + ' [data-pagination]').innerHTML = this.pagination(false);
-
-          this.eventListener();
-        }, 100));
 
       } else { // server-side
 
@@ -660,13 +650,16 @@ class KalipsoTable {
           this.current = 0;
           this.bomb(this.l10n('server_response_problem'), 'error');
         }
-
-        document.querySelector(this.selector + ' tbody').innerHTML = this.body(false);
-        document.querySelector(this.selector + ' [data-info]').innerHTML = this.information(false);
-        document.querySelector(this.selector + ' [data-pagination]').innerHTML = this.pagination(false);
-
-        await resolve(this.eventListener());
       }
+
+      document.querySelector(this.selector + ' tbody').innerHTML = this.body(false);
+      document.querySelector(this.selector + ' [data-info]').innerHTML = this.information(false);
+      document.querySelector(this.selector + ' [data-pagination]').innerHTML = this.pagination(false);
+      this.eventListener(false, true, false, false)
+
+      setTimeout(() => {
+        resolve();
+      }, 10)
     })
   }
 
@@ -678,7 +671,7 @@ class KalipsoTable {
   async fullSearch(el) {
     this.search = el.value
     this.page = 1;
-    await this.prepareBody(true)
+    await this.prepareBody()
   }
 
 
@@ -689,7 +682,7 @@ class KalipsoTable {
   async perPage(el) {
     this.options.length = parseInt(el.value)
     this.page = 1
-    await this.prepareBody(true)
+    await this.prepareBody()
   }
 
   
@@ -709,7 +702,7 @@ class KalipsoTable {
     } else {
       this.page = param
     }
-    await this.prepareBody(true)
+    await this.prepareBody()
   }
 
   /**
@@ -835,7 +828,7 @@ class KalipsoTable {
    * 
    */
   eventListener(searchEvents = true, pageEvents = true, sortingEvents = true, paginationEvents = true) {
-
+    console.log(searchEvents, pageEvents, sortingEvents, paginationEvents)
     if (searchEvents) {
       this.event("input", 'data-search', () => { })
       this.event("change", 'data-search', () => { })

@@ -25,7 +25,7 @@
         "sorting_desc": "Sıralama (Z-A)",
         "no_record": "Kayıt yok!",
         "out_of_x_records": "[X] kayıt içinden",
-        "showing_x_out_of_y_records": "[X] kayıttan [Y] arası gösteriliyor.",
+        "showing_x_records_from_y_records": "[X] kayıttan [Y] arası gösteriliyor.",
         "prev": "Önceki",
         "next": "Sonraki",
         "first": "İlk",
