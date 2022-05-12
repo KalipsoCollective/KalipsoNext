@@ -145,30 +145,18 @@ class KalipsoTable {
    * Provides synchronization of setting data.
    * @param object defaultObj  main object data
    * @param object overridedObj  overrided object data
-   * @param string key multidimension key attribute
    * @return object
    */
-  mergeObject(defaultObj, overridedObj, key = null) {
-
-    return Object.assign({}, defaultObj, overridedObj);
-    /*
-    if (defaultObj !== null && overridedObj !== null) {
-      const keys = Object.keys(overridedObj)
-      // let key = null
-
-      for (let i = 0; i < keys.length; i++) {
-        key = keys[i]
-        if (!defaultObj.hasOwnProperty(key) || typeof overridedObj[key] !== 'object') defaultObj[key] = overridedObj[key];
-        else {
-          defaultObj[key] = this.mergeObject(defaultObj[key], overridedObj[key], key);
+  mergeObject(defaultObj, overridedObj) {
+    let that = this
+    Object.keys(defaultObj).forEach(function (key) {
+        if (overridedObj.hasOwnProperty(key) && typeof overridedObj[key] === "object" && !(overridedObj[key] instanceof Array)) {
+          that.mergeObject(defaultObj[key], overridedObj[key]);
+        } else if (!overridedObj.hasOwnProperty(key)) {
+          overridedObj[key] = defaultObj[key];
         }
-      }
-
-    } else {
-      defaultObj = overridedObj
-    }
-    return defaultObj;
-    */
+    });
+    return overridedObj;
   }
 
   /**
@@ -253,8 +241,7 @@ class KalipsoTable {
 
     this.parent.innerHTML = schema;
 
-    await this.prepareBody();
-    this.eventListener(true, false, true, true);
+    await this.prepareBody(true);
   }
 
 
@@ -531,7 +518,7 @@ class KalipsoTable {
    * Prepare content with options
    * @return Promise
    */
-  prepareBody() {
+  prepareBody(firstLoad = false) {
 
     return new Promise(async (resolve) => {
 
@@ -655,9 +642,9 @@ class KalipsoTable {
       document.querySelector(this.selector + ' tbody').innerHTML = this.body(false);
       document.querySelector(this.selector + ' [data-info]').innerHTML = this.information(false);
       document.querySelector(this.selector + ' [data-pagination]').innerHTML = this.pagination(false);
-      this.eventListener(false, true, false, false)
 
       setTimeout(() => {
+        this.eventListener(firstLoad);
         resolve();
       }, 10)
     })
@@ -681,6 +668,7 @@ class KalipsoTable {
    */
   async perPage(el) {
     this.options.length = parseInt(el.value)
+    if (this.options.length === 0) this.options.length = this.total;
     this.page = 1
     await this.prepareBody()
   }
@@ -691,7 +679,7 @@ class KalipsoTable {
    * @param object el    page button
    */
   async switchPage(el) {
-
+    console.log(el)
     let param = parseInt(el.getAttribute("data-page"))
 
     let pageCount = this.options.length <= 0 ? 1 : Math.ceil(this.total / this.options.length)
@@ -794,81 +782,59 @@ class KalipsoTable {
 
 
   /**
-   * Create event listener. 
-   * @param string event          type
-   * @param string attrSelector   data attribute
-   * @param object callback       callback function
-   */
-  event(event, attrSelector, callback) {
-    if (this.listeners['other_' + event] !== undefined) {
-      this.listeners['other_' + event].removeEventListener(event);
-    }
-    this.listeners['other_' + event] = document.body.addEventListener(event, e => {
-      if (e.target.getAttributeNames().indexOf(attrSelector) !== -1) {
-        if (attrSelector === "data-search") {
-          callback.call(this.fieldSynchronizer(e.target))
-        } else if (attrSelector === "data-full-search") {
-          callback.call(this.fullSearch(e.target))
-        } else if (attrSelector === "data-perpage") {
-          callback.call(this.perPage(e.target))
-        } else if (attrSelector === "data-page") {
-          callback.call(this.switchPage(e.target))
-        }
-      }
-    })
-  }
-
-
-  /**
    * Prepares event listeners so that table actions can be listened to.
-   * @param boolean searchEvents
-   * @param boolean pageEvents
-   * @param boolean sortingEvents
-   * @param boolean paginationEvents
    * 
    */
-  eventListener(searchEvents = true, pageEvents = true, sortingEvents = true, paginationEvents = true) {
-    console.log(searchEvents, pageEvents, sortingEvents, paginationEvents)
-    if (searchEvents) {
-      this.event("input", 'data-search', () => { })
-      this.event("change", 'data-search', () => { })
+  eventListener(firstLoad = false) {
 
-      if (this.options.fullSearch) {
-        let searchInput = document.querySelector(this.options.selector + ' [data-full-search]')
-        if (searchInput) {
-          this.event("input", 'data-full-search', () => { })
-          this.event("change", 'data-full-search', () => { })
+    if (! firstLoad) {
+      // let el = this.parent,
+      //     elClone = el.cloneNode(true);
+
+      // el.parentNode.replaceChild(elClone, el);
+      this.parent = document.querySelector(this.selector);
+    }
+
+    let that = this;
+    this.parent.addEventListener("click", function (event) {
+      let target = event.target;
+
+      if (target.hasAttribute("data-page")) {
+        event.preventDefault();
+        that.switchPage(target);
+      }
+
+      if (target.nodeName === "TH" && target.hasAttribute("data-sort")) {
+        event.preventDefault();
+        that.sort(target, target.cellIndex);
+      }
+
+    });
+
+    this.parent.addEventListener("change", function (e) {
+      let target = e.target;
+
+      if (target.nodeName === "SELECT" && target.hasAttribute("data-perpage")) {
+        e.preventDefault();
+        that.perPage(target);
+      } else if (target.nodeName === "SELECT" && target.hasAttribute("data-search")) {
+        e.preventDefault();
+        that.fieldSynchronizer(target);
+      }
+
+    });
+
+    this.parent.addEventListener("keyup", function (e) {
+        let target = event.target;
+
+        if (e.target.nodeName === "INPUT" && target.hasAttribute("data-search")) {
+          e.preventDefault();
+          that.fieldSynchronizer(target);
+        } else if (e.target.nodeName === "INPUT" && target.hasAttribute("data-full-search")) {
+          e.preventDefault();
+          that.fullSearch(target);
         }
-      }
-    }
-
-    if (pageEvents) {
-      let perPage = document.querySelector(this.options.selector + ' [data-perpage]')
-      if (perPage) {
-        this.event("change", 'data-perpage', () => { })
-      }
-    }
-
-    if (paginationEvents) {
-      let pageSwitch = document.querySelectorAll(this.options.selector + ' [data-page]')
-      if (pageSwitch.length) {
-        this.event("click", 'data-page', () => { })
-      }
-    }
-
-    if (sortingEvents) {
-      let sortingTh = document.querySelectorAll(this.options.selector + ' thead th[data-sort]')
-      if (sortingTh.length) {
-        for (let th = 0; th < sortingTh.length; th++) {
-          if (this.listeners['sort_' + th] !== undefined) {
-            this.listeners['sort_' + th].removeEventListener('click');
-          }
-          this.listeners['sort_' + th] = sortingTh[th].addEventListener("click", a => {
-            this.sort(sortingTh[th], th)
-          })
-        }
-      }
-    }
+    });
   }
 
 
