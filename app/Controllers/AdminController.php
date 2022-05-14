@@ -138,29 +138,108 @@ final class AdminController extends Controller {
 	}
 
 
-	public function userRoles() {
-
-		$users = (new Users)->select('COUNT(id) as total')->notWhere('status', 'deleted')->get();
-		$userRoles = (new UserRoles)->select('COUNT(id) as total')->notWhere('status', 'deleted')->get();
-		$sessions = (new Sessions)->select('COUNT(id) as total')->get();
-		$logs = (new Logs)->select('COUNT(id) as total')->get();
-
-		$count = [
-			'users' => $users->total,
-			'user_roles' => $userRoles->total,
-			'sessions' => $sessions->total,
-			'logs' => $logs->total
-		];
+	public function roles() {
 
 		return [
 			'status' => true,
 			'statusCode' => 200,
 			'arguments' => [
-				'title' => Base::lang('base.dashboard') . ' | ' . Base::lang('base.management'),
-				'description' => Base::lang('base.dashboard_message'),
-				'count' => $count,
+				'title' => Base::lang('base.user_roles') . ' | ' . Base::lang('base.management'),
+				'description' => Base::lang('base.user_roles_message'),
 			],
-			'view' => ['admin.dashboard', 'admin']
+			'view' => ['admin.user_roles', 'admin']
+		];
+
+	}
+
+	public function roleList() {
+
+		$tableOp = (new KalipsoTable())
+			->db((new Users)->pdo)
+			->from('(SELECT 
+					x.id, 
+					x.name, 
+					x.routes, 
+					(SELECT COUNT(id) FROM users WHERE status != "deleted" AND role_id = x.id) AS users,
+					FROM_UNIXTIME(x.created_at, "%Y.%m.%d %H:%i") AS created,
+					IFNULL(FROM_UNIXTIME(x.updated_at, "%Y.%m.%d"), "-") AS updated,
+					x.status
+				FROM `user_roles` x) AS raw')
+			->process([
+				'id' => [
+					'primary' => true,
+				],
+				'name' => [],
+				'routes' => [
+					'formatter' => function($row) {
+
+
+						$title = '';
+						$total = 0;
+						if (strpos($row->routes, ',') !== false) {
+							$row->routes = explode(',', $row->routes);
+							$total = count($row->routes);
+							$title = implode(' '.PHP_EOL, $row->routes);
+						}
+
+						return '<span title="' . $title . '" class="badge bg-dark">' . $total . '</span>';
+
+					}
+				],
+				'users' => [
+					'formatter' => function($row) {
+
+						return '<span class="badge bg-light text-dark">' . $row->users . '</span>';
+
+					}
+				],
+				'created' => [],
+				'updated' => [],
+				'status' => [
+					'formatter' => function($row) {
+
+						switch ($row->status) {
+							case 'active':
+								$class = 'text-success';
+								break;
+
+							case 'passive':
+								$class = 'text-primary';
+								break;
+							
+							default:
+								$class = 'text-danger';
+								break;
+						}
+						return '<span class="' . $class . '">' . Base::lang('base.' . $row->status) . '</span>';
+
+					}
+				],
+				'action' => [
+					'exclude' => true,
+					'formatter' => function($row) {
+						return '
+						<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+							<button type="button" class="btn btn-light" data-kn-action="'.$this->get()->url('/management/users/' . $row->id . '/edit').'">
+								' . Base::lang('base.edit') . '
+							</button>
+							<button type="button" class="btn btn-danger" data-kn-action="'.$this->get()->url('/management/users/' . $row->id . '/delete').'">
+								' . Base::lang('base.delete') . '
+							</button>
+						</div>';
+					}
+				],
+			])
+			->output();
+
+
+		//$arguments = (new KalipsoTable()->);
+
+		return [
+			'status' => true,
+			'statusCode' => 200,
+			'arguments' => $tableOp,
+			'view' => null
 		];
 
 	}

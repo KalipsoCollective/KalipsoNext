@@ -188,17 +188,20 @@ final class AppController extends Controller {
                     $title = $head . ' | ' . $title;
                     $description = Base::lang('base.db_seed_message');
 
+                    /* Fake User Insert
                     function randomName() {
 
                         $data = ["Adam", "Alex", "Aaron", "Ben", "Carl", "Dan", "David", "Edward", "Fred", "Frank", "George", "Hal", "Hank", "Ike", "John", "Jack", "Joe", "Larry", "Monte", "Matthew", "Mark", "Nathan", "Otto", "Paul", "Peter", "Roger", "Roger", "Steve", "Thomas", "Tim", "Ty", "Victor", "Walter"];
 
                         return $data[array_rand($data)];
                     }
+                    */
 
                     if (isset($_GET['start']) !== false) {
 
                         $output = '<p class="text-muted">'.Base::lang('base.seeding').'</p>';
 
+                        /* Fake User Insert
                         for ($i=0; $i < 1000; $i++) { 
                             
                             $rand = rand(1, 100000);
@@ -222,7 +225,7 @@ final class AppController extends Controller {
                                 'status'                => $statusses[array_rand($statusses)]
                             ];
 
-                        }
+                        }*/
 
                         $init = (new Model)->dbSeed($dbSchema);
 

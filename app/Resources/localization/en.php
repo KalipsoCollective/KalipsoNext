@@ -141,6 +141,7 @@ return [
         'users' => 'Users',
         'users_message' => 'This is the page where you can manage users.',
         'user_roles' => 'User Roles',
+        'user_roles_message' => 'This is the page where you can manage user roles.',
         'logs' => 'Logs',
         'settings' => 'Settings',
         'view' => 'View',
@@ -151,7 +152,10 @@ return [
         'deleted' => 'Deleted',
         'role' => 'Role',
         'created_at' => 'Created',
-        'updated_at' => 'Updated'
+        'updated_at' => 'Updated',
+        'edit' => 'Edit',
+        'routes' => 'Routes',
+        'add_new' => 'Add New',
     ],
     'app' => [
         

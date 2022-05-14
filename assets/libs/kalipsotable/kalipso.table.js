@@ -74,11 +74,11 @@ class KalipsoTable {
         {
           "name": "5",
           "value": 5,
-          "default": true
         },
         {
           "name": "10",
           "value": 10,
+          "default": true
         },
         {
           "name": "50",

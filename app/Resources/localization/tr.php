@@ -65,7 +65,7 @@ return [
         'db_charset' => 'Veri Tabanı Karakter Seti',
         'db_collate' => 'Veri Tabanı Karşılaştırma Seti',
         'db_engine' => 'Veri Tabanı Motoru',
-        'db_init_alert' => '[DB_NAME] adında bir veritabanı yoksa, [COLLATION] karşılaştırma seti ayarıyla ekleyin.',
+        'db_init_alert' => '[DB_NAME] adında bir veri tabanı yoksa, [COLLATION] karşılaştırma seti ayarıyla ekleyin.',
         'db_init_start' => 'Harika, Hazırla!',
         'db_seed_success' => 'Veri tabanı başarıyla içe aktarıldı.',
         'db_seed_problem' => 'Veritabanı içe aktarılırken bir sorun oluştu. -> [ERROR]',
@@ -141,6 +141,7 @@ return [
         'users' => 'Kullanıcılar',
         'users_message' => 'Kullanıcıları yönetebileceğiniz sayfadır.',
         'user_roles' => 'Kullanıcı Rolleri',
+        'user_roles_message' => 'Kullanıcı rollerini yönetebileceğiniz sayfadır.',
         'logs' => 'Kayıtlar',
         'settings' => 'Ayarlar',
         'view' => 'Görüntüle',
@@ -151,7 +152,10 @@ return [
         'deleted' => 'Silinmiş',
         'role' => 'Rol',
         'created_at' => 'Eklenme',
-        'updated_at' => 'Güncellenme'
+        'updated_at' => 'Güncellenme',
+        'edit' => 'Düzenle',
+        'routes' => 'Rotalar',
+        'add_new' => 'Yeni Ekle',
     ],
     'app' => [
         

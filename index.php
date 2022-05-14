@@ -42,7 +42,7 @@ try {
             ['GET,POST', '/users/update/:id', 'AdminController@userUpdate', ['Auth@with']],
 
             // Roles
-            ['GET,POST', '/roles', 'AdminController@userRoles', ['Auth@with']],
+            ['GET,POST', '/roles', 'AdminController@roles', ['Auth@with']],
             ['GET,POST', '/roles/list', 'AdminController@roleList', ['Auth@with']],
             ['GET,POST', '/roles/add', 'AdminController@roleAdd', ['Auth@with']],
             ['GET,POST', '/roles/delete/:id', 'AdminController@roleDelete', ['Auth@with']],
