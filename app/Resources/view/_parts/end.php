@@ -22,8 +22,9 @@
 					usersTable: {
 						selector: "#usersTable",
 						language: "<?php echo \KN\Helpers\Base::lang('lang.code'); ?>",
-						server: false,
-						//source: '<?php echo $this->url('/management/users/list') ?>',
+						server: true,
+						source: '<?php echo $this->url('/management/users/list') ?>',
+						/*
 						source: [
 							{id: 1, u_name: 'alonzo', name: 'Alonzo Forza', email: 'alonzof@gmail.com', birth_date: '1996.08.14', role: 'admin', created: '2022.05.05', updated: '2022.05.05', status: 'active', action: '<button class="btn btn-danger btn-sm">Delete</button>'},
 							{id: 2, u_name: 'carlb', name: 'Carl Ben', email: 'carlb@gmail.com', birth_date: '1996.08.14', role: 'admin', created: '2022.05.06', updated: '2022.05.05', status: 'passive', action: '<button class="btn btn-danger btn-sm">Delete</button>'},
@@ -37,6 +38,7 @@
 							{id: 10, u_name: 'otto_dan', name: 'Dan Otto', email: 'otto_dan@gmail.com', birth_date: '1996.08.14', role: 'admin', created: '2022.03.28', updated: '2022.05.05', status: 'deleted', action: ''},
 							{id: 11, u_name: 'kotto_dan', name: 'Kenau Dan Otto', email: 'kotto_dan@gmail.com', birth_date: '1996.08.14', role: 'admin', created: '2022.03.28', updated: '2022.05.05', status: 'deleted', action: ''}
 						],
+						*/
 						columns: [ 
 							{
 								"searchable": {

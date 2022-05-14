@@ -15,7 +15,7 @@ class KalipsoTable {
    */
   constructor(options) {
 
-    this.version = '0.0.1';
+    this.version = '0.8.0';
     this.loading = false;
     this.result = [];
     this.server = false;
@@ -129,6 +129,7 @@ class KalipsoTable {
 
       if (this.selector !== null && document.querySelector(this.selector)) {
         this.parent = document.querySelector(this.options.selector);
+        this.parent.classList.add('kt-wrapper');
         this.init();
       } else {
         this.bomb(this.l10n("target_selector_not_found") + ' (' + this.options.selector + ')', "debug");
@@ -224,7 +225,7 @@ class KalipsoTable {
     const pagination = this.pagination();
 
     let schema = this.options.schema
-    const table = `<div` + (this.customize.tableWrapClass ? ` class="` + this.customize.tableWrapClass + `"` : ``) + `>` +
+    const table = `<div class="kalipso-table-wrapper` + (this.customize.tableWrapClass ? ` ` + this.customize.tableWrapClass : ``) + `">` +
       `<table class="kalipso-table` + (this.customize.tableClass ? ` ` + this.customize.tableClass : ``) + `">` +
       this.head() +
       this.body() +
@@ -369,14 +370,38 @@ class KalipsoTable {
         `<a` + (this.customize.paginationAClass ? ` class="` + this.customize.paginationAClass + `"` : ``) + ` href="javascript:;"` + prevAttr + `>` + this.l10n("prev") + `</a>` +
         `</li>`
 
+      let firstFake = false;
+      let lastFake = false;
       for (let i = 1; i <= pageCount; i++) {
-        let aClass = page === i ? `active` : ``
 
-        aClass = aClass + (this.customize.paginationAClass ? (aClass === `` ? `` : ` `) + this.customize.paginationAClass : ``)
+        let continueNext = false;
+        if (i < (page - 3)) {
+          if (! firstFake) {
+            firstFake = true;
+            pagination = pagination + `<li` + (this.customize.paginationUlClass ? ` class="` + this.customize.paginationUlClass + `"` : ``) + `>` +
+            `<a href="javascript:;" disabled>...</a>` +
+            `</li>`
+          }
+          continueNext = true
+        }
+        if (i > (page + 3)) {
+          if (! lastFake) {
+            lastFake = true;
+            pagination = pagination + `<li` + (this.customize.paginationUlClass ? ` class="` + this.customize.paginationUlClass + `"` : ``) + `>` +
+            `<a href="javascript:;" disabled>...</a>` +
+            `</li>`
+          }
+          continueNext = true
+        }
 
-        pagination = pagination + `<li` + (this.customize.paginationUlClass ? ` class="` + this.customize.paginationUlClass + `"` : ``) + `>` +
-          `<a` + (aClass !== `` ? ` class="` + aClass + `"` : ``) + ` href="javascript:;" data-page="` + i + `">` + i + `</a>` +
-          `</li>`
+        if (! continueNext) {
+
+          let aClass = page === i ? `active` : ``
+          aClass = aClass + (this.customize.paginationAClass ? (aClass === `` ? `` : ` `) + this.customize.paginationAClass : ``)
+          pagination = pagination + `<li` + (this.customize.paginationUlClass ? ` class="` + this.customize.paginationUlClass + `"` : ``) + `>` +
+            `<a` + (aClass !== `` ? ` class="` + aClass + `"` : ``) + ` href="javascript:;" data-page="` + i + `">` + i + `</a>` +
+            `</li>`
+        }
       }
 
       let nextAttr = ` disabled`
@@ -519,7 +544,6 @@ class KalipsoTable {
    * @return Promise
    */
   prepareBody(firstLoad = false) {
-
     return new Promise(async (resolve) => {
 
       if (!this.server) { // client-side
@@ -581,7 +605,6 @@ class KalipsoTable {
         this.current = this.result.length;
 
       } else { // server-side
-
         this.loading = true;
         document.querySelector(this.selector + ' tbody').innerHTML = this.body(false);
 
@@ -602,6 +625,7 @@ class KalipsoTable {
 
         const form = {};
         form.per_page = this.options.length;
+        form.page = this.page;
         form.order = this.options.order[0] + ',' + this.options.order[1];
         if (this.search) {
           form.full_search = this.search;
@@ -609,7 +633,6 @@ class KalipsoTable {
         form.search = encodeURI(JSON.stringify(this.searchParams));
 
         const link = this.options.source + '?' + (new URLSearchParams(form));
-        console.log(link);
         const result = await fetch(link, fetchOptions).then(function (response) {
 
           return response.ok ? response.json() : false
@@ -679,7 +702,7 @@ class KalipsoTable {
    * @param object el    page button
    */
   async switchPage(el) {
-    console.log(el)
+    
     let param = parseInt(el.getAttribute("data-page"))
 
     let pageCount = this.options.length <= 0 ? 1 : Math.ceil(this.total / this.options.length)
@@ -787,54 +810,57 @@ class KalipsoTable {
    */
   eventListener(firstLoad = false) {
 
-    if (! firstLoad) {
-      // let el = this.parent,
-      //     elClone = el.cloneNode(true);
+    let that = this;
+    if (firstLoad) {
 
-      // el.parentNode.replaceChild(elClone, el);
-      this.parent = document.querySelector(this.selector);
+      this.parent.addEventListener("click", function (event) {
+        let target = event.target;
+        if (target.nodeName === "TH" && target.hasAttribute("data-sort")) {
+          event.preventDefault();
+          that.sort(target, target.cellIndex);
+        }
+      }, {capture: true});
+
+      this.parent.addEventListener("change", function (e) {
+        let target = e.target;
+        if (target.nodeName === "SELECT" && target.hasAttribute("data-perpage")) {
+          e.preventDefault();
+          that.perPage(target);
+        } else if (target.nodeName === "SELECT" && target.hasAttribute("data-search")) {
+          e.preventDefault();
+          that.fieldSynchronizer(target);
+        }
+
+      }, {capture: true});
+
+      this.parent.addEventListener("keyup", function (e) {
+          let target = event.target;
+          if (e.target.nodeName === "INPUT" && target.hasAttribute("data-search")) {
+            e.preventDefault();
+            that.fieldSynchronizer(target);
+          } else if (e.target.nodeName === "INPUT" && target.hasAttribute("data-full-search")) {
+            e.preventDefault();
+            that.fullSearch(target);
+          }
+      }, {capture: true});
+
+    } else {
+
+      let el = document.querySelector(this.selector + ' [data-pagination]'),
+        elClone = el.cloneNode(true);
+
+      el.parentNode.replaceChild(elClone, el);
+
     }
 
-    let that = this;
-    this.parent.addEventListener("click", function (event) {
+    document.querySelector(this.selector + ' [data-pagination]').addEventListener("click", function (event) {
       let target = event.target;
-
-      if (target.hasAttribute("data-page")) {
+      if (target.nodeName === "A" && target.hasAttribute("data-page")) {
         event.preventDefault();
         that.switchPage(target);
       }
-
-      if (target.nodeName === "TH" && target.hasAttribute("data-sort")) {
-        event.preventDefault();
-        that.sort(target, target.cellIndex);
-      }
-
-    });
-
-    this.parent.addEventListener("change", function (e) {
-      let target = e.target;
-
-      if (target.nodeName === "SELECT" && target.hasAttribute("data-perpage")) {
-        e.preventDefault();
-        that.perPage(target);
-      } else if (target.nodeName === "SELECT" && target.hasAttribute("data-search")) {
-        e.preventDefault();
-        that.fieldSynchronizer(target);
-      }
-
-    });
-
-    this.parent.addEventListener("keyup", function (e) {
-        let target = event.target;
-
-        if (e.target.nodeName === "INPUT" && target.hasAttribute("data-search")) {
-          e.preventDefault();
-          that.fieldSynchronizer(target);
-        } else if (e.target.nodeName === "INPUT" && target.hasAttribute("data-full-search")) {
-          e.preventDefault();
-          that.fullSearch(target);
-        }
-    });
+    }, {capture: true});
+    
   }
 
 

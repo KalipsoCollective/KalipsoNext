@@ -98,7 +98,7 @@ class KalipsoTable {
 
         $order[1] = strtolower($order[1]);
 
-        if ($order[1] !== 'asc' OR $order[1] !== 'desc')
+        if ($order[1] !== 'asc' AND $order[1] !== 'desc')
             $order[1] = 'desc';
 
         if (! strlen($order[0]))

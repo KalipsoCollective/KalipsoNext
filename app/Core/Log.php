@@ -18,6 +18,14 @@ class Log {
 
         $args = Base::privateDataCleaner($args);
         $exec = microtime(true) - KN_START;
+        $request = json_encode($args['request']);
+        $response = json_encode($args['response']);
+
+        if (strlen($request) > 2000)
+            $request = substr($request, 0, 2000) . '...';
+
+        if (strlen($response) > 2000)
+            $response = substr($response, 0, 2000) . '...';
 
         $model = new Model();
         return $model->insert([
@@ -29,8 +37,8 @@ class Log {
             'auth_code'     => Base::authCode(),
             'ip'            => Base::getIp(),
             'header'        => Base::getHeader(),
-            'request'       => json_encode($args['request']),
-            'response'      => json_encode($args['response']),
+            'request'       => $request,
+            'response'      => $response,
             'exec_time'     => (string) $exec
         ]);
 
