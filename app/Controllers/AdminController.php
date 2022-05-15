@@ -255,11 +255,21 @@ final class AdminController extends Controller {
         ], $this->get('request')->params));
 
         $routes = is_array($routes) ? implode(',', $routes) : $routes;
-
         $insert = [
         	'name' => $name,
         	'routes' = $routes,
         ];
+
+        $model = new UserRoles();
+        $insert = $model->insert($insert);
+
+        if ($insert) {
+        	$arguments = [
+        		'alert' => []
+        	];
+        } else {
+
+        }
 
 		return [
 			'status' => true,
