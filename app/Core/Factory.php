@@ -95,6 +95,7 @@ final class Factory
         ];
         $this->request = (object)[];
         $this->request->params = [];
+        $this->request->files = [];
 
         $url = parse_url($_SERVER['REQUEST_URI']);
         $this->request->uri = '/' . trim(
@@ -129,6 +130,31 @@ final class Factory
             foreach ($_POST as $key => $value) {
                 $this->request->params[$key] = Base::filter($value);
             }
+        }
+
+        /**
+         * Clean FILES parameters
+         **/ 
+
+        if (isset($_FILES) !== false AND count($_FILES)) {
+            $files = [];
+            foreach ($_FILES as $name => $data) {
+
+                if (is_array($data['name'])) { // multiple upload
+                    $files[$name] = [];
+                    foreach ($data as $k => $l) {
+                        foreach ($l as $i => $v) {
+                            if (!array_key_exists($i, $files[$name]))
+                                $files[$name][$i] = [];
+                            $files[$name][$i][$k] = $v;
+                        }
+                    }
+                } else { // single upload
+                    $files[$name][] = $data;
+                }
+            }
+
+            $this->request->files = $files;
         }
 
         /**

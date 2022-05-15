@@ -140,12 +140,15 @@ final class AdminController extends Controller {
 
 	public function roles() {
 
+		$roles = require(Base::path('app/Resources/endpoints.php'));
+
 		return [
 			'status' => true,
 			'statusCode' => 200,
 			'arguments' => [
 				'title' => Base::lang('base.user_roles') . ' | ' . Base::lang('base.management'),
 				'description' => Base::lang('base.user_roles_message'),
+				'roles' => $roles
 			],
 			'view' => ['admin.user_roles', 'admin']
 		];
@@ -239,6 +242,29 @@ final class AdminController extends Controller {
 			'status' => true,
 			'statusCode' => 200,
 			'arguments' => $tableOp,
+			'view' => null
+		];
+
+	}
+
+	public function roleAdd() {
+
+		extract(Base::input([
+            'name' => 'nulled_text',
+            'routes' => 'nulled_text'
+        ], $this->get('request')->params));
+
+        $routes = is_array($routes) ? implode(',', $routes) : $routes;
+
+        $insert = [
+        	'name' => $name,
+        	'routes' = $routes,
+        ];
+
+		return [
+			'status' => true,
+			'statusCode' => 200,
+			'arguments' => [],
 			'view' => null
 		];
 

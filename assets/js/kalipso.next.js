@@ -27,6 +27,64 @@ function kalipsoInit() {
 			
 		}
 	}
+	/* Async. Form Submit */
+	const forms = document.querySelectorAll('form[data-kn-form]');
+	for (let i = 0; i < forms.length; i++) {
+		forms[i].addEventListener("submit", async function(e) {
+			e = e || window.event;
+			e.preventDefault();
+			alert("submit");
+
+			let dom = e.target;
+
+			// Append Datas
+			let form = {};
+			let data = new FormData(dom);
+			for (var [key, value] of data) {
+				let arrayType = false;
+				if (key.indexOf('[]') !== -1) {
+					arrayType = true;
+					key = key.replace('[]', '');
+				}
+
+				if (arrayType) {
+					if (form[key] === undefined) {
+						form[key] = [];
+					}
+					form[key].push(value);
+				} else {
+					form[key] = value;
+				}
+			}
+
+			let url = dom.getAttribute('action') ?? window.location.href;
+			let method = dom.getAttribute('method') ?? 'post';
+			method = method.toUpperCase();
+
+			// Fetch
+			const response = await fetch(url, {
+				method: method, // or 'PUT'
+				mode: 'no-cors',
+				cache: 'no-cache',
+				credentials: 'same-origin',
+				redirect: 'follow',
+				body: data
+			})
+			.then((response) => {
+				if (response.status >= 200 && response.status < 300) {
+	                return response.json();
+	            } else {
+	            	throw new Error(response.statusText);
+	            }
+			})
+			.then(data => {
+				console.log('Success:', data);
+			})
+			.catch((error) => {
+				console.error('Error:', error);
+			});
+		});
+	}
 }
 
 NProgress.start();

@@ -21,12 +21,12 @@ class Log {
         $request = json_encode($args['request']);
         $response = json_encode($args['response']);
 
-        if (strlen($request) > 2000) {
+        if (is_string($request) AND strlen($request) > 2000) {
             unset($args['request']['params']);
             $request = json_encode($args['request']);
         }
 
-        if (strlen($response) > 2000) {
+        if (is_string($response) AND strlen($response) > 2000) {
             unset($args['response']['arguments']);
             $response = json_encode($args['arguments']);
         }
