@@ -341,7 +341,6 @@ final class Factory
                  *
                  * Catch attributes
                  **/
-
                 if (strpos($path, ':') !== false) {
 
                     $explodedPath = trim($path, '/'); 
@@ -357,7 +356,7 @@ final class Factory
                     /**
                      * when the format equal 
                      **/
-                    if (count($explodedPath) === count($explodedRequest)) {
+                    if (($totalPath = count($explodedPath)) === count($explodedRequest)) {
 
                         preg_match_all(
                             '@(:([a-zA-Z0-9_-]+))@m', 
@@ -370,26 +369,23 @@ final class Factory
                         $expMatches = array_map( function($v) {
                             return $v[0];
                         }, $expMatches);
-
+                        $total = count($explodedPath);
                         foreach ($explodedPath as $pathIndex => $pathBody) {
 
-                            if (in_array($pathBody, $expMatches) !== false) { // slug directory check
+                            if ($pathBody == $explodedRequest[$pathIndex] || in_array($pathBody, $expMatches) !== false) { // direct directory check
 
-                                // extract as attribute
-                                $this->request->attributes[ltrim($pathBody, ':')] = $explodedRequest[$pathIndex];
+                                if (in_array($pathBody, $expMatches) !== false) {
+                                    // extract as attribute
+                                    $this->request->attributes[ltrim($pathBody, ':')] = $explodedRequest[$pathIndex];
+                                }
 
-                                $route = $details;
-                                $notFound = false;
+                                if ($totalPath === ($pathIndex + 1)) {
+                                    $route = $details;
+                                    $notFound = false;
+                                }
 
-                            } elseif ($pathBody == $explodedRequest[$pathIndex]) { // direct directory check
-
-                                $route = $details;
-                                $notFound = false;
-
-                            } else { // Undefined
-
+                            } else {
                                 break;
-
                             }
                         }
 

@@ -223,10 +223,10 @@ final class AdminController extends Controller {
 					'formatter' => function($row) {
 						return '
 						<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-							<button type="button" class="btn btn-light" data-kn-action="'.$this->get()->url('/management/users/' . $row->id . '/edit').'">
+							<button type="button" class="btn btn-light" data-kn-action="'.$this->get()->url('/management/roles/' . $row->id . '/edit').'">
 								' . Base::lang('base.edit') . '
 							</button>
-							<button type="button" class="btn btn-danger" data-kn-action="'.$this->get()->url('/management/users/' . $row->id . '/delete').'">
+							<button type="button" class="btn btn-danger" data-kn-again="'.Base::lang('base.are_you_sure').'" data-kn-action="'.$this->get()->url('/management/roles/' . $row->id . '/delete').'">
 								' . Base::lang('base.delete') . '
 							</button>
 						</div>';
@@ -249,6 +249,71 @@ final class AdminController extends Controller {
 
 	public function roleAdd() {
 
+		extract(Base::input([
+			'name' => 'nulled_text',
+			'routes' => 'nulled_text'
+		], $this->get('request')->params));
+
+		$alerts = [];
+		$arguments = [];
+
+		$routes = is_array($routes) ? implode(',', $routes) : $routes;
+		$insert = [
+			'name' => $name,
+			'routes' => $routes,
+		];
+
+		$model = new UserRoles();
+		
+		$getRole = $model->count('id', 'total')->where('name', $name)->get();
+		if ($getRole->total === 0) {
+
+			$insert = $model->insert($insert);
+
+			if ($insert) {
+
+				$alerts[] = [
+					'status' => 'success',
+					'message' => Base::lang('base.user_role_successfully_added')
+				];
+				$arguments['form_reset'] = true;
+				$arguments['modal_close'] = '#addModal';
+				$arguments['table_reset'] = 'rolesTable';
+
+			} else {
+
+				$alerts[] = [
+					'status' => 'error',
+					'message' => Base::lang('base.user_role_add_problem')
+				];
+			}
+
+		} else {
+
+			$alerts[] = [
+				'status' => 'warning',
+				'message' => Base::lang('base.same_name_alert')
+			];
+			$arguments['form_validation'] = [
+				'[name="name"]' => [
+					'class' => ['is-invalid'],
+				]
+			];
+		}
+
+		return [
+			'status' => true,
+			'statusCode' => 200,
+			'arguments' => $arguments,
+			'alerts' => $alerts,
+			'view' => null
+		];
+
+	}
+
+	public function roleDelete() {
+
+		Base::dump($this->get('request'), true);
 		extract(Base::input([
 			'name' => 'nulled_text',
 			'routes' => 'nulled_text'

@@ -38,15 +38,17 @@ try {
             ['GET,POST', '/users', 'AdminController@users', ['Auth@with']],
             ['GET,POST', '/users/list', 'AdminController@userList', ['Auth@with']],
             ['GET,POST', '/users/add', 'AdminController@userAdd', ['Auth@with']],
-            ['GET,POST', '/users/delete/:id', 'AdminController@userDelete', ['Auth@with']],
-            ['GET,POST', '/users/update/:id', 'AdminController@userUpdate', ['Auth@with']],
+            ['GET,POST', '/users/:id', 'AdminController@userDetail', ['Auth@with']],
+            ['GET,POST', '/users/:id/delete', 'AdminController@userDelete', ['Auth@with']],
+            ['GET,POST', '/users/:id/update', 'AdminController@userUpdate', ['Auth@with']],
 
             // Roles
             ['GET,POST', '/roles', 'AdminController@roles', ['Auth@with']],
             ['GET,POST', '/roles/list', 'AdminController@roleList', ['Auth@with']],
             ['GET,POST', '/roles/add', 'AdminController@roleAdd', ['Auth@with']],
-            ['GET,POST', '/roles/delete/:id', 'AdminController@roleDelete', ['Auth@with']],
-            ['GET,POST', '/roles/update/:id', 'AdminController@roleUpdate', ['Auth@with']],
+            ['GET,POST', '/roles/:id', 'AdminController@roleDetail', ['Auth@with']],
+            ['GET,POST', '/roles/:id/delete', 'AdminController@roleDelete', ['Auth@with']],
+            ['GET,POST', '/roles/:id/update', 'AdminController@roleUpdate', ['Auth@with']],
 
             //
             ['GET,POST', '/sessions', 'AdminController@sessions', ['Auth@with']],

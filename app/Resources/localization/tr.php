@@ -183,6 +183,7 @@ return [
         'user_role_add_problem' => 'Kullanıcı rolü eklenirken bir sorun oluştu.',
         'same_name_alert' => 'Zaten aynı adı taşıyan başka bir kayıt var.',
         'loading' => 'Yükleniyor...',
+        'are_you_sure' => 'Emin misiniz?',
     ],
     'app' => [
         

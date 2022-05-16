@@ -183,6 +183,7 @@ return [
         'user_role_add_problem' => 'There was a problem adding the user role.',
         'same_name_alert' => 'There is already another record with the same name.',
         'loading' => 'Loading...',
+        'are_you_sure' => 'Are you sure?',
     ],
     'app' => [
         
