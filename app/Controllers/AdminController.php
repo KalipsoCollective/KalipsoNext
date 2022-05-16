@@ -278,6 +278,7 @@ final class AdminController extends Controller {
 				];
 				$arguments['form_reset'] = true;
 				$arguments['modal_close'] = '#addModal';
+				$arguments['table_reset'] = 'rolesTable';
 
 			} else {
 

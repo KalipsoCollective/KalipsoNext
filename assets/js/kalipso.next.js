@@ -125,6 +125,19 @@ function responseFormatter(response, dom = null) {
 		alertRemove();
 	}
 
+	if (dom && response.form_reset !== undefined && response.form_reset) {
+		dom.reset();
+	}
+
+	if (response.modal_close !== undefined) {
+		const modal = bootstrap.Modal.getInstance(document.querySelector(response.modal_close));
+		modal.hide();
+	}
+
+	if (response.table_reset !== undefined && window[response.table_reset] !== undefined) {
+		window[response.table_reset].reset();
+	}
+
 	if (dom && response.form_validation !== undefined) {
 
 		for (const [selector, data] of Object.entries(response.form_validation)) {
