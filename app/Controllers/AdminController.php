@@ -88,32 +88,12 @@ final class AdminController extends Controller {
 				'role' => [],
 				'created' => [],
 				'updated' => [],
-				'status' => [
-					'formatter' => function($row) {
-
-						switch ($row->status) {
-							case 'active':
-								$class = 'text-success';
-								break;
-
-							case 'passive':
-								$class = 'text-primary';
-								break;
-							
-							default:
-								$class = 'text-danger';
-								break;
-						}
-						return '<span class="' . $class . '">' . Base::lang('base.' . $row->status) . '</span>';
-
-					}
-				],
 				'action' => [
 					'exclude' => true,
 					'formatter' => function($row) {
 						return '
 						<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-							<button type="button" class="btn btn-light" data-kn-action="'.$this->get()->url('/management/users/' . $row->id . '/edit').'">
+							<button type="button" class="btn btn-light" data-kn-action="'.$this->get()->url('/management/users/' . $row->id . '/update').'">
 								' . Base::lang('base.edit') . '
 							</button>
 							<button type="button" class="btn btn-danger" data-kn-action="'.$this->get()->url('/management/users/' . $row->id . '/delete').'">
@@ -223,7 +203,7 @@ final class AdminController extends Controller {
 					'formatter' => function($row) {
 						return '
 						<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-							<button type="button" class="btn btn-light" data-kn-action="'.$this->get()->url('/management/roles/' . $row->id . '/edit').'">
+							<button type="button" class="btn btn-light" data-kn-action="'.$this->get()->url('/management/roles/' . $row->id . '/update').'">
 								' . Base::lang('base.edit') . '
 							</button>
 							<button type="button" class="btn btn-danger" data-kn-again="'.Base::lang('base.are_you_sure').'" data-kn-action="'.$this->get()->url('/management/roles/' . $row->id . '/delete').'">
@@ -266,7 +246,7 @@ final class AdminController extends Controller {
 		$model = new UserRoles();
 		
 		$getRole = $model->count('id', 'total')->where('name', $name)->get();
-		if ($getRole->total === 0) {
+		if ((int)$getRole->total === 0) {
 
 			$insert = $model->insert($insert);
 
@@ -313,7 +293,54 @@ final class AdminController extends Controller {
 
 	public function roleDelete() {
 
-		Base::dump($this->get('request'), true);
+		$id = $this->get('request')->attributes['id'];
+
+		$alerts = [];
+		$arguments = [];
+
+		$model = new UserRoles();
+		
+		$getRole = $model->count('id', 'total')->where('id', $id)->get();
+		if ((int)$getRole->total === 1) {
+
+			$update = $model->where('id', $id)->delete();
+
+			if ($update) {
+
+				$alerts[] = [
+					'status' => 'success',
+					'message' => Base::lang('base.user_role_successfully_deleted')
+				];
+				$arguments['table_reset'] = 'rolesTable';
+
+			} else {
+
+				$alerts[] = [
+					'status' => 'error',
+					'message' => Base::lang('base.user_role_delete_problem')
+				];
+			}
+
+		} else {
+
+			$alerts[] = [
+				'status' => 'warning',
+				'message' => Base::lang('base.record_not_found')
+			];
+		}
+
+		return [
+			'status' => true,
+			'statusCode' => 200,
+			'arguments' => $arguments,
+			'alerts' => $alerts,
+			'view' => null
+		];
+
+	}
+
+	public function roleUpdate() {
+
 		extract(Base::input([
 			'name' => 'nulled_text',
 			'routes' => 'nulled_text'
@@ -331,7 +358,7 @@ final class AdminController extends Controller {
 		$model = new UserRoles();
 		
 		$getRole = $model->count('id', 'total')->where('name', $name)->get();
-		if ($getRole->total === 0) {
+		if ((int)$getRole->total === 0) {
 
 			$insert = $model->insert($insert);
 
@@ -375,7 +402,6 @@ final class AdminController extends Controller {
 		];
 
 	}
-
 
 	public function sessions() {
 

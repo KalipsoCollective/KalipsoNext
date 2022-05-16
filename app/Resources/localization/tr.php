@@ -181,9 +181,12 @@ return [
         'add' => 'Ekle',
         'user_role_successfully_added' => 'Kullanıcı rolü başarıyla eklendi.',
         'user_role_add_problem' => 'Kullanıcı rolü eklenirken bir sorun oluştu.',
+        'user_role_successfully_deleted' => 'Kullanıcı rolü başarıyla silindi.',
+        'user_role_delete_problem' => 'Kullanıcı rolü silinirken bir sorun oluştu.',
         'same_name_alert' => 'Zaten aynı adı taşıyan başka bir kayıt var.',
         'loading' => 'Yükleniyor...',
         'are_you_sure' => 'Emin misiniz?',
+        'record_not_found' => 'Kayıt bulunamadı!',
     ],
     'app' => [
         

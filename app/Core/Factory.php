@@ -376,14 +376,14 @@ final class Factory
 
                                 if (in_array($pathBody, $expMatches) !== false) {
                                     // extract as attribute
-                                    $this->request->attributes[ltrim($pathBody, ':')] = $explodedRequest[$pathIndex];
+                                    $this->request->attributes[ltrim($pathBody, ':')] = Base::filter($explodedRequest[$pathIndex]);
                                 }
 
                                 if ($totalPath === ($pathIndex + 1)) {
                                     $route = $details;
                                     $notFound = false;
                                 }
-
+                                
                             } else {
                                 break;
                             }

@@ -53,7 +53,7 @@ class Model extends Pdox {
         if ($this->updated) {
 
             $data['updated_at'] = isset($data['updated_at']) === false ? time() : $data['updated_at'];
-            $data['updated_by'] = isset($data['updated_at']) === false ? (Base::userData('id') ?? 0) : $data['updated_at'];
+            $data['updated_by'] = isset($data['updated_by']) === false ? (Base::userData('id') ?? 0) : $data['updated_by'];
 
         }
 

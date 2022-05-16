@@ -181,9 +181,12 @@ return [
         'add' => 'Add',
         'user_role_successfully_added' => 'The user role has been successfully added.',
         'user_role_add_problem' => 'There was a problem adding the user role.',
+        'user_role_successfully_deleted' => 'User role deleted successfully.',
+        'user_role_delete_problem' => 'There was a problem deleting the user role.',
         'same_name_alert' => 'There is already another record with the same name.',
         'loading' => 'Loading...',
         'are_you_sure' => 'Are you sure?',
+        'record_not_found' => 'Record not found!',
     ],
     'app' => [
         

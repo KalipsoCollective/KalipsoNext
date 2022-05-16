@@ -174,19 +174,6 @@
 								"key": "updated"
 							},
 							{
-								"searchable": {
-									"type": "select",
-									"datas": [
-										{"value": 'active', "name": "<?php echo \KN\Helpers\Base::lang('base.active'); ?>"},
-										{"value": 'passive', "name": "<?php echo \KN\Helpers\Base::lang('base.passive'); ?>"},
-										{"value": 'deleted', "name": "<?php echo \KN\Helpers\Base::lang('base.deleted'); ?>"}
-									],
-								},
-								"orderable": true,
-								"title": "<?php echo \KN\Helpers\Base::lang('base.status'); ?>",
-								"key": "status"
-							},
-							{
 								"searchable": false,
 								"orderable": false,
 								"title": "<?php echo \KN\Helpers\Base::lang('base.action'); ?>",
