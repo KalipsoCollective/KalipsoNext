@@ -179,6 +179,10 @@ return [
         'add_new' => 'Add New',
         'close' => 'Close',
         'add' => 'Add',
+        'user_role_successfully_added' => 'The user role has been successfully added.',
+        'user_role_add_problem' => 'There was a problem adding the user role.',
+        'same_name_alert' => 'There is already another record with the same name.',
+        'loading' => 'Loading...',
     ],
     'app' => [
         

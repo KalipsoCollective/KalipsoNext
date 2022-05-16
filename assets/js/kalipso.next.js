@@ -13,30 +13,23 @@ class vPjax{constructor(t,e=null){return this.version="0.8.1",this.options={sele
 /* Kalipso Next Basic Script */
 function kalipsoInit() {
 	// Stored alert remove action
-	const alerts = document.querySelectorAll('.kn-alert');
-	if (alerts.length) {
+	alertRemove();
 
-		for (var i = alerts.length - 1; i >= 0; i--) {
-			let element = alerts[i]
-			setTimeout(() => {
-				element.classList.add('out');
-				setTimeout(() => {
-					element.remove();
-				}, 800);
-			}, 5000);
-			
-		}
-	}
 	/* Async. Form Submit */
 	const forms = document.querySelectorAll('form[data-kn-form]');
 	for (let i = 0; i < forms.length; i++) {
 		forms[i].addEventListener("submit", async function(e) {
 			e = e || window.event;
 			e.preventDefault();
-			alert("submit");
+			NProgress.start();
 
-			let dom = e.target;
 
+			const dom = e.target;
+			dom.classList.add('sending');
+			dom.querySelectorAll('[name]').forEach((el) => {
+				el.classList.remove('is-valid');
+				el.classList.remove('is-invalid');
+			})
 			// Append Datas
 			let form = {};
 			let data = new FormData(dom);
@@ -64,9 +57,14 @@ function kalipsoInit() {
 			// Fetch
 			const response = await fetch(url, {
 				method: method, // or 'PUT'
-				mode: 'no-cors',
+				mode: 'cors',
 				cache: 'no-cache',
+				headers: {
+					"X-KALIPSONEXT": "1.0.0",
+					"Accept": "application/json",
+				},
 				credentials: 'same-origin',
+				referrerPolicy: 'same-origin',
 				redirect: 'follow',
 				body: data
 			})
@@ -77,13 +75,87 @@ function kalipsoInit() {
 	            	throw new Error(response.statusText);
 	            }
 			})
-			.then(data => {
-				console.log('Success:', data);
-			})
+			.then(data => { return data; })
 			.catch((error) => {
 				console.error('Error:', error);
+				alert('Error:', error);
 			});
+
+			if (response !== undefined) {
+				responseFormatter(response, dom);
+			}
+			setTimeout(() => {
+				dom.classList.remove('sending');
+				NProgress.done();
+			}, 500);
+			
 		});
+	}
+}
+
+function alertRemove() {
+	const alerts = document.querySelectorAll('.kn-alert');
+	if (alerts.length) {
+
+		for (var i = alerts.length - 1; i >= 0; i--) {
+			let element = alerts[i]
+			setTimeout(() => {
+				element.classList.add('out');
+				setTimeout(() => {
+					element.remove();
+				}, 800);
+			}, 5000);
+			
+		}
+	}
+}
+
+function responseFormatter(response, dom = null) {
+
+	if (response.alerts !== undefined) {
+		const alertDom = document.createElement('div');
+		alertDom.innerHTML = response.alerts;
+		if (alertDom.querySelector('.kn-toast-alert')) { // if with parent 
+			document.querySelector('.kn-toast-alert').innerHTML = 
+				alertDom.querySelector('.kn-toast-alert').innerHTML;
+		} else {
+			document.querySelector('.kn-toast-alert').innerHTML = 
+				alertDom.innerHTML;
+		}
+		alertRemove();
+	}
+
+	if (dom && response.form_validation !== undefined) {
+
+		for (const [selector, data] of Object.entries(response.form_validation)) {
+			
+			/**
+			 * DOM manipulation for attributes. 
+			 */
+			if (data.attribute !== undefined && data.attribute) {
+				for ([prop, value] of Object.entries(data.attribute)) {
+					dom.querySelector(selector).setAttribute(prop, value);
+				}
+			}
+
+			/**
+			 * DOM manipulation for adding class. 
+			 */
+			if (data.class !== undefined && data.class.length) {
+				for (var i = 0; i < data.class.length; i++) {
+					dom.querySelector(selector).classList.add(data.class[i]);
+				}
+			}
+
+			/**
+			 * DOM manipulation for removing class. 
+			 */
+			if (data.remove_class !== undefined && data.remove_class.length) {
+				for (var i = 0; i < data.remove_class.length; i++) {
+					dom.querySelector(selector).classList.add(data.remove_class[i]);
+				}
+			}
+		}
 	}
 }
 
@@ -92,10 +164,10 @@ NProgress.start();
 
 	window.vanillaPjax = new vPjax({selector: 'a:not([target="_blank"])', wrap: '#wrap', timeOut: 3000}).init() // .form('[data-vpjax]')
 	document.addEventListener("vPjax:start", (e) => {
-		NProgress.start()
+		NProgress.start();
 	})
 	document.addEventListener("vPjax:finish", (e) => {
-		NProgress.done()
+		NProgress.done();
 		init();
 		kalipsoInit();
 	})

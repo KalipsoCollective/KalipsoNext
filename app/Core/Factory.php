@@ -705,6 +705,10 @@ final class Factory
             /**
              * for API or Fetch/XHR output 
              **/
+
+            if (isset($arguments['alerts']) === false AND count($this->response->alerts)) {
+                $arguments['alerts'] = Base::sessionStoredAlert($this->response->alerts);
+            }
             Base::http('content_type', ['content' => 'json', 'write' => json_encode($arguments)]);
 
         } else {

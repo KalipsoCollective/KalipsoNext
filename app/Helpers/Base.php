@@ -456,10 +456,15 @@ class Base {
 
     /**
      * Stored User Alert Generator
+     * @param array externalAlerts  external alerts together session stored alerts
      * @return string    
      */
-    public static function sessionStoredAlert() {
+    public static function sessionStoredAlert($externalAlerts = []) {
 
+        $alerts = is_array($externalAlerts) ? $externalAlerts : [];
+        if (isset($_SESSION['alerts']) !== false AND is_array($_SESSION['alerts']) AND count($_SESSION['alerts'])) {
+            $alerts = array_merge($_SESSION['alerts'], $alerts);
+        }
         /**
          *   types:
          *   - default
@@ -469,9 +474,9 @@ class Base {
          **/
 
         $alert = '<div class="kn-toast-alert">';
-        if (isset($_SESSION['alerts']) !== false AND count($_SESSION['alerts'])) {
+        if (count($alerts)) {
 
-            foreach ($_SESSION['alerts'] as $k => $a) {
+            foreach ($alerts as $k => $a) {
                 switch ($a['status']) {
                     case 'error':
                         $a['status'] = 'danger';
@@ -482,7 +487,9 @@ class Base {
                         break;
                 }
                 $alert .= '<div class="kn-alert kn-alert-' . $a['status'] . '">' . $a['message'] . '</div>';
-                unset($_SESSION['alerts'][$k]);
+
+                if (isset($_SESSION['alerts'][$k]) !== false) 
+                    unset($_SESSION['alerts'][$k]);
             }
         }
         $alert .= '</div>';

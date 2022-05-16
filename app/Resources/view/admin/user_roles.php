@@ -24,8 +24,12 @@
 					</div>
 					<div class="modal-body">
 						<form class="row g-2" data-kn-form id="roleAdd" method="post" action="<?php echo $this->url('management/roles/add'); ?>">
+							<div class="form-loader">
+								<div class="spinner-border text-light" role="status">
+									<span class="visually-hidden"><?php echo \KN\Helpers\Base::lang('base.loading'); ?></span>
+								</div>
+							</div>
 							<div class="col-12 form-info">
-								
 							</div>
 							<div class="col-12">
 								<div class="form-floating">

@@ -90,16 +90,19 @@ a {
 .kn-toast-alert {
     position: fixed;
     top: 0;
-    
     right: 0;
-    left: 0;margin: 0 auto;display: flex;
+    left: 0;
+    margin: 0 auto;
+    display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
     align-content: center;
     justify-content: flex-start;
     align-items: center;
-    padding: 1rem;z-index: 1045;
-pointer-events: none;}
+    padding: 1rem;
+    z-index: 1100;
+    pointer-events: none;
+}
 
 .kn-toast-alert .kn-alert {
     display: block;
@@ -204,4 +207,37 @@ pointer-events: none;}
     transform: rotate(-45deg);
     border-color: #fff;
   }
+}
+
+[data-kn-form] {
+    position: relative;
+}
+
+[data-kn-form] .form-loader {
+    position: absolute;
+    top: 0rem;
+    left: 0rem;
+    right: 0rem;
+    bottom: -0.4rem;
+    border-radius: 0.4rem;
+    background: rgb(0 0 0 / 50%);
+    backdrop-filter: blur(2px);
+    z-index: 5;
+    display: flex;
+    opacity: 0;
+    visibility: hidden;
+    pointer-event: none;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    transition: 0.2s ease-out;
+}
+
+[data-kn-form].sending .form-loader {
+    pointer-event: all;
+    opacity: 1;
+    cursor: progress;
+    visibility: visible;
 }

@@ -179,6 +179,10 @@ return [
         'add_new' => 'Yeni Ekle',
         'close' => 'Kapat',
         'add' => 'Ekle',
+        'user_role_successfully_added' => 'Kullanıcı rolü başarıyla eklendi.',
+        'user_role_add_problem' => 'Kullanıcı rolü eklenirken bir sorun oluştu.',
+        'same_name_alert' => 'Zaten aynı adı taşıyan başka bir kayıt var.',
+        'loading' => 'Yükleniyor...',
     ],
     'app' => [
         
