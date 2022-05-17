@@ -34,13 +34,24 @@ async function kalipsoFetch(url = null, method = 'POST', data = {}) {
 		if (response.status >= 200 && response.status < 300) {
 			return response.json();
 		} else {
-			throw new Error(response.statusText);
+			throw new Error(JSON.stringify({
+				alerts: '<div class=\"kn-toast-alert\"><div class=\"kn-alert kn-alert-danger\">Server Response Problem! ['+ response.status +']</div></div>'
+			}));
 		}
 	})
 	.then(data => { return data; })
 	.catch((error) => {
-		return {alerts: '<div class=\"kn-toast-alert\"><div class=\"kn-alert kn-alert-danger\">Server Response Problem!</div></div>'}
-		console.error('Error:', error);
+		if (typeof error.message === 'string') {
+			try {
+		        return JSON.parse(error.message);
+			} catch (e) {
+		        return {
+					alerts: '<div class=\"kn-toast-alert\"><div class=\"kn-alert kn-alert-danger\">Server Response Problem!</div></div>'
+				};
+			}
+		} else {
+			return error;
+		}
 	});
 }
 

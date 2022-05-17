@@ -485,7 +485,6 @@ final class Factory
                     }
 
                 }
-
                 /**
                  * 
                  * Controller step
@@ -634,6 +633,7 @@ final class Factory
             }
 
         } else {
+
 
             if (! empty($this->response->redirect)) {
 
