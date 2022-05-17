@@ -30,6 +30,7 @@ class Model extends Pdox {
             'charset'   => Base::config('database.charset'),
             'collation' => Base::config('database.collation'),
             'prefix'    => Base::config('database.prefix'),
+            'cachedir'  => Base::path('app/Storage/db_cache/')
         ]);
 
         $this->table($this->table);

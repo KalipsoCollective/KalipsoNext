@@ -25,7 +25,7 @@ final class AdminController extends Controller {
 		$users = (new Users)->count('id', 'total')->notWhere('status', 'deleted')->get();
 		$userRoles = (new UserRoles)->count('id', 'total')->get();
 		$sessions = (new Sessions)->count('id', 'total')->get();
-		$logs = (new Logs)->count('id', 'total')->get();
+		$logs = (new Logs)->count('id', 'total')->cache(60)->get();
 
 		$count = [
 			'users' => $users->total,
