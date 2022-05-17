@@ -32,7 +32,7 @@ final class Exception {
 		ob_start();
 
 		$output = '';
-		if (! Base::config('app.dev_mode')) {
+		if (Base::config('app.dev_mode')) {
 			$output .= $file.':'.$line.' - ';
 		}
 		$output .= $errMsg;
