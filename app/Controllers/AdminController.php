@@ -50,12 +50,15 @@ final class AdminController extends Controller {
 
 	public function users() {
 
+		$userRoles = (new UserRoles)->select('name, id')->orderBy('name', 'asc')->getAll();
+
 		return [
 			'status' => true,
 			'statusCode' => 200,
 			'arguments' => [
 				'title' => Base::lang('base.users') . ' | ' . Base::lang('base.management'),
 				'description' => Base::lang('base.users_message'),
+				'userRoles' => $userRoles
 			],
 			'view' => ['admin.users', 'admin']
 		];
@@ -63,6 +66,8 @@ final class AdminController extends Controller {
 	}
 
 	public function userList() {
+
+		$container = $this->get();
 
 		$tableOp = (new KalipsoTable())
 			->db((new Users)->pdo)
@@ -90,15 +95,31 @@ final class AdminController extends Controller {
 				'updated' => [],
 				'action' => [
 					'exclude' => true,
-					'formatter' => function($row) {
-						return '
-						<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-							<button type="button" class="btn btn-light" data-kn-action="'.$this->get()->url('/management/users/' . $row->id . '/update').'">
-								' . Base::lang('base.edit') . '
-							</button>
-							<button type="button" class="btn btn-danger" data-kn-action="'.$this->get()->url('/management/users/' . $row->id . '/delete').'">
+					'formatter' => function($row) use ($container) {
+
+						$buttons = '';
+						if ($container->authority('management/users/:id')) {
+							$buttons .= '
+							<button type="button" class="btn btn-light" 
+								data-kn-action="'.$this->get()->url('/management/users/' . $row->id ).'">
+								' . Base::lang('base.view') . '
+							</button>';
+						}
+
+						if ($container->authority('management/users/:id/delete')) {
+							$buttons .= '
+							<button type="button" class="btn btn-danger" 
+								data-kn-again="'.Base::lang('base.are_you_sure').'" 
+								data-kn-action="'.$this->get()->url('/management/users/' . $row->id . '/delete').'">
 								' . Base::lang('base.delete') . '
-							</button>
+							</button>';
+						}
+
+
+
+						return '
+						<div class="btn-group btn-group-sm" role="group" aria-label="'.Base::lang('base.action').'">
+							'.$buttons.'
 						</div>';
 					}
 				],
@@ -237,7 +258,7 @@ final class AdminController extends Controller {
 					'formatter' => function($row) use ($container) {
 
 						$buttons = '';
-						if ($container->authority('management/roles/:id/update')) {
+						if ($container->authority('management/roles/:id')) {
 							$buttons .= '
 							<button type="button" class="btn btn-light" 
 								data-kn-action="'.$this->get()->url('/management/roles/' . $row->id ).'">
@@ -254,10 +275,8 @@ final class AdminController extends Controller {
 							</button>';
 						}
 
-
-
 						return '
-						<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+						<div class="btn-group btn-group-sm" role="group" aria-label="'.Base::lang('base.action').'">
 							'.$buttons.'
 						</div>';
 					}
