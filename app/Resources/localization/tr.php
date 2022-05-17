@@ -187,6 +187,12 @@ return [
         'loading' => 'Yükleniyor...',
         'are_you_sure' => 'Emin misiniz?',
         'record_not_found' => 'Kayıt bulunamadı!',
+        'delete_role' => 'Rolü Sil',
+        'role_to_transfer_users' => 'Kullanıcıların Transfer Edileceği Rol',
+        'user_role_delete_required_transfer' => 'Bu rolü silebilmek için ilgili üyeleri transfer etmelisiniz!',
+        'role_to_delete' => 'Silinecek Rol',
+        'affected_user_count' => 'Etkilenecek Kullanıcı Sayısı',
+        'user_role_transfer_problem' => 'Kullanıcılar yeni role transfer edilirken sorun oluştu!',
     ],
     'app' => [
         

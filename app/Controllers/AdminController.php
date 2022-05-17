@@ -22,10 +22,10 @@ final class AdminController extends Controller {
 
 	public function dashboard() {
 
-		$users = (new Users)->select('COUNT(id) as total')->notWhere('status', 'deleted')->get();
-		$userRoles = (new UserRoles)->select('COUNT(id) as total')->notWhere('status', 'deleted')->get();
-		$sessions = (new Sessions)->select('COUNT(id) as total')->get();
-		$logs = (new Logs)->select('COUNT(id) as total')->get();
+		$users = (new Users)->count('id', 'total')->notWhere('status', 'deleted')->get();
+		$userRoles = (new UserRoles)->count('id', 'total')->get();
+		$sessions = (new Sessions)->count('id', 'total')->get();
+		$logs = (new Logs)->count('id', 'total')->get();
 
 		$count = [
 			'users' => $users->total,
@@ -137,6 +137,8 @@ final class AdminController extends Controller {
 
 	public function roleList() {
 
+		$container = $this->get();
+
 		$tableOp = (new KalipsoTable())
 			->db((new Users)->pdo)
 			->from('(SELECT 
@@ -145,8 +147,7 @@ final class AdminController extends Controller {
 					x.routes, 
 					(SELECT COUNT(id) FROM users WHERE status != "deleted" AND role_id = x.id) AS users,
 					FROM_UNIXTIME(x.created_at, "%Y.%m.%d %H:%i") AS created,
-					IFNULL(FROM_UNIXTIME(x.updated_at, "%Y.%m.%d"), "-") AS updated,
-					x.status
+					IFNULL(FROM_UNIXTIME(x.updated_at, "%Y.%m.%d"), "-") AS updated
 				FROM `user_roles` x) AS raw')
 			->process([
 				'id' => [
@@ -178,37 +179,33 @@ final class AdminController extends Controller {
 				],
 				'created' => [],
 				'updated' => [],
-				'status' => [
-					'formatter' => function($row) {
-
-						switch ($row->status) {
-							case 'active':
-								$class = 'text-success';
-								break;
-
-							case 'passive':
-								$class = 'text-primary';
-								break;
-							
-							default:
-								$class = 'text-danger';
-								break;
-						}
-						return '<span class="' . $class . '">' . Base::lang('base.' . $row->status) . '</span>';
-
-					}
-				],
 				'action' => [
 					'exclude' => true,
-					'formatter' => function($row) {
+					'formatter' => function($row) use ($container) {
+
+						$buttons = '';
+						if ($container->authority('management/roles/:id/update')) {
+							$buttons .= '
+							<button type="button" class="btn btn-light" 
+								data-kn-action="'.$this->get()->url('/management/roles/' . $row->id . '/update').'">
+								' . Base::lang('base.edit') . '
+							</button>';
+						}
+
+						if ($container->authority('management/roles/:id/delete')) {
+							$buttons .= '
+							<button type="button" class="btn btn-danger" 
+								data-kn-again="'.Base::lang('base.are_you_sure').'" 
+								data-kn-action="'.$this->get()->url('/management/roles/' . $row->id . '/delete').'">
+								' . Base::lang('base.delete') . '
+							</button>';
+						}
+
+
+
 						return '
 						<div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-							<button type="button" class="btn btn-light" data-kn-action="'.$this->get()->url('/management/roles/' . $row->id . '/update').'">
-								' . Base::lang('base.edit') . '
-							</button>
-							<button type="button" class="btn btn-danger" data-kn-again="'.Base::lang('base.are_you_sure').'" data-kn-action="'.$this->get()->url('/management/roles/' . $row->id . '/delete').'">
-								' . Base::lang('base.delete') . '
-							</button>
+							'.$buttons.'
 						</div>';
 					}
 				],
@@ -274,7 +271,7 @@ final class AdminController extends Controller {
 				'status' => 'warning',
 				'message' => Base::lang('base.same_name_alert')
 			];
-			$arguments['form_validation'] = [
+			$arguments['manipulation'] = [
 				'[name="name"]' => [
 					'class' => ['is-invalid'],
 				]
@@ -300,25 +297,103 @@ final class AdminController extends Controller {
 
 		$model = new UserRoles();
 		
-		$getRole = $model->count('id', 'total')->where('id', $id)->get();
-		if ((int)$getRole->total === 1) {
+		$getRole = $model->select('id, name')->where('id', $id)->get();
+		if (! empty($getRole)) {
 
-			$update = $model->where('id', $id)->delete();
+			$deletePlease = false;
 
-			if ($update) {
+			$userModel = new Users();
+			$getUsers = $userModel->count('id', 'total')->where('role_id', $id)->get();
+			if ((int)$getUsers->total > 0) { // affected users
 
-				$alerts[] = [
-					'status' => 'success',
-					'message' => Base::lang('base.user_role_successfully_deleted')
-				];
-				$arguments['table_reset'] = 'rolesTable';
+				if (isset($this->get('request')->params['transfer_role']) !== false) {  // transfer step
+
+					// user update step
+					$updateUsers = $userModel->where('role_id', $id)->update(['role_id' => (int)$this->get('request')->params['transfer_role']]);
+					if ($updateUsers) {
+
+						// session update step
+						$updateSessions = (new Sessions)->where('role_id', $id)->update([
+							'role_id' => (int)$this->get('request')->params['transfer_role'],
+							'update_session' => 'true'
+						]);
+						if ($updateSessions) {
+							$deletePlease = true;
+						}
+
+					}
+
+					if (! $deletePlease) {
+						$alerts[] = [
+							'status' => 'warning',
+							'message' => Base::lang('base.user_role_transfer_problem')
+						];
+					}
+					
+
+				} else { // role to be transferred step
+
+					$alerts[] = [
+						'status' => 'warning',
+						'message' => Base::lang('base.user_role_delete_required_transfer')
+					];
+					$arguments['modal_open'] = '#deleteModal';
+					$arguments['attribute'] = [
+						'#roleDelete' => [
+							'action' => $this->get()->url('management/roles/' . $id . '/delete')
+						]
+					];
+
+					$options = '';
+					$userRoles = $model->select('name, id')->notWhere('id', $id)->orderBy('name', 'asc')->getAll();
+					if (is_array($userRoles) AND count($userRoles)) {
+						foreach ($userRoles as $role) {
+							$options .= '<option value="' . $role->id . '">' . $role->name . '</option>';
+						}
+					}
+
+					$info = '
+						<p class="m-0 p-0 text-danger"><small>' . Base::lang('base.role_to_delete') . ': <strong>' . $getRole->name . '</strong></small></p>
+						<p class="m-0 p-0 text-danger"><small>' . Base::lang('base.affected_user_count') . ': <strong>' . $getUsers->total . '</strong></small></p>';
+
+					$arguments['manipulation'] = [
+						'#roleDelete' => [
+							'attribute' => ['action' => $this->get()->url('management/roles/' . $id . '/delete')],
+						],
+						'#availableRoles' => [
+							'html'	=> $options
+						],
+						'#roleDelete .form-info' => [
+							'html' => $info
+						]
+					];
+				}
 
 			} else {
+				$deletePlease = true;
+			}
 
-				$alerts[] = [
-					'status' => 'error',
-					'message' => Base::lang('base.user_role_delete_problem')
-				];
+			if ($deletePlease) {
+
+				$update = $model->where('id', $id)->delete();
+
+				if ($update) {
+
+					$alerts[] = [
+						'status' => 'success',
+						'message' => Base::lang('base.user_role_successfully_deleted')
+					];
+					$arguments['table_reset'] = 'rolesTable';
+					$arguments['modal_close'] = '#deleteModal';
+
+				} else {
+
+					$alerts[] = [
+						'status' => 'error',
+						'message' => Base::lang('base.user_role_delete_problem')
+					];
+				}
+
 			}
 
 		} else {
@@ -386,7 +461,7 @@ final class AdminController extends Controller {
 				'status' => 'warning',
 				'message' => Base::lang('base.same_name_alert')
 			];
-			$arguments['form_validation'] = [
+			$arguments['manipulation'] = [
 				'[name="name"]' => [
 					'class' => ['is-invalid'],
 				]
@@ -405,10 +480,10 @@ final class AdminController extends Controller {
 
 	public function sessions() {
 
-		$users = (new Users)->select('COUNT(id) as total')->notWhere('status', 'deleted')->get();
-		$userRoles = (new UserRoles)->select('COUNT(id) as total')->notWhere('status', 'deleted')->get();
-		$sessions = (new Sessions)->select('COUNT(id) as total')->get();
-		$logs = (new Logs)->select('COUNT(id) as total')->get();
+		$users = (new Users)->count('id', 'total')->notWhere('status', 'deleted')->get();
+		$userRoles = (new UserRoles)->count('id', 'total')->get();
+		$sessions = (new Sessions)->count('id', 'total')->get();
+		$logs = (new Logs)->count('id', 'total')->get();
 
 		$count = [
 			'users' => $users->total,
@@ -433,17 +508,7 @@ final class AdminController extends Controller {
 
 	public function settings() {
 
-		$users = (new Users)->select('COUNT(id) as total')->notWhere('status', 'deleted')->get();
-		$userRoles = (new UserRoles)->select('COUNT(id) as total')->notWhere('status', 'deleted')->get();
-		$sessions = (new Sessions)->select('COUNT(id) as total')->get();
-		$logs = (new Logs)->select('COUNT(id) as total')->get();
-
-		$count = [
-			'users' => $users->total,
-			'user_roles' => $userRoles->total,
-			'sessions' => $sessions->total,
-			'logs' => $logs->total
-		];
+		$count = '';
 
 		return [
 			'status' => true,
@@ -461,11 +526,7 @@ final class AdminController extends Controller {
 
 	public function logs() {
 
-		$users = (new Users)->select('COUNT(id) as total')->notWhere('status', 'deleted')->get();
-		$userRoles = (new UserRoles)->select('COUNT(id) as total')->notWhere('status', 'deleted')->get();
-		$sessions = (new Sessions)->select('COUNT(id) as total')->get();
-		$logs = (new Logs)->select('COUNT(id) as total')->get();
-
+		$count = '';
 		$count = [
 			'users' => $users->total,
 			'user_roles' => $userRoles->total,

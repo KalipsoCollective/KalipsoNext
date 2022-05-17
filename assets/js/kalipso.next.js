@@ -152,6 +152,10 @@ function alertRemove() {
 
 function responseFormatter(response, dom = null) {
 
+	if (dom === null) {
+		dom = document;
+	}
+
 	if (response.alerts !== undefined) {
 		const alertDom = document.createElement('div');
 		alertDom.innerHTML = response.alerts;
@@ -169,43 +173,57 @@ function responseFormatter(response, dom = null) {
 		dom.reset();
 	}
 
-	if (response.modal_close !== undefined) {
+	if (response.modal_close !== undefined && document.querySelector(response.modal_close)) {
 		const modal = bootstrap.Modal.getInstance(document.querySelector(response.modal_close));
 		modal.hide();
+	}
+
+	if (response.modal_open !== undefined && document.querySelector(response.modal_open)) {
+		const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(response.modal_open));
+		modal.show();
 	}
 
 	if (response.table_reset !== undefined && window[response.table_reset] !== undefined) {
 		window[response.table_reset].reset();
 	}
 
-	if (dom && response.form_validation !== undefined) {
+	if (dom && response.manipulation !== undefined) {
 
-		for (const [selector, data] of Object.entries(response.form_validation)) {
+		for (const [selector, data] of Object.entries(response.manipulation)) {
 			
-			/**
-			 * DOM manipulation for attributes. 
-			 */
-			if (data.attribute !== undefined && data.attribute) {
-				for ([prop, value] of Object.entries(data.attribute)) {
-					dom.querySelector(selector).setAttribute(prop, value);
+			if (dom.querySelector(selector)) {
+				/**
+				 * DOM manipulation for attributes. 
+				 */
+				if (data.attribute !== undefined && data.attribute) {
+					for ([prop, value] of Object.entries(data.attribute)) {
+						dom.querySelector(selector).setAttribute(prop, value);
+					}
 				}
-			}
 
-			/**
-			 * DOM manipulation for adding class. 
-			 */
-			if (data.class !== undefined && data.class.length) {
-				for (var i = 0; i < data.class.length; i++) {
-					dom.querySelector(selector).classList.add(data.class[i]);
+				/**
+				 * DOM manipulation for adding class. 
+				 */
+				if (data.class !== undefined && data.class.length) {
+					for (var i = 0; i < data.class.length; i++) {
+						dom.querySelector(selector).classList.add(data.class[i]);
+					}
 				}
-			}
 
-			/**
-			 * DOM manipulation for removing class. 
-			 */
-			if (data.remove_class !== undefined && data.remove_class.length) {
-				for (var i = 0; i < data.remove_class.length; i++) {
-					dom.querySelector(selector).classList.add(data.remove_class[i]);
+				/**
+				 * DOM manipulation for removing class. 
+				 */
+				if (data.remove_class !== undefined && data.remove_class.length) {
+					for (var i = 0; i < data.remove_class.length; i++) {
+						dom.querySelector(selector).classList.remove(data.remove_class[i]);
+					}
+				}
+
+				/**
+				 * DOM manipulation inner html. 
+				 */
+				if (data.html !== undefined && data.html) {
+					dom.querySelector(selector).innerHTML = data.html;
 				}
 			}
 		}

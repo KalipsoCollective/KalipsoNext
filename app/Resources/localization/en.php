@@ -187,6 +187,12 @@ return [
         'loading' => 'Loading...',
         'are_you_sure' => 'Are you sure?',
         'record_not_found' => 'Record not found!',
+        'delete_role' => 'Delete Role',
+        'role_to_transfer_users' => 'Role to Transfer Users',
+        'user_role_delete_required_transfer' => 'To be able to delete this role, you must transfer the relevant members!',
+        'role_to_delete' => 'Role to Delete',
+        'affected_user_count' => 'Number of Users to be Affected',
+        'user_role_transfer_problem' => 'Problem occurred while transferring users to new role!',
     ],
     'app' => [
         
