@@ -183,6 +183,8 @@ return [
         'user_role_add_problem' => 'Kullanıcı rolü eklenirken bir sorun oluştu.',
         'user_role_successfully_deleted' => 'Kullanıcı rolü başarıyla silindi.',
         'user_role_delete_problem' => 'Kullanıcı rolü silinirken bir sorun oluştu.',
+        'user_role_successfully_updated' => 'Kullanıcı rolü başarıyla güncellendi.',
+        'user_role_update_problem' => 'Kullanıcı rolü güncellenirken bir sorun oluştu.',
         'same_name_alert' => 'Zaten aynı adı taşıyan başka bir kayıt var.',
         'loading' => 'Yükleniyor...',
         'are_you_sure' => 'Emin misiniz?',
@@ -193,6 +195,7 @@ return [
         'role_to_delete' => 'Silinecek Rol',
         'affected_user_count' => 'Etkilenecek Kullanıcı Sayısı',
         'user_role_transfer_problem' => 'Kullanıcılar yeni role transfer edilirken sorun oluştu!',
+        'no_change' => 'Değişiklik yok!',
     ],
     'app' => [
         

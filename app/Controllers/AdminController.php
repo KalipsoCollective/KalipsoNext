@@ -135,6 +135,61 @@ final class AdminController extends Controller {
 
 	}
 
+	public function roleDetail() {
+
+		$id = (int)$this->get('request')->attributes['id'];
+
+
+		$alerts = [];
+		$arguments = [];
+
+		$model = new UserRoles();
+		$getRole = $model->select('id, name, routes')->where('id', $id)->get();
+		if (! empty($getRole)) {
+
+			$options = '';
+			$routes = strpos($getRole->routes, ',') !== false ? explode(',', $getRole->routes) : [$getRole->routes];
+
+			$roles = require(Base::path('app/Resources/endpoints.php'));
+			foreach ($roles as $route => $detail) {
+				$selected = in_array($route, $routes) !== false ? true : false;
+				$options .= '
+				<option value="' . $route . '"' . ($selected ? ' selected' : '') . '>
+					' . Base::lang($detail['name']) . '
+				</option>';
+			}
+
+			$arguments['modal_open'] = ['#editModal'];
+			$arguments['manipulation'] = [
+				'#roleUpdate' => [
+					'attribute' => ['action' => $this->get()->url('management/roles/' . $id . '/update')],
+				],
+				'#theRoleName' => [
+					'attribute' => ['value' => $getRole->name],
+				],
+				'#theRoleRoutes' => [
+					'html'	=> $options
+				]
+			];
+
+		} else {
+
+			$alerts[] = [
+				'status' => 'warning',
+				'message' => Base::lang('base.record_not_found')
+			];
+		}
+
+		return [
+			'status' => true,
+			'statusCode' => 200,
+			'arguments' => $arguments,
+			'alerts' => $alerts,
+			'view' => null
+		];
+
+	}
+
 	public function roleList() {
 
 		$container = $this->get();
@@ -160,11 +215,9 @@ final class AdminController extends Controller {
 
 						$title = '';
 						$total = 0;
-						if (strpos($row->routes, ',') !== false) {
-							$row->routes = explode(',', $row->routes);
-							$total = count($row->routes);
-							$title = implode(' '.PHP_EOL, $row->routes);
-						}
+						$row->routes = strpos($row->routes, ',') !== false ? explode(',', $row->routes) : [$row->routes];
+						$total = count($row->routes);
+						$title = implode(' '.PHP_EOL, $row->routes);
 
 						return '<span title="' . $title . '" class="badge bg-dark">' . $total . '</span>';
 
@@ -187,8 +240,8 @@ final class AdminController extends Controller {
 						if ($container->authority('management/roles/:id/update')) {
 							$buttons .= '
 							<button type="button" class="btn btn-light" 
-								data-kn-action="'.$this->get()->url('/management/roles/' . $row->id . '/update').'">
-								' . Base::lang('base.edit') . '
+								data-kn-action="'.$this->get()->url('/management/roles/' . $row->id ).'">
+								' . Base::lang('base.view') . '
 							</button>';
 						}
 
@@ -290,7 +343,7 @@ final class AdminController extends Controller {
 
 	public function roleDelete() {
 
-		$id = $this->get('request')->attributes['id'];
+		$id = (int)$this->get('request')->attributes['id'];
 
 		$alerts = [];
 		$arguments = [];
@@ -416,42 +469,84 @@ final class AdminController extends Controller {
 
 	public function roleUpdate() {
 
+		$id = (int)$this->get('request')->attributes['id'];
 		extract(Base::input([
 			'name' => 'nulled_text',
 			'routes' => 'nulled_text'
 		], $this->get('request')->params));
+		$routes = is_array($routes) ? implode(',', $routes) : $routes;
 
 		$alerts = [];
 		$arguments = [];
 
-		$routes = is_array($routes) ? implode(',', $routes) : $routes;
-		$insert = [
-			'name' => $name,
-			'routes' => $routes,
-		];
-
 		$model = new UserRoles();
-		
-		$getRole = $model->count('id', 'total')->where('name', $name)->get();
-		if ((int)$getRole->total === 0) {
+		$getRole = $model->select('id, name, routes')->where('id', $id)->get();
+		if (! empty($getRole)) {
 
-			$insert = $model->insert($insert);
 
-			if ($insert) {
+			if ($routes !=  $getRole->routes OR $name != $getRole->name) {
 
-				$alerts[] = [
-					'status' => 'success',
-					'message' => Base::lang('base.user_role_successfully_added')
-				];
-				$arguments['form_reset'] = true;
-				$arguments['modal_close'] = '#addModal';
-				$arguments['table_reset'] = 'rolesTable';
+				$update = false;
+				if ($name != $getRole->name) {
+
+					$getSameRole = $model->count('id', 'total')->where('name', $name)->get();
+					if ((int)$getSameRole->total === 0) {
+						$update = true;
+					}
+
+				} else {
+					$update = true;
+				}
+
+
+				if ($update) {
+
+					$update = [
+						'name' => $name,
+						'routes' => $routes
+					];
+
+					$update = $model->where('id', $id)->update($update);
+
+					if ($update) {
+
+						$updateSessions = (new Sessions)->where('role_id', $id)->update([
+							'update_session' => 'true'
+						]);
+
+						$alerts[] = [
+							'status' => 'success',
+							'message' => Base::lang('base.user_role_successfully_updated')
+						];
+						$arguments['table_reset'] = 'rolesTable';
+
+					} else {
+
+						$alerts[] = [
+							'status' => 'error',
+							'message' => Base::lang('base.user_role_update_problem')
+						];
+					}
+
+				} else {
+
+					$alerts[] = [
+						'status' => 'warning',
+						'message' => Base::lang('base.same_name_alert')
+					];
+					$arguments['manipulation'] = [
+						'[name="name"]' => [
+							'class' => ['is-invalid'],
+						]
+					];
+
+				}
 
 			} else {
 
 				$alerts[] = [
-					'status' => 'error',
-					'message' => Base::lang('base.user_role_add_problem')
+					'status' => 'warning',
+					'message' => Base::lang('base.no_change')
 				];
 			}
 
@@ -459,12 +554,7 @@ final class AdminController extends Controller {
 
 			$alerts[] = [
 				'status' => 'warning',
-				'message' => Base::lang('base.same_name_alert')
-			];
-			$arguments['manipulation'] = [
-				'[name="name"]' => [
-					'class' => ['is-invalid'],
-				]
+				'message' => Base::lang('base.record_not_found')
 			];
 		}
 

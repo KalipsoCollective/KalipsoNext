@@ -59,16 +59,15 @@
 				</div>
 			</div>
 		</div>
-		<!-- 
 		<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
 			<div class="modal-dialog modal-dialog-centered">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title" id="editModalLabel"><?php echo \KN\Helpers\Base::lang('base.add_new'); ?></h5>
+						<h5 class="modal-title" id="editModalLabel"><?php echo \KN\Helpers\Base::lang('base.view'); ?></h5>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?php echo \KN\Helpers\Base::lang('base.close'); ?>"></button>
 					</div>
 					<div class="modal-body">
-						<form class="row g-2" data-kn-form id="roleAdd" method="post" action="<?php echo $this->url('management/roles/add'); ?>">
+						<form class="row g-2" data-kn-form id="roleUpdate" method="post" action="">
 							<div class="form-loader">
 								<div class="spinner-border text-light" role="status">
 									<span class="visually-hidden"><?php echo \KN\Helpers\Base::lang('base.loading'); ?></span>
@@ -78,34 +77,26 @@
 							</div>
 							<div class="col-12">
 								<div class="form-floating">
-									<input type="text" class="form-control" required name="name" id="roleName" placeholder="<?php echo \KN\Helpers\Base::lang('base.name'); ?>">
-									<label for="roleName"><?php echo \KN\Helpers\Base::lang('base.name'); ?></label>
+									<input type="text" class="form-control" required name="name" id="theRoleName" placeholder="<?php echo \KN\Helpers\Base::lang('base.name'); ?>">
+									<label for="theRoleName"><?php echo \KN\Helpers\Base::lang('base.name'); ?></label>
 								</div>
 							</div>
 							<div class="col-12">
 								<div class="form-floating">
-									<select class="form-select" id="roleRoutes" required multiple style="height: 300px" name="routes[]" aria-label="<?php echo \KN\Helpers\Base::lang('base.routes'); ?>">
-										<?php
-										foreach ($roles as $route => $detail) {
-											echo '
-											<option value="' . $route . '"' . ($detail['default'] ? ' selected' : '') . '>
-												' . \KN\Helpers\Base::lang($detail['name']) . '
-											</option>';
-										}	?>
+									<select class="form-select" id="theRoleRoutes" required multiple style="height: 300px" name="routes[]" aria-label="<?php echo \KN\Helpers\Base::lang('base.routes'); ?>">
 									</select>
-									<label for="roleRoutes"><?php echo \KN\Helpers\Base::lang('base.routes'); ?></label>
+									<label for="theRoleRoutes"><?php echo \KN\Helpers\Base::lang('base.routes'); ?></label>
 								</div>
 							</div>
 						</form>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo \KN\Helpers\Base::lang('base.close'); ?></button>
-						<button type="submit" form="roleAdd" class="btn btn-success"><?php echo \KN\Helpers\Base::lang('base.add'); ?></button>
+						<button type="submit" form="roleUpdate" class="btn btn-primary"><?php echo \KN\Helpers\Base::lang('base.update'); ?></button>
 					</div>
 				</div>
 			</div>
 		</div>
-		-->
 		<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
 			<div class="modal-dialog modal-dialog-centered">
 				<div class="modal-content">

@@ -183,6 +183,8 @@ return [
         'user_role_add_problem' => 'There was a problem adding the user role.',
         'user_role_successfully_deleted' => 'User role deleted successfully.',
         'user_role_delete_problem' => 'There was a problem deleting the user role.',
+        'user_role_successfully_updated' => 'The user role has been successfully updated.',
+        'user_role_update_problem' => 'There was a problem updating the user role.',
         'same_name_alert' => 'There is already another record with the same name.',
         'loading' => 'Loading...',
         'are_you_sure' => 'Are you sure?',
@@ -193,6 +195,7 @@ return [
         'role_to_delete' => 'Role to Delete',
         'affected_user_count' => 'Number of Users to be Affected',
         'user_role_transfer_problem' => 'Problem occurred while transferring users to new role!',
+        'no_change' => 'No change!',
     ],
     'app' => [
         
