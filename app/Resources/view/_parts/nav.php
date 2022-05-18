@@ -45,13 +45,17 @@
                                     <?php echo KN\Helpers\Base::lang('base.account'); ?>
                                 </a>
                             </li>
-                            <div class="vr"></div>
-                            <li class="nav-item">
-                                <a class="nav-link" href="<?php echo $this->url('/auth/logout'); ?>">
-                                    <i class="mdi mdi-power"></i> <?php echo KN\Helpers\Base::lang('base.logout'); ?>
-                                </a>
-                            </li>
-                        <?php } ?>
+                            <?php
+                            if ($this->authority('auth/logout')) { ?>
+                                <div class="vr"></div>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="<?php echo $this->url('/auth/logout'); ?>">
+                                        <i class="mdi mdi-power"></i> <?php echo KN\Helpers\Base::lang('base.logout'); ?>
+                                    </a>
+                                </li>
+                        <?php
+                            }
+                        }   ?>
                     </ul>
                 </div>
             </div>

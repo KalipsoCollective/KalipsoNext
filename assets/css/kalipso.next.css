@@ -109,6 +109,7 @@ a {
 .sandbox {
     background: var(--bs-dark);
     color: var(--bs-light);
+    min-height: 100vh;
 }
 
 .navbar .navbar-nav .nav-item .nav-link {

@@ -74,7 +74,8 @@ final class AdminController extends Controller {
 			->from('(SELECT 
 					x.id, 
 					x.u_name, 
-					CONCAT(x.f_name, " ", x.l_name) AS name,
+					x.f_name,
+					x.l_name,
 					x.email, 
 					IFNULL(FROM_UNIXTIME(x.b_date, "%Y.%m.%d"), "-") AS birth_date,
 					IFNULL((SELECT name FROM user_roles WHERE status = "active" AND id = x.role_id), "-") AS role,
@@ -87,7 +88,14 @@ final class AdminController extends Controller {
 					'primary' => true,
 				],
 				'u_name' => [],
-				'name' => [],
+				'name' => [
+					'exclude' => true,
+					'formatter' => function($row) {
+
+						$name = trim($row->f_name . ' ' . $row->l_name);
+						return $name == '' ? '-' : $name;
+					}
+				],
 				'email' => [],
 				'birth_date' => [],
 				'role' => [],
@@ -383,10 +391,10 @@ final class AdminController extends Controller {
 					'attribute' => ['value' => $getUser->u_name],
 				],
 				'#thefName' => [
-					'attribute' => ['value' => $getUser->f_name],
+					'attribute' => $getUser->f_name ? ['value' => $getUser->f_name] : ['value' => ''],
 				],
 				'#thelName' => [
-					'attribute' => ['value' => $getUser->l_name],
+					'attribute' => $getUser->l_name ? ['value' => $getUser->l_name] : ['value' => ''],
 				],
 				'#theRoles' => [
 					'html'	=> $options
@@ -455,11 +463,17 @@ final class AdminController extends Controller {
 
 						if ($update) {
 
+							if ($getUser->role_id !== $role_id) {
+								(new Sessions)->where('user_id', $id)->update([
+									'role_id' => $role_id,
+									'update_session' => 'true'
+								]);
+							}
+
 							$alerts[] = [
 								'status' => 'success',
 								'message' => Base::lang('base.user_successfully_updated')
 							];
-							$arguments['form_reset'] = true;
 							$arguments['table_reset'] = 'usersTable';
 
 						} else {
@@ -525,7 +539,7 @@ final class AdminController extends Controller {
 				}
 
 			}
-			
+
 		} else {
 
 			$alerts[] = [
