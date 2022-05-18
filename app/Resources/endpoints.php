@@ -85,4 +85,8 @@ return [
 		'default' => false,
 		'name' => 'auth.management_logs',
 	],
+	'management/logs/list' => [
+		'default' => false,
+		'name' => 'auth.management_logs_list',
+	],
 ];

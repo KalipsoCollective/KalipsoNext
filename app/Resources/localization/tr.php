@@ -53,6 +53,7 @@ return [
         'management_sessions' => 'Yönetim - Oturumlar',
         'management_settings' => 'Yönetim - Ayarlar',
         'management_logs' => 'Yönetim - Kayıtlar',
+        'management_logs_list' => 'Yönetim - Kayıtlar - Liste',
     ],
     'base' => [
         'sandbox' => 'Geliştirici Araçları',
@@ -164,6 +165,7 @@ return [
         'user_roles' => 'Kullanıcı Rolleri',
         'user_roles_message' => 'Kullanıcı rollerini yönetebileceğiniz sayfadır.',
         'logs' => 'Kayıtlar',
+        'logs_message' => 'Tüm işlem kayıtlarını inceleyebileceğiniz sayfadır.',
         'settings' => 'Ayarlar',
         'view' => 'Görüntüle',
         'status' => 'Durum',

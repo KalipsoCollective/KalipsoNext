@@ -703,9 +703,6 @@ final class AdminController extends Controller {
 			])
 			->output();
 
-
-		//$arguments = (new KalipsoTable()->);
-
 		return [
 			'status' => true,
 			'statusCode' => 200,
@@ -1054,23 +1051,83 @@ final class AdminController extends Controller {
 
 	public function logs() {
 
-		$count = '';
-		$count = [
-			'users' => $users->total,
-			'user_roles' => $userRoles->total,
-			'sessions' => $sessions->total,
-			'logs' => $logs->total
-		];
 
 		return [
 			'status' => true,
 			'statusCode' => 200,
 			'arguments' => [
-				'title' => Base::lang('base.dashboard') . ' | ' . Base::lang('base.management'),
-				'description' => Base::lang('base.dashboard_message'),
-				'count' => $count,
+				'title' => Base::lang('base.logs') . ' | ' . Base::lang('base.management'),
+				'description' => Base::lang('base.logs_message')
 			],
-			'view' => ['admin.dashboard', 'admin']
+			'view' => ['admin.logs', 'admin']
+		];
+
+	}
+
+	public function logList() {
+
+		$container = $this->get();
+
+		$tableOp = (new KalipsoTable())
+			->db((new Logs)->pdo)
+			->from('(SELECT 
+					x.id, 
+					x.endpoint, 
+					x.method,
+					x.controller, 
+					x.middleware, 
+					x.http_status, 
+					x.auth_code, 
+					x.ip, 
+					x.header,
+					x.exec_time, 
+					x.created_by, 
+					IFNULL(SELECT u_name FROM users WHERE id = x.created_by, "-")) AS user,
+					IFNULL(FROM_UNIXTIME(x.created_at, "%Y.%m.%d %H:%i"), "-") AS created
+				FROM `logs` x) AS raw')
+			->process([
+				'id' => [
+					'primary' => true,
+				],
+				'endpoint' => [],
+				'req' => [
+					'exclude' = true,
+					'formatter' => function($row) {
+						return $row->method . ' ' . $row->http_status
+					}
+				],
+				'controller' => [],
+				'middleware' => [],
+				'ip' => [],
+				'created' => [],
+				'action' => [
+					'exclude' => true,
+					'formatter' => function($row) use ($container) {
+
+						$buttons = '';
+						/*
+						if ($container->authority('management/roles/:id')) {
+							$buttons .= '
+							<button type="button" class="btn btn-light" 
+								data-kn-action="'.$this->get()->url('/management/roles/' . $row->id ).'">
+								' . Base::lang('base.view') . '
+							</button>';
+						} */
+
+						return '
+						<div class="btn-group btn-group-sm" role="group" aria-label="'.Base::lang('base.action').'">
+							'.$buttons.'
+						</div>';
+					}
+				],
+			])
+			->output();
+
+		return [
+			'status' => true,
+			'statusCode' => 200,
+			'arguments' => $tableOp,
+			'view' => null
 		];
 
 	}

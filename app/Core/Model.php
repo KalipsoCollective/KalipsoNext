@@ -41,7 +41,7 @@ class Model extends Pdox {
         if ($this->created) {
 
             $data['created_at'] = isset($data['created_at']) === false ? time() : $data['created_at'];
-            $data['created_by'] = isset($data['created_at']) === false ? (Base::userData('id') ?? 0) : $data['created_at'];
+            $data['created_by'] = isset($data['created_by']) === false ? (Base::userData('id') ?? 0) : $data['created_by'];
 
         }
 

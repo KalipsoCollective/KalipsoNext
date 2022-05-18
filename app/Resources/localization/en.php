@@ -53,6 +53,7 @@ return [
         'management_sessions' => 'Management - Sessions',
         'management_settings' => 'Management - Settings',
         'management_logs' => 'Management - Logs',
+        'management_logs_list' => 'Management - Logs - List',
     ],
     'base' => [
         'sandbox' => 'Sandbox',
@@ -164,6 +165,7 @@ return [
         'user_roles' => 'User Roles',
         'user_roles_message' => 'This is the page where you can manage user roles.',
         'logs' => 'Logs',
+        'logs_message' => 'This is the page where you can review all log records.',
         'settings' => 'Settings',
         'view' => 'View',
         'status' => 'Status',
