@@ -86,8 +86,7 @@
 									"type": "select",
 									"datas": [
 										{"value": 'active', "name": "<?php echo \KN\Helpers\Base::lang('base.active'); ?>"},
-										{"value": 'passive', "name": "<?php echo \KN\Helpers\Base::lang('base.passive'); ?>"},
-										{"value": 'deleted', "name": "<?php echo \KN\Helpers\Base::lang('base.deleted'); ?>"}
+										{"value": 'passive', "name": "<?php echo \KN\Helpers\Base::lang('base.passive'); ?>"}
 									],
 								},
 								"orderable": true,

@@ -81,7 +81,7 @@ final class AdminController extends Controller {
 					FROM_UNIXTIME(x.created_at, "%Y.%m.%d %H:%i") AS created,
 					IFNULL(FROM_UNIXTIME(x.updated_at, "%Y.%m.%d"), "-") AS updated,
 					x.status
-				FROM `users` x) AS raw')
+				FROM `users` x WHERE status != "deleted") AS raw')
 			->process([
 				'id' => [
 					'primary' => true,
@@ -93,6 +93,27 @@ final class AdminController extends Controller {
 				'role' => [],
 				'created' => [],
 				'updated' => [],
+				'status' => [
+					'formatter' => function ($row) {
+
+						switch ($row->status) {
+							case 'deleted':
+								$status = 'text-danger';
+								break;
+
+							case 'passive':
+								$status = 'text-warning';
+								break;
+								
+							default:
+								$status = 'text-success';
+								break;
+						}
+
+						return '<span class="' . $status . '">' . Base::lang('base.' . $row->status) . '</span>';
+
+					}
+				],
 				'action' => [
 					'exclude' => true,
 					'formatter' => function($row) use ($container) {
@@ -265,6 +286,130 @@ final class AdminController extends Controller {
 
 	}
 
+	public function userDelete() {
+
+		$id = (int)$this->get('request')->attributes['id'];
+
+		$alerts = [];
+		$arguments = [];
+
+		$model = new Users();
+		
+		$getUser = $model->select('id, u_name')->where('id', $id)->get();
+		if (! empty($getUser)) {
+
+			if ($id !== Base::userData('id')) {
+
+				$update = $model->where('id', $id)->update([
+					'status' => 'deleted'
+				]);
+
+				if ($update) {
+
+					(new Sessions())->where('user_id', $id)->delete();
+					$alerts[] = [
+						'status' => 'success',
+						'message' => Base::lang('base.user_successfully_deleted')
+					];
+					$arguments['table_reset'] = 'usersTable';
+
+				} else {
+
+					$alerts[] = [
+						'status' => 'error',
+						'message' => Base::lang('base.user_delete_problem')
+					];
+				}
+
+			} else {
+
+				$alerts[] = [
+					'status' => 'error',
+					'message' => Base::lang('base.user_delete_problem_for_own_account')
+				];
+			}
+
+			
+
+		} else {
+
+			$alerts[] = [
+				'status' => 'warning',
+				'message' => Base::lang('base.record_not_found')
+			];
+		}
+
+		return [
+			'status' => true,
+			'statusCode' => 200,
+			'arguments' => $arguments,
+			'alerts' => $alerts,
+			'view' => null
+		];
+
+	}
+
+	public function userDetail() {
+
+		$id = (int)$this->get('request')->attributes['id'];
+
+		$alerts = [];
+		$arguments = [];
+
+		$model = new Users();
+		$getUser = $model->select('id, u_name, f_name, l_name, email, role_id')->where('id', $id)->get();
+		if (! empty($getUser)) {
+
+			$userRoles = (new UserRoles)->select('name, id')->orderBy('name', 'asc')->getAll();
+			$options = '';
+			
+			foreach ($userRoles as $role) {
+				$selected = $role->id == $getUser->role_id ? true : false;
+				$options .= '
+				<option value="' . $role->id. '"' . ($selected ? ' selected' : '') . '>
+					' . $role->name . '
+				</option>';
+			}
+
+			$arguments['modal_open'] = ['#editModal'];
+			$arguments['manipulation'] = [
+				'#userUpdate' => [
+					'attribute' => ['action' => $this->get()->url('management/users/' . $id . '/update')],
+				],
+				'#theUserEmail' => [
+					'attribute' => ['value' => $getUser->email],
+				],
+				'#theUserName' => [
+					'attribute' => ['value' => $getUser->u_name],
+				],
+				'#thefName' => [
+					'attribute' => ['value' => $getUser->f_name],
+				],
+				'#thelName' => [
+					'attribute' => ['value' => $getUser->l_name],
+				],
+				'#theRoles' => [
+					'html'	=> $options
+				],
+			];
+
+		} else {
+
+			$alerts[] = [
+				'status' => 'warning',
+				'message' => Base::lang('base.record_not_found')
+			];
+		}
+
+		return [
+			'status' => true,
+			'statusCode' => 200,
+			'arguments' => $arguments,
+			'alerts' => $alerts,
+			'view' => null
+		];
+
+	}
 
 	public function roles() {
 

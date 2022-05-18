@@ -185,7 +185,7 @@ function responseFormatter(response, dom = null) {
 	}
 
 	if (response.modal_close !== undefined && document.querySelector(response.modal_close)) {
-		const modal = bootstrap.Modal.getInstance(document.querySelector(response.modal_close));
+		const modal = bootstrap.Modal.getOrCreateInstance(document.querySelector(response.modal_close));
 		modal.hide();
 	}
 
