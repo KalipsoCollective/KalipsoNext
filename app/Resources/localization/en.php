@@ -196,6 +196,9 @@ return [
         'affected_user_count' => 'Number of Users to be Affected',
         'user_role_transfer_problem' => 'Problem occurred while transferring users to new role!',
         'no_change' => 'No change!',
+        'copyright' => 'Copyright',
+        'all_rights_reserved' => 'All rights reserved.',
+        'language' => 'Language',
     ],
     'app' => [
         

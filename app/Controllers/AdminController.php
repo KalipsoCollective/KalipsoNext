@@ -223,7 +223,7 @@ final class AdminController extends Controller {
 					x.routes, 
 					(SELECT COUNT(id) FROM users WHERE status != "deleted" AND role_id = x.id) AS users,
 					FROM_UNIXTIME(x.created_at, "%Y.%m.%d %H:%i") AS created,
-					IFNULL(FROM_UNIXTIME(x.updated_at, "%Y.%m.%d"), "-") AS updated
+					IFNULL(FROM_UNIXTIME(x.updated_at, "%Y.%m.%d %H:%i"), "-") AS updated
 				FROM `user_roles` x) AS raw')
 			->process([
 				'id' => [

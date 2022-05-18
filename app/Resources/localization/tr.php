@@ -196,6 +196,9 @@ return [
         'affected_user_count' => 'Etkilenecek Kullanıcı Sayısı',
         'user_role_transfer_problem' => 'Kullanıcılar yeni role transfer edilirken sorun oluştu!',
         'no_change' => 'Değişiklik yok!',
+        'copyright' => 'Telif Hakkı',
+        'all_rights_reserved' => 'Tüm hakkı saklıdır.',
+        'language' => 'Dil',
     ],
     'app' => [
         
