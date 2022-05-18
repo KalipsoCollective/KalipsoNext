@@ -81,7 +81,7 @@ table.kalipso-table thead th.sort:before {
     background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcuMDMgMTMuOTJIMTEuMDNWNUwxMy4wNCA0Ljk3VjEzLjkySDE3LjAzTDEyLjAzIDE4LjkyWiIgLz48L3N2Zz4=);
     background-repeat: no-repeat;
     background-size: 1.2rem;
-    right: 1rem;
+    right: 0.5rem;
     top: calc(50% - 0.6rem);
     opacity: 0.2;
     transition: 0.1s ease-out;
@@ -95,7 +95,7 @@ table.kalipso-table thead th.sort:after {
     background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTcuMDMgOS45N0gxMS4wM1YxOC44OUwxMy4wNCAxOC45MlY5Ljk3SDE3LjAzTDEyLjAzIDQuOTdaIiAvPjwvc3ZnPg==);
     background-repeat: no-repeat;
     background-size: 1.2rem;
-    right: 0.5rem;
+    right: 0rem;
     top: calc(50% - 0.6rem);
     opacity: 0.2;
     transition: 0.1s ease-out;

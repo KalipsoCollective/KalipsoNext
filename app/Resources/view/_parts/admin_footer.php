@@ -4,7 +4,7 @@
 					<div class="col-12 col-md-6">
 						<?php echo \KN\Helpers\Base::lang('base.copyright') . ' © ' . date('Y') . ' | ' . \KN\Helpers\Base::lang('base.all_rights_reserved'); ?>
 					</div>
-					<div class="col-12 col-md-6 d-flex">
+					<div class="col-12 col-md-6 d-flex align-items-center">
 						<?php 
 						$languages = \KN\Helpers\Base::config('app.available_languages');
 						if ($languages AND count($languages) > 1) {
@@ -27,6 +27,7 @@
 									}	?>
 								</ul>
 							</div>
+							<p class="bg-dark badge m-0">KalipsoNext: <?php echo 'v'.KN_VERSION; ?></p>
 						<?php
 						}	?>
 					</div>

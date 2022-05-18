@@ -42,8 +42,26 @@
 								</div>
 								<div class="col-12">
 									<div class="form-floating">
-										<input type="text" class="form-control" required name="name" id="userName" placeholder="<?php echo \KN\Helpers\Base::lang('base.name'); ?>">
-										<label for="userName"><?php echo \KN\Helpers\Base::lang('base.name'); ?></label>
+										<input type="email" class="form-control" required name="email" id="userEmail" placeholder="<?php echo \KN\Helpers\Base::lang('base.email'); ?>">
+										<label for="userEmail"><?php echo \KN\Helpers\Base::lang('base.email'); ?></label>
+									</div>
+								</div>
+								<div class="col-12">
+									<div class="form-floating">
+										<input type="text" class="form-control" required name="u_name" id="userName" placeholder="<?php echo \KN\Helpers\Base::lang('base.username'); ?>">
+										<label for="userName"><?php echo \KN\Helpers\Base::lang('base.username'); ?></label>
+									</div>
+								</div>
+								<div class="col-12">
+									<div class="form-floating">
+										<input type="text" class="form-control" name="f_name" id="fName" placeholder="<?php echo \KN\Helpers\Base::lang('base.name'); ?>">
+										<label for="fName"><?php echo \KN\Helpers\Base::lang('base.name'); ?></label>
+									</div>
+								</div>
+								<div class="col-12">
+									<div class="form-floating">
+										<input type="text" class="form-control" name="l_name" id="lName" placeholder="<?php echo \KN\Helpers\Base::lang('base.surname'); ?>">
+										<label for="lName"><?php echo \KN\Helpers\Base::lang('base.surname'); ?></label>
 									</div>
 								</div>
 								<div class="col-12">
@@ -58,6 +76,12 @@
 											}	?>
 										</select>
 										<label for="roleRoutes"><?php echo \KN\Helpers\Base::lang('base.role'); ?></label>
+									</div>
+								</div>
+								<div class="col-12">
+									<div class="form-floating">
+										<input type="password" class="form-control" name="password" id="userPassword" placeholder="<?php echo \KN\Helpers\Base::lang('base.password'); ?>">
+										<label for="userPassword"><?php echo \KN\Helpers\Base::lang('base.password'); ?></label>
 									</div>
 								</div>
 							</form>
