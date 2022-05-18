@@ -199,6 +199,12 @@ return [
         'copyright' => 'Telif Hakkı',
         'all_rights_reserved' => 'Tüm hakkı saklıdır.',
         'language' => 'Dil',
+        'user_successfully_added' => 'Kullanıcı başarıyla eklendi.',
+        'user_add_problem' => 'Kullanıcı eklenirken bir sorun oluştu.',
+        'user_successfully_deleted' => 'Kullanıcı başarıyla silindi.',
+        'user_delete_problem' => 'Kullanıcı silinirken bir sorun oluştu.',
+        'user_successfully_updated' => 'Kullanıcı başarıyla güncellendi.',
+        'user_update_problem' => 'Kullanıcı güncellenirken bir sorun oluştu.',
     ],
     'app' => [
         

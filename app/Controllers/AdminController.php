@@ -138,6 +138,133 @@ final class AdminController extends Controller {
 
 	}
 
+	public function userAdd() {
+
+		extract(Base::input([
+			'email' => 'nulled_text',
+			'u_name' => 'nulled_text',
+			'f_name' => 'nulled_text',
+			'l_name' => 'nulled_text',
+			'role_id' => 'nulled_int',
+			'password' => 'nulled_password'
+		], $this->get('request')->params));
+
+		$alerts = [];
+		$arguments = [];
+
+		$model = new Users();
+		
+		if ($email AND $u_name AND $role_id AND $password) {
+
+			$userNameCheck = $model->count('id', 'total')->where('u_name', $u_name)->get();
+			if ((int)$userNameCheck->total === 0) {
+
+				$userEmailCheck = $model->count('id', 'total')->where('email', $email)->get();
+				if ((int)$userEmailCheck->total === 0) {
+
+					$insert = [
+						'email' => $email,
+						'u_name' => $u_name,
+						'f_name' => $f_name,
+						'l_name' => $l_name,
+						'role_id' => $role_id,
+						'password' => $password,
+						'token' => Base::tokenGenerator(80),
+						'status' => 'active'
+					];
+
+					$insert = $model->insert($insert);
+
+					if ($insert) {
+
+						$alerts[] = [
+							'status' => 'success',
+							'message' => Base::lang('base.user_successfully_added')
+						];
+						$arguments['form_reset'] = true;
+						$arguments['modal_close'] = '#addModal';
+						$arguments['table_reset'] = 'usersTable';
+
+					} else {
+
+						$alerts[] = [
+							'status' => 'error',
+							'message' => Base::lang('base.user_add_problem')
+						];
+					}
+
+				} else {
+
+					$alerts[] = [
+						'status' => 'warning',
+						'message' => Base::lang('base.email_is_already_used')
+					];
+					$arguments['manipulation'] = [
+						'#userAdd [name="email"]' => [
+							'class' => ['is-invalid'],
+						]
+					];
+
+				}
+
+			} else {
+
+				$alerts[] = [
+					'status' => 'warning',
+					'message' => Base::lang('base.username_is_already_used')
+				];
+				$arguments['manipulation'] = [
+					'#userAdd [name="u_name"]' => [
+						'class' => ['is-invalid'],
+					]
+				];
+			}
+
+		} else {
+
+			$alerts[] = [
+				'status' => 'warning',
+				'message' => Base::lang('base.form_cannot_empty')
+			];
+
+			$arguments['manipulation'] = [];
+
+			if ($email) {
+				$arguments['manipulation']['#userAdd [name="email"]'] = [
+					'class' => ['is-invalid'],
+				];
+			}
+
+			if ($u_name) {
+				$arguments['manipulation']['#userAdd [name="u_name"]'] = [
+					'class' => ['is-invalid'],
+				];
+			}
+
+			if ($role_id) {
+				$arguments['manipulation']['#userAdd [name="role_id"]'] = [
+					'class' => ['is-invalid'],
+				];
+			}
+
+			if ($password) {
+				$arguments['manipulation']['#userAdd [name="password"]'] = [
+					'class' => ['is-invalid'],
+				];
+			}
+
+		}
+
+		return [
+			'status' => true,
+			'statusCode' => 200,
+			'arguments' => $arguments,
+			'alerts' => $alerts,
+			'view' => null
+		];
+
+	}
+
 
 	public function roles() {
 

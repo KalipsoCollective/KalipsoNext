@@ -199,6 +199,12 @@ return [
         'copyright' => 'Copyright',
         'all_rights_reserved' => 'All rights reserved.',
         'language' => 'Language',
+        'user_successfully_added' => 'The user has been successfully added.',
+        'user_add_problem' => 'There was a problem adding the user.',
+        'user_successfully_deleted' => 'User deleted successfully.',
+        'user_delete_problem' => 'There was a problem deleting the user.',
+        'user_successfully_updated' => 'The user has been successfully updated.',
+        'user_update_problem' => 'There was a problem updating the user.',
     ],
     'app' => [
         
