@@ -362,7 +362,7 @@ final class AdminController extends Controller {
 
 			$userRoles = (new UserRoles)->select('name, id')->orderBy('name', 'asc')->getAll();
 			$options = '';
-			
+
 			foreach ($userRoles as $role) {
 				$selected = $role->id == $getUser->role_id ? true : false;
 				$options .= '
@@ -393,6 +393,139 @@ final class AdminController extends Controller {
 				],
 			];
 
+		} else {
+
+			$alerts[] = [
+				'status' => 'warning',
+				'message' => Base::lang('base.record_not_found')
+			];
+		}
+
+		return [
+			'status' => true,
+			'statusCode' => 200,
+			'arguments' => $arguments,
+			'alerts' => $alerts,
+			'view' => null
+		];
+
+	}
+
+	public function userUpdate() {
+
+		extract(Base::input([
+			'email' => 'nulled_text',
+			'u_name' => 'nulled_text',
+			'f_name' => 'nulled_text',
+			'l_name' => 'nulled_text',
+			'role_id' => 'nulled_int',
+			'password' => 'nulled_password'
+		], $this->get('request')->params));
+
+		$id = (int)$this->get('request')->attributes['id'];
+
+		$alerts = [];
+		$arguments = [];
+
+		$model = new Users();
+		$getUser = $model->select('id, u_name, f_name, l_name, email, role_id')->where('id', $id)->get();
+		if (! empty($getUser)) {
+		
+			if ($email AND $u_name AND $role_id) {
+
+				$userNameCheck = $model->count('id', 'total')->where('u_name', $u_name)->notWhere('id', $id)->get();
+				if ((int)$userNameCheck->total === 0) {
+
+					$userEmailCheck = $model->count('id', 'total')->where('email', $email)->notWhere('id', $id)->get();
+					if ((int)$userEmailCheck->total === 0) {
+
+						$update = [
+							'email' => $email,
+							'u_name' => $u_name,
+							'f_name' => $f_name,
+							'l_name' => $l_name,
+							'role_id' => $role_id,
+						];
+
+						if ($password) {
+							$update['password'] = $password;
+						}
+
+						$update = $model->where('id', $id)->update($update);
+
+						if ($update) {
+
+							$alerts[] = [
+								'status' => 'success',
+								'message' => Base::lang('base.user_successfully_updated')
+							];
+							$arguments['form_reset'] = true;
+							$arguments['table_reset'] = 'usersTable';
+
+						} else {
+
+							$alerts[] = [
+								'status' => 'error',
+								'message' => Base::lang('base.user_update_problem')
+							];
+						}
+
+					} else {
+
+						$alerts[] = [
+							'status' => 'warning',
+							'message' => Base::lang('base.email_is_already_used')
+						];
+						$arguments['manipulation'] = [
+							'#userAdd [name="email"]' => [
+								'class' => ['is-invalid'],
+							]
+						];
+
+					}
+
+				} else {
+
+					$alerts[] = [
+						'status' => 'warning',
+						'message' => Base::lang('base.username_is_already_used')
+					];
+					$arguments['manipulation'] = [
+						'#userAdd [name="u_name"]' => [
+							'class' => ['is-invalid'],
+						]
+					];
+				}
+
+			} else {
+
+				$alerts[] = [
+					'status' => 'warning',
+					'message' => Base::lang('base.form_cannot_empty')
+				];
+
+				$arguments['manipulation'] = [];
+
+				if ($email) {
+					$arguments['manipulation']['#userUpdate [name="email"]'] = [
+						'class' => ['is-invalid'],
+					];
+				}
+
+				if ($u_name) {
+					$arguments['manipulation']['#userUpdate [name="u_name"]'] = [
+						'class' => ['is-invalid'],
+					];
+				}
+
+				if ($role_id) {
+					$arguments['manipulation']['#userUpdate [name="role_id"]'] = [
+						'class' => ['is-invalid'],
+					];
+				}
+
+			}
+			
 		} else {
 
 			$alerts[] = [
