@@ -170,6 +170,7 @@ return [
         'logs' => 'Logs',
         'logs_message' => 'This is the page where you can review all log records.',
         'settings' => 'Settings',
+        'settings_message' => 'You can update all settings from this screen.',
         'view' => 'View',
         'status' => 'Status',
         'all' => 'All',

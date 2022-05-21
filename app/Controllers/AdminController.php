@@ -1072,25 +1072,6 @@ final class AdminController extends Controller {
 
 	}
 
-
-	public function settings() {
-
-		$count = '';
-
-		return [
-			'status' => true,
-			'statusCode' => 200,
-			'arguments' => [
-				'title' => Base::lang('base.dashboard') . ' | ' . Base::lang('base.management'),
-				'description' => Base::lang('base.dashboard_message'),
-				'count' => $count,
-			],
-			'view' => ['admin.dashboard', 'admin']
-		];
-
-	}
-
-
 	public function logs() {
 
 
@@ -1272,5 +1253,132 @@ final class AdminController extends Controller {
 		];
 
 	}
+
+	public function settings() {
+
+		$userRoles = (new UserRoles)->select('name, id')->orderBy('name', 'asc')->getAll();
+		$_userRoles = [];
+		foreach ($userRoles as $role) {
+			$_userRoles[$role->id] = $role->name;
+		}
+		$userRoles = $_userRoles;
+
+		$languages = [];
+		foreach (Base::config('app.available_languages') as $lang) {
+			$languages[$lang] = Base::lang('langs.' . $lang);
+		}
+
+		$areas = [
+			'name' => [
+				'type' => 'input',
+				'value' => Base::config('settings.name'),
+				'required' => true
+			],
+			'description' => [
+				'type' => 'input',
+				'value' => Base::config('settings.name'),
+				'required' => true
+			],
+			'contact_email' => [
+				'type' => 'input',
+				'value' => Base::config('settings.name'),
+				'required' => true
+			],
+			'separator' => [
+				'type' => 'input',
+				'value' => Base::config('settings.name'),
+				'required' => true
+			],
+			'language' => [
+				'type' => 'select',
+				'value' => Base::config('settings.name'),
+				'options' => $languages,
+				'required' => true
+			],
+			'ssl' => [
+				'type' => 'check',
+				'value' => Base::config('settings.ssl')
+			],
+			'log' => [
+				'type' => 'check',
+				'value' => Base::config('settings.log')
+			],
+			'mail_send_type' => [
+				'type' => 'select',
+				'value' => Base::config('settings.mail_send_type'),
+				'options' => [
+					'server' => Base::lang('base.server'),
+					'smtp' => Base::lang('base.smtp'),
+				],
+				'required' => true
+			],
+			'smtp_address' => [
+				'type' => 'input',
+				'value' => Base::config('settings.smtp_address'),
+				'required' => true
+			],
+			'smtp_port' => [
+				'type' => 'input',
+				'value' => Base::config('settings.smtp_port'),
+				'required' => true
+			],
+			'smtp_email_address' => [
+				'type' => 'input',
+				'value' => Base::config('settings.smtp_email_address'),
+				'required' => true
+			],
+			'smtp_email_pass' => [
+				'type' => 'input',
+				'value' => Base::config('settings.smtp_email_pass'),
+				'required' => true
+			],
+			'smtp_secure' => [
+				'type' => 'select',
+				'value' => Base::config('settings.smtp_secure'),
+				'options' => [
+					'ssl' => Base::lang('base.ssl'),
+					'tls' => Base::lang('base.tls')
+				],
+				'required' => true
+			],
+			'default_user_role' => [
+				'type' => 'select',
+				'value' => Base::config('settings.default_user_role'),
+				'options' => $userRoles,
+				'required' => true
+			],
+			'mail_queue' => [
+				'type' => 'check',
+				'value' => Base::config('settings.mail_queue')
+			],
+			'js_cache' => [
+				'type' => 'check',
+				'value' => Base::config('settings.js_cache')
+			],
+			'privacy_policy_page' => [
+				'type' => 'hidden',
+				'value' => Base::config('settings.privacy_policy_page')
+			],
+
+			'last_updated_at' => [
+				'type' => 'hidden',
+				'value' => Base::config('settings.last_updated_at'),
+			],
+
+		];
+
+		return [
+			'status' => true,
+			'statusCode' => 200,
+			'arguments' => [
+				'title' => Base::lang('base.settings') . ' | ' . Base::lang('base.management'),
+				'description' => Base::lang('base.settings_message'),
+				'areas' => $areas
+			],
+			'view' => ['admin.settings', 'admin']
+		];
+
+	}
+
 
 }

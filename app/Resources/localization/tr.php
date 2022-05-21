@@ -170,6 +170,7 @@ return [
         'logs' => 'Kayıtlar',
         'logs_message' => 'Tüm işlem kayıtlarını inceleyebileceğiniz sayfadır.',
         'settings' => 'Ayarlar',
+        'settings_message' => 'Tüm ayarları bu ekrandan güncelleyebilirsiniz.',
         'view' => 'Görüntüle',
         'status' => 'Durum',
         'all' => 'Tümü',
