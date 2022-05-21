@@ -215,14 +215,8 @@
 									"maxlength": 50
 								},
 								"orderable": true,
-								"title": "<?php echo \KN\Helpers\Base::lang('base.name'); ?>",
-								"key": "name"
-							},
-							{
-								"searchable": false,
-								"orderable": false,
-								"title": "<?php echo \KN\Helpers\Base::lang('base.routes'); ?>",
-								"key": "routes"
+								"title": "<?php echo \KN\Helpers\Base::lang('base.endpoint'); ?>",
+								"key": "endpoint"
 							},
 							{
 								"searchable": {
@@ -230,8 +224,53 @@
 									"maxlength": 50
 								},
 								"orderable": true,
-								"title": "<?php echo \KN\Helpers\Base::lang('base.users'); ?>",
-								"key": "users"
+								"title": "<?php echo \KN\Helpers\Base::lang('base.request'); ?>",
+								"key": "req"
+							},
+							{
+								"searchable": {
+									"type": "text",
+									"maxlength": 50
+								},
+								"orderable": true,
+								"title": "<?php echo \KN\Helpers\Base::lang('base.middleware'); ?>",
+								"key": "middleware"
+							},
+							{
+								"searchable": {
+									"type": "text",
+									"maxlength": 50
+								},
+								"orderable": true,
+								"title": "<?php echo \KN\Helpers\Base::lang('base.controller'); ?>",
+								"key": "controller"
+							},
+							{
+								"searchable": {
+									"type": "text",
+									"maxlength": 50
+								},
+								"orderable": true,
+								"title": "<?php echo \KN\Helpers\Base::lang('base.ip'); ?>",
+								"key": "ip"
+							},
+							{
+								"searchable": {
+									"type": "text",
+									"maxlength": 50
+								},
+								"orderable": true,
+								"title": "<?php echo \KN\Helpers\Base::lang('base.user'); ?>",
+								"key": "user"
+							},
+							{
+								"searchable": {
+									"type": "text",
+									"maxlength": 50
+								},
+								"orderable": true,
+								"title": "<?php echo \KN\Helpers\Base::lang('base.execute_time'); ?>",
+								"key": "exec_time"
 							},
 							{
 								"searchable": {
@@ -241,15 +280,6 @@
 								"orderable": true,
 								"title": "<?php echo \KN\Helpers\Base::lang('base.created_at'); ?>",
 								"key": "created"
-							},
-							{
-								"searchable": {
-									"type": "text",
-									"maxlength": 50
-								},
-								"orderable": true,
-								"title": "<?php echo \KN\Helpers\Base::lang('base.updated_at'); ?>",
-								"key": "updated"
 							},
 							{
 								"searchable": false,

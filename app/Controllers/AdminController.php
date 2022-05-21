@@ -1082,7 +1082,8 @@ final class AdminController extends Controller {
 					x.header,
 					x.exec_time, 
 					x.created_by, 
-					IFNULL(SELECT u_name FROM users WHERE id = x.created_by, "-")) AS user,
+					CONCAT(x.http_status,x.method) AS req,
+					IFNULL((SELECT u_name FROM users WHERE id = x.created_by), "-") AS user,
 					IFNULL(FROM_UNIXTIME(x.created_at, "%Y.%m.%d %H:%i"), "-") AS created
 				FROM `logs` x) AS raw')
 			->process([
@@ -1091,14 +1092,25 @@ final class AdminController extends Controller {
 				],
 				'endpoint' => [],
 				'req' => [
-					'exclude' = true,
 					'formatter' => function($row) {
-						return $row->method . ' ' . $row->http_status
+
+						if ($row->http_status >= 200 AND $row->http_status < 300) {
+							$class = 'text-success';
+						} elseif ($row->http_status >= 300 AND $row->http_status < 400) {
+							$class = 'text-primary';
+						} elseif ($row->http_status >= 400 AND $row->http_status < 500) {
+							$class = 'text-warning';
+						} else {
+							$class = 'text-danger';
+						}
+						return '<strong class="'.$class.'">' . $row->method . ' ' . $row->http_status . '</strong>';
 					}
 				],
-				'controller' => [],
 				'middleware' => [],
+				'controller' => [],
 				'ip' => [],
+				'user' => [],
+				'exec_time' => [],
 				'created' => [],
 				'action' => [
 					'exclude' => true,

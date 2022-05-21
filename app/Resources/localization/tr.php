@@ -208,6 +208,12 @@ return [
         'user_successfully_updated' => 'Kullanıcı başarıyla güncellendi.',
         'user_update_problem' => 'Kullanıcı güncellenirken bir sorun oluştu.',
         'user_delete_problem_for_own_account' => 'Kendi hesabınızı silemezsiniz!',
+        'middleware' => 'İlk Katman',
+        'controller' => 'İkinci Katman',
+        'request' => 'İstek',
+        'endpoint' => 'Hedef',
+        'user' => 'Kullanıcı',
+        'execute_time' => 'Yanıt Süresi',
     ],
     'app' => [
         

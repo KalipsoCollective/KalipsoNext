@@ -208,6 +208,12 @@ return [
         'user_successfully_updated' => 'The user has been successfully updated.',
         'user_update_problem' => 'There was a problem updating the user.',
         'user_delete_problem_for_own_account' => 'You cannot delete your own account!',
+        'middleware' => 'Middleware',
+        'controller' => 'Controller',
+        'request' => 'Request',
+        'endpoint' => 'Endpoint',
+        'user' => 'User',
+        'execute_time' => 'Execute Time',
     ],
     'app' => [
         
