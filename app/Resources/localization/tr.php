@@ -21,7 +21,8 @@ return [
         'username_is_already_used' => 'Kullanıcı adı zaten kullanımda.',
         'notification_hook_file_not_found' => 'Bildirim kanca dosyası bulunamadı!',
         'a_problem_occurred' => 'Bir sorun oluştu!',
-        'endpoint_file_is_not_found' => 'Yetki kontrol noktası dosyası bulunamadı!'
+        'endpoint_file_is_not_found' => 'Yetki kontrol noktası dosyası bulunamadı!',
+        'ip_blocked' => 'IP adresiniz engellenmiştir!',
     ],
     'notification' => [
         'registration_email_title' => 'Hesabınız Oluşturuldu!',
@@ -54,6 +55,7 @@ return [
         'management_settings' => 'Yönetim - Ayarlar',
         'management_logs' => 'Yönetim - Kayıtlar',
         'management_logs_list' => 'Yönetim - Kayıtlar - Liste',
+        'management_logs_ip_block' => 'Yönetim - Kayıtlar - IP Bloklama',
     ],
     'base' => [
         'sandbox' => 'Geliştirici Araçları',
@@ -214,6 +216,10 @@ return [
         'endpoint' => 'Hedef',
         'user' => 'Kullanıcı',
         'execute_time' => 'Yanıt Süresi',
+        'block_ip' => 'IP Engelle',
+        'remove_ip_block' => 'IP Engeli Kaldır',
+        'ip_block_list_not_updated' => 'IP blok listesi güncellenemedi!',
+        'ip_block_list_updated' => 'IP blok listesi güncellendi.',
     ],
     'app' => [
         

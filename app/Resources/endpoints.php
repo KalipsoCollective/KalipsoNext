@@ -89,4 +89,8 @@ return [
 		'default' => false,
 		'name' => 'auth.management_logs_list',
 	],
+	'management/logs/:ip/block' => [
+		'default' => false,
+		'name' => 'auth.management_logs_ip_block',
+	],
 ];

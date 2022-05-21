@@ -21,7 +21,8 @@ return [
         'username_is_already_used' => 'Username is already used.',
         'notification_hook_file_not_found' => 'Notification hook file not found!',
         'a_problem_occurred' => 'A problem occurred!',
-        'endpoint_file_is_not_found' => 'Authority endpoint file not found!'
+        'endpoint_file_is_not_found' => 'Authority endpoint file not found!',
+        'ip_blocked' => 'Your IP address has been blocked!',
     ],
     'notification' => [
         'registration_email_title' => 'Your Account Has Been Created!',
@@ -54,6 +55,7 @@ return [
         'management_settings' => 'Management - Settings',
         'management_logs' => 'Management - Logs',
         'management_logs_list' => 'Management - Logs - List',
+        'management_logs_ip_block' => 'Management - Logs - IP Block',
     ],
     'base' => [
         'sandbox' => 'Sandbox',
@@ -214,6 +216,10 @@ return [
         'endpoint' => 'Endpoint',
         'user' => 'User',
         'execute_time' => 'Execute Time',
+        'block_ip' => 'Block IP',
+        'remove_ip_block' => 'Remove IP Block',
+        'ip_block_list_not_updated' => 'Failed to update IP block list!',
+        'ip_block_list_updated' => 'IP block list updated.',
     ],
     'app' => [
         

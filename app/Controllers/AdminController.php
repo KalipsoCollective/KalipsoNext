@@ -1067,6 +1067,15 @@ final class AdminController extends Controller {
 	public function logList() {
 
 		$container = $this->get();
+		$blockList = file_exists($file = Base::path('app/Storage/security/ip_blacklist.json')) ? file_get_contents($file) : null; 
+		if (empty($blockList)) {
+			$blockList = [];
+		} else {
+			$blockList = @json_decode($blockList, true);
+			if (! is_array($blockList)) {
+				$blockList = [];
+			}
+		}
 
 		$tableOp = (new KalipsoTable())
 			->db((new Logs)->pdo)
@@ -1114,17 +1123,28 @@ final class AdminController extends Controller {
 				'created' => [],
 				'action' => [
 					'exclude' => true,
-					'formatter' => function($row) use ($container) {
+					'formatter' => function($row) use ($blockList, $container) {
 
 						$buttons = '';
-						/*
-						if ($container->authority('management/roles/:id')) {
+						if ($container->authority('management/logs/:ip/block')) {
+
+							if (isset($blockList[$row->ip]) !== false) {
+								$class = 'btn-success';
+								$text = Base::lang('base.remove_ip_block');
+							} else {
+								$class = 'btn-danger';
+								$text = Base::lang('base.block_ip');
+							}
+
+							if ($row->ip == Base::getIp())
+								$class .= ' disabled';
+
 							$buttons .= '
-							<button type="button" class="btn btn-light" 
-								data-kn-action="'.$this->get()->url('/management/roles/' . $row->id ).'">
-								' . Base::lang('base.view') . '
+							<button type="button" class="btn ' . $class . '" 
+								data-kn-action="'.$this->get()->url('/management/logs/' . $row->ip . '/block').'">
+								' . $text . '
 							</button>';
-						} */
+						}
 
 						return '
 						<div class="btn-group btn-group-sm" role="group" aria-label="'.Base::lang('base.action').'">
@@ -1139,6 +1159,73 @@ final class AdminController extends Controller {
 			'status' => true,
 			'statusCode' => 200,
 			'arguments' => $tableOp,
+			'view' => null
+		];
+
+	}
+
+	public function logIpBlock() {
+
+		$ip = $this->get('request')->attributes['ip'];
+		/* maybe one day
+		extract(Base::input([
+			'reason' => 'nulled_text',
+		], $this->get('request')->params));
+		*/
+
+		$blockList = file_exists($file = Base::path('app/Storage/security/ip_blacklist.json')) ? json_decode(file_get_contents($file), true) : null;
+		if (is_null($blockList)) {
+
+			if (! is_dir($dir = Base::path('app/Storage'))) {
+				mkdir($dir);
+			}
+
+			if (! is_dir($dir .= '/security')) {
+				mkdir($dir);
+			}
+
+			touch($file);
+			$blockList = [];
+
+		} 
+
+		$alerts = [];
+		$arguments = [];
+
+		if (isset($blockList[$ip]) !== false) {
+
+			unset($blockList[$ip]);
+
+		} else {
+
+			$blockList[$ip] = [
+				'date' => time(),
+				'user' => Base::userData('id')
+			];
+
+		}
+
+		if (file_put_contents($file, json_encode($blockList, JSON_PRETTY_PRINT))) {
+
+			$alerts[] = [
+				'status' => 'success',
+				'message' => Base::lang('base.ip_block_list_updated')
+			];
+			$arguments['table_reset'] = 'logsTable';
+
+		} else {
+
+			$alerts[] = [
+				'status' => 'warning',
+				'message' => Base::lang('base.ip_block_list_not_updated')
+			];
+		}
+
+		return [
+			'status' => true,
+			'statusCode' => 200,
+			'arguments' => $arguments,
+			'alerts' => $alerts,
 			'view' => null
 		];
 

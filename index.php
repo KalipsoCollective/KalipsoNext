@@ -50,11 +50,16 @@ try {
             ['GET,POST', '/roles/:id/delete', 'AdminController@roleDelete', ['Auth@with']],
             ['GET,POST', '/roles/:id/update', 'AdminController@roleUpdate', ['Auth@with']],
 
-            //
+            // Sessions
             ['GET,POST', '/sessions', 'AdminController@sessions', ['Auth@with']],
-            ['GET,POST', '/settings', 'AdminController@settings', ['Auth@with']],
+
+            // Logs & Security
             ['GET,POST', '/logs', 'AdminController@logs', ['Auth@with']],
             ['GET,POST', '/logs/list', 'AdminController@logList', ['Auth@with']],
+            ['GET,POST', '/logs/:ip/block', 'AdminController@logIpBlock', ['Auth@with']],
+
+            // Settings
+            ['GET,POST', '/settings', 'AdminController@settings', ['Auth@with']],
         ];
     });
 
