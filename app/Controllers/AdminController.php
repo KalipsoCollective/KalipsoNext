@@ -1005,27 +1005,69 @@ final class AdminController extends Controller {
 
 	public function sessions() {
 
-		$users = (new Users)->count('id', 'total')->notWhere('status', 'deleted')->get();
-		$userRoles = (new UserRoles)->count('id', 'total')->get();
-		$sessions = (new Sessions)->count('id', 'total')->get();
-		$logs = (new Logs)->count('id', 'total')->get();
-
-		$count = [
-			'users' => $users->total,
-			'user_roles' => $userRoles->total,
-			'sessions' => $sessions->total,
-			'logs' => $logs->total
-		];
-
 		return [
 			'status' => true,
 			'statusCode' => 200,
 			'arguments' => [
-				'title' => Base::lang('base.dashboard') . ' | ' . Base::lang('base.management'),
-				'description' => Base::lang('base.dashboard_message'),
-				'count' => $count,
+				'title' => Base::lang('base.sessions') . ' | ' . Base::lang('base.management'),
+				'description' => Base::lang('base.sessions_message')
 			],
-			'view' => ['admin.dashboard', 'admin']
+			'view' => ['admin.sessions', 'admin']
+		];
+
+	}
+
+	public function sessionList() {
+
+		$container = $this->get();
+
+		$tableOp = (new KalipsoTable())
+			->db((new Logs)->pdo)
+			->from('(SELECT 
+					x.id, 
+					x.auth_code, 
+					x.header,
+					x.ip, 
+					x.last_action_date, 
+					x.last_action_point,
+					IFNULL((SELECT u_name FROM users WHERE id = x.user_id), "-") AS user,
+					IFNULL((SELECT name FROM user_roles WHERE id = x.role_id), "-") AS role
+				FROM `sessions` x) AS raw')
+			->process([
+				'id' => [
+					'primary' => true,
+				],
+				'auth_code' => [],
+				'user' => [],
+				'role' => [],
+				'role' => [],
+				'header' => [
+					'formatter' => function($row) {
+
+						$device = Base::userAgentDetails($row->header);
+						$return = '
+						<strong class="p-2 strong" title="' . $row->header . '">
+							<i title="' . $device['os'] . '" class="' . $device['p_icon'] . '"></i> 
+							<i title="' . $device['browser'] . ' ' . $device['version'] . '" class="' . $device['b_icon'] . '"></i>
+						</strong>';
+						return $return;
+					}
+				],
+				'ip' => [],
+				'last_action_date' => [
+					'formatter' => function($row) {
+						return date('d.m.Y H:i:s', (int)$row->last_action_date);
+					}
+				],
+				'last_action_point' => [],
+			])
+			->output();
+
+		return [
+			'status' => true,
+			'statusCode' => 200,
+			'arguments' => $tableOp,
+			'view' => null
 		];
 
 	}

@@ -52,6 +52,7 @@ return [
         'management_roles_update' => 'Management - Roller - Edit',
         'management_roles_delete' => 'Management - Roller - Delete',
         'management_sessions' => 'Management - Sessions',
+        'management_sessions_list' => 'Management - Sessions - List',
         'management_settings' => 'Management - Settings',
         'management_logs' => 'Management - Logs',
         'management_logs_list' => 'Management - Logs - List',
@@ -220,6 +221,7 @@ return [
         'remove_ip_block' => 'Remove IP Block',
         'ip_block_list_not_updated' => 'Failed to update IP block list!',
         'ip_block_list_updated' => 'IP block list updated.',
+        'auth_code' => 'Auth Code',
     ],
     'app' => [
         

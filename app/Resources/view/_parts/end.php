@@ -301,6 +301,94 @@
 							visible: true,
 							searchBar: true
 						}
+					},
+					sessionsTable: {
+						selector: "#sessionsTable",
+						language: "<?php echo \KN\Helpers\Base::lang('lang.code'); ?>",
+						server: true,
+						source: '<?php echo $this->url('/management/sessions/list') ?>',
+						columns: [ 
+							{
+								"searchable": {
+									"type": "number",
+									"min": 1,
+									"max": 999
+								},
+								"orderable": true,
+								"title": "#",
+								"key": "id"
+							},
+							{
+								"searchable": {
+									"type": "text",
+									"maxlength": 50
+								},
+								"orderable": true,
+								"title": "<?php echo \KN\Helpers\Base::lang('base.auth_code'); ?>",
+								"key": "auth_code"
+							},
+							{
+								"searchable": {
+									"type": "text",
+									"maxlength": 50
+								},
+								"orderable": true,
+								"title": "<?php echo \KN\Helpers\Base::lang('base.user'); ?>",
+								"key": "user"
+							},
+							{
+								"searchable": {
+									"type": "text",
+									"maxlength": 50
+								},
+								"orderable": true,
+								"title": "<?php echo \KN\Helpers\Base::lang('base.role'); ?>",
+								"key": "role"
+							},
+							{
+								"searchable": true,
+								"orderable": false,
+								"title": "<?php echo \KN\Helpers\Base::lang('base.device'); ?>",
+								"key": "header"
+							},
+							{
+								"searchable": {
+									"type": "text",
+									"maxlength": 50
+								},
+								"orderable": true,
+								"title": "<?php echo \KN\Helpers\Base::lang('base.ip'); ?>",
+								"key": "ip"
+							},
+							{
+								"searchable": false,
+								"orderable": true,
+								"title": "<?php echo \KN\Helpers\Base::lang('base.last_action_date'); ?>",
+								"key": "last_action_date"
+							},
+							{
+								"searchable": {
+									"type": "text",
+									"maxlength": 50
+								},
+								"orderable": true,
+								"title": "<?php echo \KN\Helpers\Base::lang('base.last_action_point'); ?>",
+								"key": "last_action_point"
+							}
+						],
+						customize: {
+							tableWrapClass: "table-responsive",
+							tableClass: "table table-bordered",
+							inputClass: "form-control form-control-sm",
+							selectClass: "form-control form-control-sm",
+						},
+						tableHeader: {
+							searchBar: true
+						},
+						tableFooter: {
+							visible: true,
+							searchBar: true
+						}
 					}
 				}
 

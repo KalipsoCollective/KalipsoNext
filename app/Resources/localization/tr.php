@@ -52,6 +52,7 @@ return [
         'management_roles_update' => 'Yönetim - Roller - Düzenle',
         'management_roles_delete' => 'Yönetim - Roller - Sil',
         'management_sessions' => 'Yönetim - Oturumlar',
+        'management_sessions_list' => 'Yönetim - Oturumlar - Liste',
         'management_settings' => 'Yönetim - Ayarlar',
         'management_logs' => 'Yönetim - Kayıtlar',
         'management_logs_list' => 'Yönetim - Kayıtlar - Liste',
@@ -220,6 +221,7 @@ return [
         'remove_ip_block' => 'IP Engeli Kaldır',
         'ip_block_list_not_updated' => 'IP blok listesi güncellenemedi!',
         'ip_block_list_updated' => 'IP blok listesi güncellendi.',
+        'auth_code' => 'Oturum Kodu',
     ],
     'app' => [
         

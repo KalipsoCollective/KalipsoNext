@@ -77,6 +77,10 @@ return [
 		'default' => false,
 		'name' => 'auth.management_sessions',
 	],
+	'management/sessions/list' => [
+		'default' => false,
+		'name' => 'auth.management_sessions_list',
+	],
 	'management/settings' => [
 		'default' => false,
 		'name' => 'auth.management_settings',

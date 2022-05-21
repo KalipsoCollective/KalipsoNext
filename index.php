@@ -52,6 +52,7 @@ try {
 
             // Sessions
             ['GET,POST', '/sessions', 'AdminController@sessions', ['Auth@with']],
+            ['GET,POST', '/sessions/list', 'AdminController@sessionList', ['Auth@with']],
 
             // Logs & Security
             ['GET,POST', '/logs', 'AdminController@logs', ['Auth@with']],
