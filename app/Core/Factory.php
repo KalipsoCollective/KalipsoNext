@@ -334,8 +334,8 @@ final class Factory
      **/
     public function run() {
 
+        // IP Block
         $blockList = file_exists($file = Base::path('app/Storage/security/ip_blacklist.json')) ? json_decode(file_get_contents($file), true) : [];
-        
         if (isset($blockList[Base::getIp()]) !== false) {
 
             $this->response->statusCode = 403;
@@ -352,6 +352,7 @@ final class Factory
         }
 
         $notFound = true;
+        
         /**
          * exact expression
          **/
