@@ -18,9 +18,9 @@ return [
 	'smtp_email_pass' => 'password',
 	'smtp_secure' => 'tls',
 	'mail_queue' => true,
-	'view_cache' => true,
+	'view_cache' => false,
 	'db_cache' => true,
 	'route_cache' => true,
-	'last_updated_at' => 1653340254,
+	'last_updated_at' => 1653341422,
 	'last_updated_by' => 1,
 ];
