@@ -53,10 +53,11 @@ return [
         'management_roles_delete' => 'Management - Roller - Delete',
         'management_sessions' => 'Management - Sessions',
         'management_sessions_list' => 'Management - Sessions - List',
-        'management_settings' => 'Management - Settings',
         'management_logs' => 'Management - Logs',
         'management_logs_list' => 'Management - Logs - List',
         'management_logs_ip_block' => 'Management - Logs - IP Block',
+        'management_settings' => 'Management - Settings',
+        'management_settings_update' => 'Management - Settings - Edit',
     ],
     'base' => [
         'sandbox' => 'Sandbox',

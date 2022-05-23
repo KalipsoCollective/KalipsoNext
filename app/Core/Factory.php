@@ -398,6 +398,7 @@ final class Factory
 
                                 if ($totalPath === ($pathIndex + 1)) {
                                     $route = $details;
+                                    $routePath = $path;
                                     $notFound = false;
                                 }
                                 
@@ -406,8 +407,9 @@ final class Factory
                             }
                         }
 
-                        if (! is_null($route)) {
-                            $this->endpoint = trim($path, '/');
+                        if (isset($routePath) !== false) {
+
+                            $this->endpoint = trim($routePath, '/');
                         }
                     }
                 }
@@ -502,6 +504,7 @@ final class Factory
                     }
 
                 }
+
                 /**
                  * 
                  * Controller step

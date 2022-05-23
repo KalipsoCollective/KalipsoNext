@@ -81,10 +81,6 @@ return [
 		'default' => false,
 		'name' => 'auth.management_sessions_list',
 	],
-	'management/settings' => [
-		'default' => false,
-		'name' => 'auth.management_settings',
-	],
 	'management/logs' => [
 		'default' => false,
 		'name' => 'auth.management_logs',
@@ -96,5 +92,13 @@ return [
 	'management/logs/:ip/block' => [
 		'default' => false,
 		'name' => 'auth.management_logs_ip_block',
+	],
+	'management/settings' => [
+		'default' => false,
+		'name' => 'auth.management_settings',
+	],
+	'management/settings/update' => [
+		'default' => false,
+		'name' => 'auth.management_settings_update',
 	],
 ];

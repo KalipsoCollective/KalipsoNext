@@ -53,10 +53,11 @@ return [
         'management_roles_delete' => 'Yönetim - Roller - Sil',
         'management_sessions' => 'Yönetim - Oturumlar',
         'management_sessions_list' => 'Yönetim - Oturumlar - Liste',
-        'management_settings' => 'Yönetim - Ayarlar',
         'management_logs' => 'Yönetim - Kayıtlar',
         'management_logs_list' => 'Yönetim - Kayıtlar - Liste',
         'management_logs_ip_block' => 'Yönetim - Kayıtlar - IP Bloklama',
+        'management_settings' => 'Yönetim - Ayarlar',
+        'management_settings_update' => 'Yönetim - Ayarlar - Düzenle',
     ],
     'base' => [
         'sandbox' => 'Geliştirici Araçları',

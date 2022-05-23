@@ -417,7 +417,7 @@ return [
 		'user_roles' => [
 			[
 				'name'                  => 'admin',
-				'routes'                => 'auth,auth/:action,auth/logout,management,management/users,management/roles,management/sessions,management/settings,management/logs,management/users/list,management/users/add,management/users/:id,management/users/:id/delete,management/users/:id/update,management/roles/list,management/roles/add,management/roles/:id,management/roles/:id/delete,management/roles/:id/update',
+				'routes'                => 'auth,auth/:action,auth/logout,management,management/users,management/users/list,management/users/add,management/users/:id,management/users/:id/update,management/users/:id/delete,management/roles,management/roles/list,management/roles/add,management/roles/:id,management/roles/:id/delete,management/roles/:id/update,management/sessions,management/sessions/list,management/logs,management/logs/list,management/logs/:ip/block,management/settings,management/settings/update',
 				'created_at'            => time(),
 				'created_by'            => 1
 			]
