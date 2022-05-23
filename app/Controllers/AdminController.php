@@ -1281,10 +1281,11 @@ final class AdminController extends Controller {
 					],
 					'description' => [
 						'type' => 'input',
-						'value' => Base::config('settings.description'),
+						'value' => json_decode(Base::config('settings.description'), true),
 						'required' => true,
 						'name' => Base::lang('settings.description'),
 						'info' => Base::lang('settings.description_info'),
+						'multilingual' => true,
 					],
 					'contact_email' => [
 						'type' => 'input',
@@ -1347,9 +1348,10 @@ final class AdminController extends Controller {
 					],
 					'maintenance_mode_desc' => [
 						'type' => 'input',
-						'value' => Base::config('settings.maintenance_mode_desc'),
+						'value' => json_decode(Base::config('settings.maintenance_mode_desc'), true),
 						'name' => Base::lang('settings.maintenance_mode_desc'),
 						'info' => Base::lang('settings.maintenance_mode_desc_info'),
+						'multilingual' => true,
 					]
 				]
 			],
@@ -1458,7 +1460,8 @@ final class AdminController extends Controller {
 			'arguments' => [
 				'title' => Base::lang('base.settings') . ' | ' . Base::lang('base.management'),
 				'description' => Base::lang('base.settings_message'),
-				'groups' => $parameters['groups']
+				'groups' => $parameters['groups'],
+				'languages' => $parameters['languages']
 			],
 			'view' => ['admin.settings', 'admin']
 		];
@@ -1487,6 +1490,9 @@ final class AdminController extends Controller {
 		$settings = '<?php ' . PHP_EOL . PHP_EOL . 'return [' . PHP_EOL;
 		foreach ($parameterList as $variable => $type) {
 			$settings .= '	\'' . $variable . '\' => ';
+			if (is_array($$variable)) {
+				$$variable = json_encode($$variable);
+			}
 			switch ($type) {
 				case 'check_as_boolean':
 					$settings .= ($$variable ? 'true' : 'false') . ',';
@@ -1522,6 +1528,7 @@ final class AdminController extends Controller {
 				'message' => Base::lang('base.settings_updated')
 			];
 			$arguments['reload'] = true;
+			$arguments['reload_timeout'] = 5000;
 
 		} else {
 

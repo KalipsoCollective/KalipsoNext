@@ -57,10 +57,25 @@
 
 													} elseif ($values['type'] == 'input') {
 
-														$rightSection = '
-														<div class="col-auto">
-															<input type="'.(isset($values['numeric']) !== false ? 'number' : 'text').'" class="form-control"' . (isset($values['required']) !== false ? ' required' : '') . ' name="' . $name . '" id="' . $name . '" placeholder="' . $values['name'] . '" value="' . $values['value'] . '" />
-														</div>';
+														if (isset($values['multilingual']) !== false) {
+															$rightSection .= '
+															<div class="col-auto">';
+															foreach ($languages as $langCode => $langName) {
+																$rightSection .= '
+																<div class="form-floating mb-1">
+																	<input type="'.(isset($values['numeric']) !== false ? 'number' : 'text').'" class="form-control"' . (isset($values['required']) !== false ? ' required' : '') . ' name="' . $name . '['.$langCode.']" id="' . $name . $langCode . '" placeholder="' . $langName . '" value="' . $values['value'][$langCode] . '" />
+																	 <label for="' . $name . $langCode . '">' . $langName . '</label>
+																</div>';
+															}
+															$rightSection .= '
+															</div>';
+															
+														} else {
+															$rightSection = '
+															<div class="col-auto">
+																<input type="'.(isset($values['numeric']) !== false ? 'number' : 'text').'" class="form-control"' . (isset($values['required']) !== false ? ' required' : '') . ' name="' . $name . '" id="' . $name . '" placeholder="' . $values['name'] . '" value="' . $values['value'] . '" />
+															</div>';
+														}
 
 
 													} elseif ($values['type'] == 'check') {

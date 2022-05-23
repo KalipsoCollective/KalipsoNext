@@ -195,7 +195,7 @@ function responseFormatter(response, dom = null) {
 	}
 
 	if (response.reload !== undefined) {
-		const timeOut = response.reload_timout !== undefined ? response.reload_timout : 1;
+		const timeOut = response.reload_timeout !== undefined ? response.reload_timeout : 1;
 		setTimeout(() => {
 			if (response.reload === true) {
 				if (window.vanillaPjax) window.vanillaPjax.reload();

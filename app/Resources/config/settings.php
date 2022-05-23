@@ -2,15 +2,15 @@
 
 return [
 	'name' => 'Kalipso Next',
-	'description' => 'A basic php framework/boilerplate.',
+	'description' => '{"en":"test","tr":"test2"}',
 	'contact_email' => 'halillusion@gmail.com',
 	'separator' => '-',
 	'language' => 'tr',
 	'default_user_role' => 1,
 	'ssl' => false,
 	'log' => true,
-	'maintenance_mode' => false,
-	'maintenance_mode_desc' => 'Dont log in.',
+	'maintenance_mode' => true,
+	'maintenance_mode_desc' => '{"en":"naber","tr":"bebek"}',
 	'mail_send_type' => 'server',
 	'smtp_address' => 'smtp.yandex.com.tr',
 	'smtp_port' => 587,
@@ -21,6 +21,6 @@ return [
 	'view_cache' => true,
 	'db_cache' => true,
 	'route_cache' => true,
-	'last_updated_at' => 1653335289,
+	'last_updated_at' => 1653338064,
 	'last_updated_by' => 1,
 ];

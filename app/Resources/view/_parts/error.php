@@ -6,7 +6,7 @@
 				if ((int)$error === 503) {
 					?>
 					<h1><?php echo \KN\Helpers\Base::lang('base.maintenance_mode'); ?></h1>
-					<h2 class="h4"><?php echo $output ? $output : \KN\Helpers\Base::lang('base.maintenance_mode_desc'); ?></h2>
+					<h2 class="h4"><?php echo $output ? $output[\KN\Helpers\Base::lang('lang.code')] : \KN\Helpers\Base::lang('base.maintenance_mode_desc'); ?></h2>
 					<?php
 				} else {
 					?>

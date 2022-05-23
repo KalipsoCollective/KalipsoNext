@@ -455,11 +455,12 @@ final class Factory
             // Maintenance Mode
             if (Base::config('settings.maintenance_mode') AND (! $this->authority('/management') AND ! in_array($this->endpoint, $this->excludedRoutes))) {
 
+                $desc = Base::config('settings.maintenance_mode_desc');
                 $this->response->statusCode = 503;
                 $this->response->title = Base::lang('err');
                 $this->response->arguments = [
                     'error' => '503',
-                    'output' => Base::config('settings.maintenance_mode_desc')
+                    'output' => $desc ? json_decode($desc, true) : $desc
                 ];
 
                 $this->response();
