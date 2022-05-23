@@ -423,14 +423,5 @@ final class AppController extends Controller {
         }
 
     }
-    /*
-
-    public function dynamicJS() {
-
-        Base::http('content_type', ['content' => 'js']);
-        require Base::path('app/resources/script.php');
-
-    }
-    */
 
 }
