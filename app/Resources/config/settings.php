@@ -2,7 +2,7 @@
 
 return [
 	'name' => 'Kalipso Next',
-	'description' => '{"en":"test","tr":"test2"}',
+	'description' => '{"en":"It\'s a site description.","tr":"Bu bir site a\u00e7\u0131klamas\u0131."}',
 	'contact_email' => 'halillusion@gmail.com',
 	'separator' => '-',
 	'language' => 'tr',
@@ -10,7 +10,7 @@ return [
 	'ssl' => false,
 	'log' => true,
 	'maintenance_mode' => true,
-	'maintenance_mode_desc' => '{"en":"naber","tr":"bebek"}',
+	'maintenance_mode_desc' => '{"en":"We are under maintenance.","tr":"Bak\u0131m modunday\u0131z."}',
 	'mail_send_type' => 'server',
 	'smtp_address' => 'smtp.yandex.com.tr',
 	'smtp_port' => 587,
@@ -21,6 +21,6 @@ return [
 	'view_cache' => true,
 	'db_cache' => true,
 	'route_cache' => true,
-	'last_updated_at' => 1653338064,
+	'last_updated_at' => 1653340254,
 	'last_updated_by' => 1,
 ];

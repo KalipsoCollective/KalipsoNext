@@ -734,7 +734,7 @@ final class Factory
     /**
      *
      * View Page 
-     * @param string  file          view file name
+     * @param string|null  file          view file name
      * @param array   arguments     needed view variables 
      * @param string  layout        page structure indicator
      * @return this
@@ -767,42 +767,67 @@ final class Factory
              * 
              * Arguments are extracted and the title is defined.
              **/
+            $view = true;
+            // View Cache Get
+            if (Base::config('settings.view_cache')) {
 
-            $arguments['title'] = isset($arguments['title']) !== false ? 
-                str_replace(
-                    ['[TITLE]', '[APP]'], 
-                    [$arguments['title'], 
-                    Base::config('settings.name')], Base::config('app.title_format')) 
-                    : Base::config('settings.name');
-
-            extract($arguments);
-
-            if (isset($description) === false) {
-                $description = @json_decode(Base::config('settings.description'), true);
-                if (! $description) $description = Base::config('settings.description');
-                else $description = $description[Base::lang('lang.code')];
+                $cacheHash = md5($file.json_encode($arguments).$layout);
+                if (file_exists($cacheFile = Base::path('app/Storage/view_cache/' . $cacheHash . '.html')) AND 
+                    strtotime(date('Y-m-d H:i:s +10 minutes', filemtime($cacheFile))) < time()
+                ) {
+                    $view = false;
+                    echo file_get_contents($cacheFile);
+                }
             }
 
+            if ($view) {
 
-            /**
-             * 
-             * Prepare the page structure according to the format.
-             **/
+                $arguments['title'] = isset($arguments['title']) !== false ? 
+                    str_replace(
+                        ['[TITLE]', '[APP]'], 
+                        [$arguments['title'], 
+                        Base::config('settings.name')], Base::config('app.title_format')) 
+                        : Base::config('settings.name');
 
-            $layoutVars = Base::path('app/Resources/view/_layouts/_' . $layout . '.php');
-            $layout = file_exists($layoutVars) ? (require $layoutVars) : ['_'];
+                extract($arguments);
 
-            foreach ($layout as $part) {
-
-                if ($part === '_')
-                    $part = strpos($file, '.') !== false ? str_replace('.', '/', $file) : $file;
-                else
-                    $part = '_parts/' . $part;
-
-                if (file_exists($req = Base::path('app/Resources/view/' . $part . '.php'))) {
-                    require $req;
+                if (isset($description) === false) {
+                    $description = @json_decode(Base::config('settings.description'), true);
+                    if (! $description) $description = Base::config('settings.description');
+                    else $description = $description[Base::lang('lang.code')];
                 }
 
+
+                /**
+                 * 
+                 * Prepare the page structure according to the format.
+                 **/
+
+                $layoutVars = Base::path('app/Resources/view/_layouts/_' . $layout . '.php');
+                $layout = file_exists($layoutVars) ? (require $layoutVars) : ['_'];
+
+                foreach ($layout as $part) {
+
+                    if ($part === '_')
+                        $part = strpos($file, '.') !== false ? str_replace('.', '/', $file) : $file;
+                    else
+                        $part = '_parts/' . $part;
+
+                    if (file_exists($req = Base::path('app/Resources/view/' . $part . '.php'))) {
+                        require $req;
+                    }
+
+                }
+
+                // View Cache Set
+                if (Base::config('settings.view_cache')) {
+
+                    if (! is_dir($dir = Base::path('app/Storage/view_cache')))
+                        mkdir($dir);
+
+                    file_put_contents($cacheFile, ob_get_contents());
+
+                }
             }
 
         }
