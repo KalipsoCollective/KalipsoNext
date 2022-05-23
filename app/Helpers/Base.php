@@ -221,11 +221,12 @@ class Base {
                             break;
 
                         case 'password': 
-                            $_value[$key] = password_hash(trim($value), PASSWORD_DEFAULT); 
+
+                            $_value[$key] = password_hash(trim((string)$value), PASSWORD_DEFAULT); 
                             break;
 
                         case 'nulled_password': 
-                            $_value[$key] = trim($value) != '' ? password_hash(trim($value), PASSWORD_DEFAULT) : null;
+                            $_value[$key] = trim((string)$value) != '' ? password_hash(trim((string)$value), PASSWORD_DEFAULT) : null;
                              break;
 
                         case 'date': 
@@ -233,15 +234,15 @@ class Base {
                             break;
 
                         case 'nulled_text': 
-                            $_value[$key] = trim(strip_tags($value)) == '' ? null : trim(strip_tags($value)); 
+                            $_value[$key] = trim(strip_tags((string)$value)) == '' ? null : trim(strip_tags((string)$value)); 
                             break;
 
                         case 'slug': 
-                            $_value[$key] = trim(strip_tags($value)) == '' ? null : self::slugGenerator(trim(strip_tags($value))); 
+                            $_value[$key] = trim(strip_tags((string)$value)) == '' ? null : self::slugGenerator(trim(strip_tags((string)$value))); 
                             break;
 
                         default: 
-                            $_value[$key] = trim(strip_tags($value));
+                            $_value[$key] = trim(strip_tags((string)$value));
 
                     }
                 }
@@ -264,7 +265,7 @@ class Base {
                 case 'nulled_html': 
                     $data = htmlspecialchars(trim($data));
                     $data = $data == '' ? null : $data; 
-                    if ($data AND trim(strip_tags(htmlspecialchars_decode($data))) == '') {
+                    if ($data AND trim(strip_tags(htmlspecialchars_decode((string)$data))) == '') {
                         $data = null;
                     }
                     break;
@@ -290,11 +291,11 @@ class Base {
                     break;
 
                 case 'password': 
-                    $data = password_hash(trim($data), PASSWORD_DEFAULT); 
+                    $data = password_hash(trim((string)$data), PASSWORD_DEFAULT); 
                     break;
 
                 case 'nulled_password': 
-                    $data = ! empty($data) ? password_hash(trim($data), PASSWORD_DEFAULT) : null; 
+                    $data = ! empty($data) ? password_hash(trim((string)$data), PASSWORD_DEFAULT) : null; 
                     break;
 
                 case 'date': 
@@ -302,20 +303,20 @@ class Base {
                     break;
 
                 case 'nulled_text': 
-                    $data = empty($data) ? null : strip_tags(trim($data)); 
+                    $data = empty($data) ? null : strip_tags(trim((string)$data)); 
                     break;
 
                 case 'nulled_email': 
-                    $data = empty($data) ? null : strip_tags(trim($data));
+                    $data = empty($data) ? null : strip_tags(trim((string)$data));
                     if ($data) $data = filter_var($data, FILTER_VALIDATE_EMAIL) ? $data : null; 
                     break;
 
                 case 'slug': 
-                    $data = empty($data) ? null : self::slugGenerator(strip_tags(trim($data))); 
+                    $data = empty($data) ? null : self::slugGenerator(strip_tags(trim((string)$data))); 
                     break;
 
                 default: 
-                    $data = strip_tags(trim($data));
+                    $data = strip_tags(trim((string)$data));
             }
 
             if (strpos($parameter, 'nulled') !== false AND $data == '') {

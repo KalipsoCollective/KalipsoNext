@@ -61,6 +61,7 @@ try {
 
             // Settings
             ['GET,POST', '/settings', 'AdminController@settings', ['Auth@with']],
+            ['GET,POST', '/settings/update', 'AdminController@settingsUpdate', ['Auth@with']],
         ];
     });
 

@@ -8,58 +8,105 @@
 						<p><?php echo $description; ?></p>
 					</div>
 					<div class="col-12">
-						<form class="row g-2" data-kn-form id="roleAdd" method="post" action="<?php echo $this->url('management/roles/add'); ?>">
+						<form class="row g-2" data-kn-form id="settingsUpdate" method="post" action="<?php echo $this->url('management/settings/update'); ?>">
 							<div class="form-loader">
 								<div class="spinner-border text-light" role="status">
 									<span class="visually-hidden"><?php echo \KN\Helpers\Base::lang('base.loading'); ?></span>
 								</div>
 							</div>
-							<div class="col-12 form-info">
-							</div>
-							<?php
-
-							echo '<small class="text-muted">
-								' . \KN\Helpers\Base::lang('base.updated_at') . ': 
-								<strong>' . date('d.m.Y H:i',  (int)$areas['last_updated_at']['value']) . '</strong>
+							<div class="col-12 form-info"></div>
+							<?php 
+							echo '
+							<small class="text-muted">
+								' . $groups['basic']['items']['last_updated_at']['name'] . ': 
+								<strong>' . date('d.m.Y H:i',  (int)$groups['basic']['items']['last_updated_at']['value']) . '</strong>
 							</small>';
+							$hiddenInputs = '';
+							foreach ($groups as $group) {
+								?>
+								<div class="card p-0 mb-2 shadow-sm">
+									<div class="card-header">
+										<h2 class="card-header-title mb-0 fw-bold h5">
+											<?php echo $group['name']; ?>
+										</h2>
+									</div>
+									<div class="card-body">
+										<div class="list-group list-group-flush">
+											<?php
+											foreach ($group['items'] as $name => $values) {
 
-							foreach ($areas as $name => $values) {
+												if ($values['type'] == 'hidden') {
+													$hiddenInputs .= '<input type="hidden" name="' . $name . '" value="' . $values['value'] . '">';
+												} else {
 
-								$col = 'col-md-4 col-12';
-								$text = \KN\Helpers\Base::lang('base.' . $name);
-								
-								if ($values['type'] == 'hidden') {
+													$rightSection = '';
+													if ($values['type'] == 'select') {
 
-									echo '<input type="hidden" name="' . $name . '" value="' . $values['value'] . '">';
+														foreach ($values['options'] as $val => $txt) {
+															$rightSection .= '
+															<option value="' . $val . '"' . ($val == $values['value'] ? ' selected' : '') . '>
+																' . $txt . '
+															</option>';
+														}
+														$rightSection = '
+														<div class="col-auto">
+															<select class="form-select"' . (isset($values['required']) !== false ? ' required' : '') . ' name="' . $name . '" id="' . $name . '">
+																' . $rightSection . '
+															</select>
+														</div>';
 
-								} elseif ($values['type'] == 'select') {
+													} elseif ($values['type'] == 'input') {
+
+														$rightSection = '
+														<div class="col-auto">
+															<input type="'.(isset($values['numeric']) !== false ? 'number' : 'text').'" class="form-control"' . (isset($values['required']) !== false ? ' required' : '') . ' name="' . $name . '" id="' . $name . '" placeholder="' . $values['name'] . '" value="' . $values['value'] . '" />
+														</div>';
 
 
+													} elseif ($values['type'] == 'check') {
 
-								} elseif ($values['type'] == 'input') {
+														$rightSection = '
+														<div class="col-auto">
+															<div class="form-check form-switch d-flex h-100 align-items-center">
+																<input class="form-check-input px-4 py-3" type="checkbox"' . ($values['value'] ? ' checked' : '') . ' role="switch" id="' . $name . '" name="' . $name . '">
+															</div>
+														</div>';
 
-									echo '
-									<div class="' . $col . '">
-										<div class="form-floating">
-											<input type="text" class="form-control" required name="' . $name . '" id="' . $name . '" placeholder="' . $text . '">
-											<label for="' . $name . '">' . $text . '</label>
+													}	?>
+													<div class="list-group-item">
+														<div class="row align-items-center">
+															<div class="col">
+																<h3 class="font-weight-base mb-1 fw-bold h6">
+																	<?php 
+																	echo $values['name'] . (
+																		isset($values['required']
+																	) !== false ? ' <sup class="text-danger">*</sup>' : '')
+																	?>
+																</h3>
+																<?php
+																if (isset($values['info']) !== false) {
+																	?>
+																	<small class="text-muted">
+																		<?php echo $values['info']; ?>
+																	</small>
+																	<?php
+																}	?>
+															</div>
+															<?php echo $rightSection; ?>
+														</div>
+													</div>
+												<?php
+												}
+											}	?>
 										</div>
-									</div>';
-
-
-								} elseif ($values['type'] == 'check') {
-
-									echo '
-									<div class="' . $col . '">
-										<div class="form-check form-switch d-flex h-100 align-items-center">
-											<input class="form-check-input" type="checkbox" role="switch" id="'.$name.'">
-											<label class="form-check-label ms-2" for="'.$name.'"> ' . $text . '</label>
-										</div>
-									</div>';
-
-								}
-
+									</div>
+								</div>
+								<?php
+								echo $hiddenInputs;
 							}	?>
+							<div class="col-12 d-flex">
+								<button type="submit" class="btn ms-auto btn-primary mb-5"><?php echo \KN\Helpers\Base::lang('base.update'); ?></button>
+							</div>
 						</form>
 					</div>
 				</div>
