@@ -777,6 +777,12 @@ final class Factory
 
             extract($arguments);
 
+            if (isset($description) === false) {
+                $description = @json_decode(Base::config('settings.description'), true);
+                if (! $description) $description = Base::config('settings.description');
+                else $description = $description[Base::lang('lang.code')];
+            }
+
 
             /**
              * 

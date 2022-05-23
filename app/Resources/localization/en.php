@@ -8,6 +8,7 @@
 return [
     'lang' => [
         'code' => 'en',
+        'iso_code' => 'en_US',
         'dir' => 'ltr',
         'timezone' => 'Europe/London',
         'currency' => 'usd',

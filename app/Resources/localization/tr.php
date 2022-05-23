@@ -8,6 +8,7 @@
 return [
     'lang' => [
         'code' => 'tr',
+        'iso_code' => 'tr_TR',
         'dir' => 'ltr',
         'timezone' => 'Europe/Istanbul',
         'currency' => 'try',
