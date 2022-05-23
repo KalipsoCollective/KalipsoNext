@@ -194,6 +194,19 @@ function responseFormatter(response, dom = null) {
 		modal.show();
 	}
 
+	if (response.reload !== undefined) {
+		const timeOut = response.reload_timout !== undefined ? response.reload_timout : 1;
+		setTimeout(() => {
+			if (response.reload === true) {
+				if (window.vanillaPjax) window.vanillaPjax.reload();
+				else window.location.reload();
+			} else {
+				if (window.vanillaPjax) window.vanillaPjax.reload(response.reload);
+				else window.location.href = response.reload;
+			}
+		}, timeOut);
+	}
+
 	if (response.table_reset !== undefined && window[response.table_reset] !== undefined) {
 		window[response.table_reset].reset();
 	}

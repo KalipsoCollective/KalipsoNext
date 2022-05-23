@@ -1521,7 +1521,8 @@ final class AdminController extends Controller {
 				'status' => 'success',
 				'message' => Base::lang('base.settings_updated')
 			];
-			$arguments['reload'] = Base::base('management/users');
+			$arguments['reload'] = true;
+			$arguments['reload_timout'] = 2000;
 
 		} else {
 

@@ -8,7 +8,7 @@
 						<p><?php echo $description; ?></p>
 					</div>
 					<div class="col-12">
-						<form class="row g-2" data-kn-form id="settingsUpdate" method="post" action="<?php echo $this->url('management/settings/update'); ?>">
+						<form class="row g-2 mb-4" data-kn-form id="settingsUpdate" method="post" action="<?php echo $this->url('management/settings/update'); ?>">
 							<div class="form-loader">
 								<div class="spinner-border text-light" role="status">
 									<span class="visually-hidden"><?php echo \KN\Helpers\Base::lang('base.loading'); ?></span>
@@ -105,7 +105,7 @@
 								echo $hiddenInputs;
 							}	?>
 							<div class="col-12 d-flex">
-								<button type="submit" class="btn ms-auto btn-primary mb-5"><?php echo \KN\Helpers\Base::lang('base.update'); ?></button>
+								<button type="submit" class="btn ms-auto btn-primary"><?php echo \KN\Helpers\Base::lang('base.update'); ?></button>
 							</div>
 						</form>
 					</div>
