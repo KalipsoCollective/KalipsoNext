@@ -30,6 +30,7 @@ final class Factory
     public $auth = false;
     public $response;
     public $routes = [];
+    public $excludedRoutes = [];
     public $endpoints = [];
     public $endpoint;
     public $lang = '';
@@ -57,7 +58,7 @@ final class Factory
         /**
          * Assign default language 
          **/
-        $this->lang = Base::config('app.default_language');
+        $this->lang = Base::config('settings.language');
 
         /**
          * 
@@ -193,6 +194,8 @@ final class Factory
             throw new \Exception("Language file is not found!");
         }
 
+        date_default_timezone_set(Base::lang('lang.timezone'));
+
         /**
          *  Auth check 
          **/
@@ -311,11 +314,24 @@ final class Factory
 
 
     /**
+     * Exclude while in maintenance
+     * @param array routes            routes to exclude while in maintenance.
+     * @return this
+     **/
+    public function excludeWhileInMaintenance($routes = []) {
+
+        $this->excludedRoutes = $routes;
+
+        return $this;
+
+    }
+
+
+    /**
      * 
      * App starter
      * @return this
      **/
-
     public function run() {
 
         $blockList = file_exists($file = Base::path('app/Storage/security/ip_blacklist.json')) ? json_decode(file_get_contents($file), true) : [];
@@ -435,6 +451,20 @@ final class Factory
             $this->response();
 
         } else {
+
+            // Maintenance Mode
+            if (Base::config('settings.maintenance_mode') AND (! $this->authority('/management') AND ! in_array($this->endpoint, $this->excludedRoutes))) {
+
+                $this->response->statusCode = 503;
+                $this->response->title = Base::lang('err');
+                $this->response->arguments = [
+                    'error' => '503',
+                    'output' => Base::config('settings.maintenance_mode_desc')
+                ];
+
+                $this->response();
+                return $this;
+            }
 
             if (isset($route[$this->request->method]) !== false) {
 
@@ -609,6 +639,9 @@ final class Factory
     public function response() {
 
         Base::http($this->response->statusCode);
+        if ($this->response->statusCode === 503) {
+            Base::http('retry_after');
+        }
         $next = true;
 
         if ($this->response->statusCode === 200) {

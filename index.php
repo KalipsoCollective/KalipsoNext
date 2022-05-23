@@ -73,6 +73,10 @@ try {
     $app->route('GET,POST', '/sandbox', 'AppController@sandbox');
     $app->route('GET,POST', '/sandbox/:action', 'AppController@sandbox');
 
+    $app->excludeWhileInMaintenance([
+        'auth/login'
+    ]);
+
     $app->run();
 
 } catch (Exception $e) {

@@ -354,7 +354,8 @@ class Base {
             403 => 'Forbidden',
             404 => 'Not Found',
             405 => 'Method Not Allowed',
-            500 => 'Internal Server Error'
+            500 => 'Internal Server Error',
+            503 => 'Service Unavailable'
         ];
 
         if (is_numeric($code) AND isset($httpCodes[(int)$code]) !== false) {
@@ -367,6 +368,10 @@ class Base {
 
                 case 'powered_by':
                     header('X-Powered-By: KalipsoNext/v' . KN_VERSION);
+                    break;
+
+                case 'retry_after':
+                    header('Retry-After: ' . (isset($parameters['second']) !== false ? $parameters['second'] : 5));
                     break;
 
                 case 'location':

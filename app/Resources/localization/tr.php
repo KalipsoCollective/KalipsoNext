@@ -9,6 +9,8 @@ return [
     'lang' => [
         'code' => 'tr',
         'dir' => 'ltr',
+        'timezone' => 'Europe/Istanbul',
+        'currency' => 'try',
     ],
     'langs' => [
         'tr' => 'Türkçe',
@@ -281,6 +283,8 @@ return [
         'smtp' => 'SMTP',
         'settings_not_updated' => 'Ayarlar güncellenemedi!',
         'settings_updated' => 'Ayarlar güncellendi.',
+        'maintenance_mode' => 'Bakım Modu',
+        'maintenance_mode_desc' => 'Maalesef bakımda olduğumuz için şu an hizmet veremiyoruz, daha sonra tekrar deneyebilirsiniz.',
     ],
     'app' => [
         

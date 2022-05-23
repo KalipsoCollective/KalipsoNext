@@ -9,6 +9,8 @@ return [
     'lang' => [
         'code' => 'en',
         'dir' => 'ltr',
+        'timezone' => 'Europe/London',
+        'currency' => 'usd',
     ],
     'langs' => [
         'tr' => 'Turkish',
@@ -281,6 +283,8 @@ return [
         'smtp' => 'SMTP',
         'settings_not_updated' => 'Failed to update settings!',
         'settings_updated' => 'Settings updated.',
+        'maintenance_mode' => 'Maintenance Mode',
+        'maintenance_mode_desc' => 'Unfortunately, we are currently under maintenance, so we are unable to provide service, you can try again later.',
     ],
     'app' => [
         

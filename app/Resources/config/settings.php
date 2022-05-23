@@ -10,7 +10,7 @@ return [
 	'ssl' => false,
 	'log' => true,
 	'maintenance_mode' => false,
-	'maintenance_mode_desc' => '',
+	'maintenance_mode_desc' => 'Dont log in.',
 	'mail_send_type' => 'server',
 	'smtp_address' => 'smtp.yandex.com.tr',
 	'smtp_port' => 587,
@@ -21,6 +21,6 @@ return [
 	'view_cache' => true,
 	'db_cache' => true,
 	'route_cache' => true,
-	'last_updated_at' => 1653314452,
+	'last_updated_at' => 1653335289,
 	'last_updated_by' => 1,
 ];
