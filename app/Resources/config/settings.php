@@ -19,8 +19,8 @@ return [
 	'smtp_secure' => 'tls',
 	'mail_queue' => true,
 	'view_cache' => false,
-	'db_cache' => false,
+	'db_cache' => true,
 	'route_cache' => false,
-	'last_updated_at' => 1653376861,
+	'last_updated_at' => 1653384627,
 	'last_updated_by' => 1,
 ];
