@@ -447,20 +447,22 @@ final class UserController extends Controller {
 
     public function logout() {
 
+        
         $deleteSession = (new Sessions)
             ->where('auth_code', Base::authCode())
             ->delete();
 
         if ($deleteSession !== false AND $deleteSession !== null) {
 
-            Base::clearSession();
+            // Base::clearSession();
             return [
                 'status' => true,
                 'alerts' => [[
                     'status' => 'success',
                     'message' => Base::lang('base.signed_out'),
                 ]],
-                'redirect' => '/'
+                'redirect' => '/',
+                'view' => null
             ];
 
         } else {
