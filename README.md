@@ -11,6 +11,13 @@ A basic php framework/boilerplate. You can quickly build your applications on it
 ## Documentation
 This documentation has been created to give you a quick start.
 
+### Installation
+- `composer install`
+- Visit http://localhost/sandbox
+- Prepare DB
+- Seed DB
+- Start Development
+
 ### Tricks
 
 #### Server Configurations (Apache .htaccess)
