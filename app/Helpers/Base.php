@@ -125,7 +125,7 @@ class Base {
 
         }
         
-        return $return;
+        return is_string($return) ? html_entity_decode($return) : $return;
 
     }
 
@@ -234,7 +234,7 @@ class Base {
                             break;
 
                         case 'nulled_text': 
-                            $_value[$key] = trim(strip_tags((string)$value)) == '' ? null : trim(strip_tags((string)$value)); 
+                            $_value[$key] = trim(strip_tags((string)$value)) == '' ? null : htmlentities(strip_tags(trim((string)$value)), ENT_QUOTES); 
                             break;
 
                         case 'slug': 
@@ -242,7 +242,7 @@ class Base {
                             break;
 
                         default: 
-                            $_value[$key] = trim(strip_tags((string)$value));
+                            $_value[$key] = htmlentities(trim(strip_tags((string)$value)), ENT_QUOTES);
 
                     }
                 }
@@ -303,7 +303,7 @@ class Base {
                     break;
 
                 case 'nulled_text': 
-                    $data = empty($data) ? null : strip_tags(trim((string)$data)); 
+                    $data = empty($data) ? null : htmlentities(strip_tags(trim((string)$data)), ENT_QUOTES); 
                     break;
 
                 case 'nulled_email': 
@@ -316,7 +316,7 @@ class Base {
                     break;
 
                 default: 
-                    $data = strip_tags(trim((string)$data));
+                    $data = htmlentities(trim(strip_tags((string)$data)), ENT_QUOTES);
             }
 
             if (strpos($parameter, 'nulled') !== false AND $data == '') {
@@ -773,7 +773,7 @@ class Base {
         if ($bytes >= 1073741824) $bytes = number_format($bytes / 1073741824, 2) . ' GB';
         elseif ($bytes >= 1048576) $bytes = number_format($bytes / 1048576, 2) . ' MB';
         elseif ($bytes >= 1024) $bytes = number_format($bytes / 1024, 2) . ' KB';
-        elseif ($bytes > 1) $bytes = $bytes . ' ' . self::lang('byte') . self::lang('plural_suffix');
+        elseif ($bytes > 1) $bytes = $bytes . ' ' . self::lang('byte') . self::lang('lang.plural_suffix');
         elseif ($bytes == 1) $bytes = $bytes . ' ' . self::lang('byte');
         else $bytes = '0 ' . self::lang('byte');
 

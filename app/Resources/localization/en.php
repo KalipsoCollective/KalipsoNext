@@ -12,6 +12,7 @@ return [
         'dir' => 'ltr',
         'timezone' => 'Europe/London',
         'currency' => 'usd',
+        'plural_suffix' => 's',
     ],
     'langs' => [
         'tr' => 'Turkish',

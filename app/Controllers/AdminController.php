@@ -1493,9 +1493,6 @@ final class AdminController extends Controller {
 			if (is_array($$variable)) {
 				$$variable = json_encode($$variable);
 			}
-			if (is_string($$variable)) {
-				$$variable = str_replace(['\''], ["\'"], $$variable);
-			}
 			switch ($type) {
 				case 'check_as_boolean':
 					$settings .= ($$variable ? 'true' : 'false') . ',';

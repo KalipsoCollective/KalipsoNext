@@ -369,66 +369,93 @@ final class Factory
 
         if (is_null($route)) {
 
-            foreach ($this->routes as $path => $details) {
+            $fromCache = false;
+            if (Base::config('settings.route_cache')) {
+                $routeHash = md5(trim($this->request->uri, '/'));
 
-                /**
-                 *
-                 * Catch attributes
-                 **/
-                if (strpos($path, ':') !== false) {
+                if (file_exists($file = Base::path('app/Storage/route_cache/' . $routeHash . '.json'))) {
+                    $routeCache = json_decode(file_get_contents($file), true);
+                    $this->request->attributes = $routeCache['attributes'];
+                    $this->endpoint = $routeCache['endpoint'];
+                    $route = $routeCache['details'];
+                    $fromCache = true;
+                    $notFound = false;
+                }
+            }
 
-                    $explodedPath = trim($path, '/'); 
-                    $explodedRequest = trim($this->request->uri, '/');
-
-                    $explodedPath = strpos($explodedPath, '/') !== false ? 
-                        explode('/', $explodedPath) : [$explodedPath];
-
-                    $explodedRequest = strpos($explodedRequest, '/') !== false ? 
-                        explode('/', $explodedRequest) : [$explodedRequest];
-
+            if (! $fromCache) {
+                foreach ($this->routes as $path => $details) {
 
                     /**
-                     * when the format equal 
+                     *
+                     * Catch attributes
                      **/
-                    if (($totalPath = count($explodedPath)) === count($explodedRequest)) {
+                    if (strpos($path, ':') !== false) {
 
-                        preg_match_all(
-                            '@(:([a-zA-Z0-9_-]+))@m', 
-                            $path, 
-                            $expMatches, 
-                            PREG_SET_ORDER, 
-                            0
-                        );
+                        $explodedPath = trim($path, '/'); 
+                        $explodedRequest = trim($this->request->uri, '/');
 
-                        $expMatches = array_map( function($v) {
-                            return $v[0];
-                        }, $expMatches);
-                        $total = count($explodedPath);
-                        foreach ($explodedPath as $pathIndex => $pathBody) {
+                        $explodedPath = strpos($explodedPath, '/') !== false ? 
+                            explode('/', $explodedPath) : [$explodedPath];
 
-                            if ($pathBody == $explodedRequest[$pathIndex] || in_array($pathBody, $expMatches) !== false) { // direct directory check
+                        $explodedRequest = strpos($explodedRequest, '/') !== false ? 
+                            explode('/', $explodedRequest) : [$explodedRequest];
 
-                                if (in_array($pathBody, $expMatches) !== false) {
-                                    // extract as attribute
-                                    $this->request->attributes[ltrim($pathBody, ':')] = Base::filter($explodedRequest[$pathIndex]);
+
+                        /**
+                         * when the format equal 
+                         **/
+                        if (($totalPath = count($explodedPath)) === count($explodedRequest)) {
+
+                            preg_match_all(
+                                '@(:([a-zA-Z0-9_-]+))@m', 
+                                $path, 
+                                $expMatches, 
+                                PREG_SET_ORDER, 
+                                0
+                            );
+
+                            $expMatches = array_map( function($v) {
+                                return $v[0];
+                            }, $expMatches);
+                            $total = count($explodedPath);
+                            foreach ($explodedPath as $pathIndex => $pathBody) {
+
+                                if ($pathBody == $explodedRequest[$pathIndex] || in_array($pathBody, $expMatches) !== false) { // direct directory check
+
+                                    if (in_array($pathBody, $expMatches) !== false) {
+                                        // extract as attribute
+                                        $this->request->attributes[ltrim($pathBody, ':')] = Base::filter($explodedRequest[$pathIndex]);
+                                    }
+
+                                    if ($totalPath === ($pathIndex + 1)) {
+                                        $route = $details;
+                                        $routePath = $path;
+                                        $notFound = false;
+                                    }
+                                    
+                                } else {
+                                    break;
                                 }
+                            }
 
-                                if ($totalPath === ($pathIndex + 1)) {
-                                    $route = $details;
-                                    $routePath = $path;
-                                    $notFound = false;
-                                }
-                                
-                            } else {
-                                break;
+                            if (isset($routePath) !== false) {
+
+                                $this->endpoint = trim($routePath, '/');
                             }
                         }
-
-                        if (isset($routePath) !== false) {
-
-                            $this->endpoint = trim($routePath, '/');
-                        }
                     }
+                }
+                if (Base::config('settings.route_cache')) {
+
+                    if (! is_dir($dir = Base::path('app/Storage/route_cache')))
+                        mkdir($dir);
+
+                    $cacheContent['attributes'] = $this->request->attributes;
+                    $cacheContent['endpoint'] = $this->endpoint;
+                    $cacheContent['details'] = $route;
+
+                    file_put_contents($file, json_encode($cacheContent));
                 }
             }
 

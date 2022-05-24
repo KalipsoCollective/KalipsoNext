@@ -12,6 +12,7 @@ return [
         'dir' => 'ltr',
         'timezone' => 'Europe/Istanbul',
         'currency' => 'try',
+        'plural_suffix' => '',
     ],
     'langs' => [
         'tr' => 'Türkçe',
