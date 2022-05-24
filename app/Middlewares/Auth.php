@@ -11,13 +11,19 @@ namespace KN\Middlewares;
 
 use KN\Helpers\Base;
 use KN\Core\Middleware;
+use KN\Core\Auth as CoreAuth;
 use KN\Model\Users;
 
 final class Auth extends Middleware {
 
     public function with() {
 
-        if ($this->get('auth')) {
+        $authenticated = false;
+        if ($this->get()->authority($this->get('endpoint'))) {
+            $authenticated = true;
+        }
+
+        if ($this->get('auth') AND $authenticated) {
             return [
                 'status' => true,
                 'next'   => true

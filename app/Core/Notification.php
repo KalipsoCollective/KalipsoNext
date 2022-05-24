@@ -57,83 +57,6 @@ class Notification {
             return $this->types[$type]($this, $data);
 
         }
-        /*
-        switch ($type) {
-
-            case 'recovery_request':
-
-                $title = KN::lang('noti_email_recovery_request_title');
-                $name = (empty($data['f_name']) ? $data['u_name'] : $data['f_name']);
-                $link = '<a href="' . KN::base('account/recovery?token=' . $data['token']) . '">
-                    ' . KN::lang('recovery_account') . '
-                </a>';
-                $body = str_replace(
-                    ['[USER]', '[RECOVERY_LINK]'], 
-                    [$name, $link], 
-                    KN::lang('noti_email_recovery_request_body')
-                );
-
-                return $this->emailLogger([
-                    'title' => $title,
-                    'body' => $body,
-                    'recipient' => $data['u_name'],
-                    'recipient_email' => $data['email'],
-                    'recipient_id' => $data['id'],
-                    'token' => $data['token']
-                ]);
-                break;
-
-            case 'recovery_account':
-
-                $title = KN::lang('noti_email_recovery_account_title');
-                $name = (empty($data['f_name']) ? $data['u_name'] : $data['f_name']);
-                $body = str_replace(
-                    ['[USER]'], 
-                    [$name], 
-                    KN::lang('noti_email_recovery_account_body')
-                );
-
-                $this->emailLogger([
-                    'title' => $title,
-                    'body' => $body,
-                    'recipient' => $data['u_name'],
-                    'recipient_email' => $data['email'],
-                    'recipient_id' => $data['id'],
-                    'token' => $data['token']
-                ]);
-                    
-                return (new DB())->table('notifications')
-                    ->insert([
-                        'user_id'       => $data['id'],
-                        'type'          => $type,
-                        'created_at'    => time()
-                    ]);
-                break;
-
-            case 'email_change':
-
-                $title = KN::lang('noti_email_change_title');
-                $name = (empty($data['f_name']) ? $data['u_name'] : $data['f_name']);
-                $link = '<a href="' . KN::base('account/?verify-account=' . $data['token']) . '">
-                    ' . KN::lang('verify_email') . '
-                </a>';
-                $body = str_replace(
-                    ['[USER]', '[VERIFY_LINK]'], 
-                    [$name, $link], 
-                    KN::lang('noti_email_change_body')
-                );
-
-                $this->emailLogger([
-                    'title' => $title,
-                    'body' => $body,
-                    'recipient' => $data['u_name'],
-                    'recipient_email' => $data['email'],
-                    'recipient_id' => $data['id'],
-                    'token' => $data['token']
-                ]);
-                break;
-        }
-        */
         
     }
 
@@ -268,6 +191,68 @@ class Notification {
 
         return $return;
 
+    }
+
+
+    /**
+     * It sends the emails waiting in the queue based on the limit.
+     * @param int $limit        shooting lmit
+     * @return array $return    report
+     */
+    public function mailQueue(int $limit = 10) {
+
+        $return = [];
+        $model = new EmailModel;
+        $queue = $model->select('id, date, email, name, title, file, status')
+            ->where('status', 'pending')
+            ->orderBy('id', 'desc')
+            ->limit($limit)
+            ->getAll();
+
+        if (! empty($queue)) {
+
+            foreach ($queue as $mail) {
+
+                $move = false;
+
+                $file = Base::path('app/Storage/email/' . $mail->status . '/' . $mail->file);
+                if ($mail->date > strtotime('-3 days') AND file_exists($file)) {
+
+                    $content = file_get_contents($file);
+                    $send = $this->sendEmail($mail->email, $mail->name, $content, $mail->title);
+                    if ($send) {
+                        $move = 'completed';
+                    } else {
+                        $move = 'uncompleted';
+                    }
+
+                } else {
+                    $move = 'uncompleted';
+                }
+
+                $return[$mail->id] = '';
+
+                if ($move) {
+                    if (file_exists($file)) {
+
+                        if (! is_dir($newDir = Base::path('app/Storage/email/' . $move)))
+                            mkdir($newDir);
+
+                        if (rename($file, $newDir . '/' . $mail->file)) {
+                            $return[$mail->id] .= 'Moved to: ' . $move . '/' . $mail->file . PHP_EOL;
+                        }
+                    }
+
+                    if ($model->where('id', $mail->id)->update(['status' => $move])) {
+                        $return[$mail->id] .= 'Updated as: ' . $move;
+                    }
+
+                }
+
+            }
+        }
+
+        return $return;
     }
 
 }

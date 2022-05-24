@@ -11,9 +11,6 @@ namespace KN\Core;
 
 use KN\Helpers\Base;
 use KN\Core\Log;
-use KN\Model\Users;
-use KN\Model\UserRoles;
-use KN\Model\Sessions;
 
 final class Factory 
 {
@@ -33,6 +30,9 @@ final class Factory
     public $auth = false;
     public $response;
     public $routes = [];
+    public $excludedRoutes = [];
+    public $endpoints = [];
+    public $endpoint;
     public $lang = '';
     public $log = true;
     public $action;
@@ -58,7 +58,7 @@ final class Factory
         /**
          * Assign default language 
          **/
-        $this->lang = Base::config('app.default_language');
+        $this->lang = Base::config('settings.language');
 
         /**
          * 
@@ -90,13 +90,13 @@ final class Factory
         $this->response = (object)[
             'statusCode'    => 200,
             'status'        => true,
-            'data'          => [],
             'alerts'        => [],
             'redirect'      => [], // link, second, http status code
-            'view'          => [] // view parameters -> [0] = page, [1] = layout
+            'view'          => [] // as array: view parameters -> [0] = page, [1] = layout, as string: view_file, as json: null
         ];
         $this->request = (object)[];
         $this->request->params = [];
+        $this->request->files = [];
 
         $url = parse_url($_SERVER['REQUEST_URI']);
         $this->request->uri = '/' . trim(
@@ -131,6 +131,31 @@ final class Factory
             foreach ($_POST as $key => $value) {
                 $this->request->params[$key] = Base::filter($value);
             }
+        }
+
+        /**
+         * Clean FILES parameters
+         **/ 
+
+        if (isset($_FILES) !== false AND count($_FILES)) {
+            $files = [];
+            foreach ($_FILES as $name => $data) {
+
+                if (is_array($data['name'])) { // multiple upload
+                    $files[$name] = [];
+                    foreach ($data as $k => $l) {
+                        foreach ($l as $i => $v) {
+                            if (!array_key_exists($i, $files[$name]))
+                                $files[$name][$i] = [];
+                            $files[$name][$i][$k] = $v;
+                        }
+                    }
+                } else { // single upload
+                    $files[$name][] = $data;
+                }
+            }
+
+            $this->request->files = $files;
         }
 
         /**
@@ -169,10 +194,24 @@ final class Factory
             throw new \Exception("Language file is not found!");
         }
 
+        date_default_timezone_set(Base::lang('lang.timezone'));
+
         /**
          *  Auth check 
          **/
         $this->authCheck();
+
+
+        /**
+         * Routes 
+         **/
+        if (file_exists($endpoints = Base::path('app/Resources/endpoints.php'))) {
+
+            $this->endpoints = require $endpoints;
+            
+        } else {
+            throw new \Exception(Base::lang('error.endpoint_file_is_not_found'));
+        }
 
     }
 
@@ -275,20 +314,53 @@ final class Factory
 
 
     /**
+     * Exclude while in maintenance
+     * @param array routes            routes to exclude while in maintenance.
+     * @return this
+     **/
+    public function excludeWhileInMaintenance($routes = []) {
+
+        $this->excludedRoutes = $routes;
+
+        return $this;
+
+    }
+
+
+    /**
      * 
      * App starter
      * @return this
      **/
-
     public function run() {
 
+        // IP Block
+        $blockList = file_exists($file = Base::path('app/Storage/security/ip_blacklist.json')) ? json_decode(file_get_contents($file), true) : [];
+        if (isset($blockList[Base::getIp()]) !== false) {
+
+            $this->response->statusCode = 403;
+            $this->response->title = Base::lang('err');
+            $this->response->arguments = [
+                'error' => '403',
+                'output' => Base::lang('error.ip_blocked')
+            ];
+
+            $this->response();
+
+            return $this;
+
+        }
+
         $notFound = true;
+        
         /**
-         *
-         * Method step 
+         * exact expression
          **/
-        $route = isset($this->routes[$this->request->uri]) !== false ?
-            $this->routes[$this->request->uri] : null;
+        $route = null;
+        if (isset($this->routes[$this->request->uri]) !== false) {
+            $route = $this->routes[$this->request->uri];
+            $this->endpoint = trim($this->request->uri, '/');
+        }
 
         
         /**
@@ -297,65 +369,93 @@ final class Factory
 
         if (is_null($route)) {
 
-            foreach ($this->routes as $path => $details) {
+            $fromCache = false;
+            if (Base::config('settings.route_cache')) {
+                $routeHash = md5(trim($this->request->uri, '/'));
 
-                /**
-                 *
-                 * Catch attributes
-                 **/
+                if (file_exists($file = Base::path('app/Storage/route_cache/' . $routeHash . '.json'))) {
+                    $routeCache = json_decode(file_get_contents($file), true);
+                    $this->request->attributes = $routeCache['attributes'];
+                    $this->endpoint = $routeCache['endpoint'];
+                    $route = $routeCache['details'];
+                    $fromCache = true;
+                    $notFound = false;
+                }
+            }
 
-                if (strpos($path, ':') !== false) {
-
-                    $explodedPath = trim($path, '/'); 
-                    $explodedRequest = trim($this->request->uri, '/');
-
-                    $explodedPath = strpos($explodedPath, '/') !== false ? 
-                        explode('/', $explodedPath) : [$explodedPath];
-
-                    $explodedRequest = strpos($explodedRequest, '/') !== false ? 
-                        explode('/', $explodedRequest) : [$explodedRequest];
-
+            if (! $fromCache) {
+                foreach ($this->routes as $path => $details) {
 
                     /**
-                     * when the format equal 
+                     *
+                     * Catch attributes
                      **/
-                    if (count($explodedPath) === count($explodedRequest)) {
+                    if (strpos($path, ':') !== false) {
 
-                        preg_match_all(
-                            '@(:([a-zA-Z0-9_-]+))@m', 
-                            $path, 
-                            $expMatches, 
-                            PREG_SET_ORDER, 
-                            0
-                        );
+                        $explodedPath = trim($path, '/'); 
+                        $explodedRequest = trim($this->request->uri, '/');
 
-                        $expMatches = array_map( function($v) {
-                            return $v[0];
-                        }, $expMatches);
+                        $explodedPath = strpos($explodedPath, '/') !== false ? 
+                            explode('/', $explodedPath) : [$explodedPath];
 
-                        foreach ($explodedPath as $pathIndex => $pathBody) {
+                        $explodedRequest = strpos($explodedRequest, '/') !== false ? 
+                            explode('/', $explodedRequest) : [$explodedRequest];
 
-                            if (in_array($pathBody, $expMatches) !== false) { // slug directory check
 
-                                // extract as attribute
-                                $this->request->attributes[ltrim($pathBody, ':')] = 
-                                    $explodedRequest[$pathIndex];
+                        /**
+                         * when the format equal 
+                         **/
+                        if (($totalPath = count($explodedPath)) === count($explodedRequest)) {
 
-                                $route = $details;
-                                $notFound = false;
+                            preg_match_all(
+                                '@(:([a-zA-Z0-9_-]+))@m', 
+                                $path, 
+                                $expMatches, 
+                                PREG_SET_ORDER, 
+                                0
+                            );
 
-                            } elseif ($pathBody == $explodedRequest[$pathIndex]) { // direct directory check
+                            $expMatches = array_map( function($v) {
+                                return $v[0];
+                            }, $expMatches);
+                            $total = count($explodedPath);
+                            foreach ($explodedPath as $pathIndex => $pathBody) {
 
-                                $route = $details;
-                                $notFound = false;
+                                if ($pathBody == $explodedRequest[$pathIndex] || in_array($pathBody, $expMatches) !== false) { // direct directory check
 
-                            } else { // Undefined
+                                    if (in_array($pathBody, $expMatches) !== false) {
+                                        // extract as attribute
+                                        $this->request->attributes[ltrim($pathBody, ':')] = Base::filter($explodedRequest[$pathIndex]);
+                                    }
 
-                                break;
+                                    if ($totalPath === ($pathIndex + 1)) {
+                                        $route = $details;
+                                        $routePath = $path;
+                                        $notFound = false;
+                                    }
+                                    
+                                } else {
+                                    break;
+                                }
+                            }
 
+                            if (isset($routePath) !== false) {
+
+                                $this->endpoint = trim($routePath, '/');
                             }
                         }
                     }
+                }
+                if (Base::config('settings.route_cache')) {
+
+                    if (! is_dir($dir = Base::path('app/Storage/route_cache')))
+                        mkdir($dir);
+
+                    $cacheContent['attributes'] = $this->request->attributes;
+                    $cacheContent['endpoint'] = $this->endpoint;
+                    $cacheContent['details'] = $route;
+
+                    file_put_contents($file, json_encode($cacheContent));
                 }
             }
 
@@ -380,6 +480,21 @@ final class Factory
 
         } else {
 
+            // Maintenance Mode
+            if (Base::config('settings.maintenance_mode') AND (! $this->authority('/management') AND ! in_array($this->endpoint, $this->excludedRoutes))) {
+
+                $desc = Base::config('settings.maintenance_mode_desc');
+                $this->response->statusCode = 503;
+                $this->response->title = Base::lang('err');
+                $this->response->arguments = [
+                    'error' => '503',
+                    'output' => $desc ? json_decode($desc, true) : $desc
+                ];
+
+                $this->response();
+                return $this;
+            }
+
             if (isset($route[$this->request->method]) !== false) {
 
                 $route = $route[$this->request->method];
@@ -395,6 +510,7 @@ final class Factory
 
                     foreach ($route['middlewares'] as $middleware) {
 
+                        // for log
                         $this->action->middleware[] = $middleware;
 
                         $middleware = explode('@', $middleware, 2);
@@ -491,6 +607,12 @@ final class Factory
                             $this->response->arguments = $controller['arguments'];
 
                         /**
+                         * Output 
+                         **/
+                        if (isset($controller['output']) !== false)
+                            $this->response->output = $controller['output'];
+
+                        /**
                          * Log 
                          **/
                         if (isset($controller['log']) !== false)
@@ -507,7 +629,7 @@ final class Factory
                          **/
                         $this->response->status = $controller['status'];
 
-                        if (isset($controller['view']) !== false)
+                        if (isset($controller['view']) !== false OR is_null($controller['view']))
                             $this->response->view = $controller['view'];
 
                     } else {
@@ -546,6 +668,9 @@ final class Factory
     public function response() {
 
         Base::http($this->response->statusCode);
+        if ($this->response->statusCode === 503) {
+            Base::http('retry_after');
+        }
         $next = true;
 
         if ($this->response->statusCode === 200) {
@@ -575,6 +700,9 @@ final class Factory
                 } elseif (is_array($this->response->view) AND count($this->response->view) === 2) {
                     $viewFile = $this->response->view[0];
                     $viewLayout = $this->response->view[1];
+                } elseif (is_null($this->response->view)) {
+                    $viewFile = null;
+                    $viewLayout = null;
                 } else {
                     throw new \Exception(Base::lang('error.view_definition_not_found'));
                 }
@@ -587,6 +715,7 @@ final class Factory
             }
 
         } else {
+
 
             if (! empty($this->response->redirect)) {
 
@@ -614,7 +743,11 @@ final class Factory
             }
         }
         
-        if ($this->log AND Base::config('settings.log')) {
+        if ($this->log AND 
+            (Base::config('settings.log') OR 
+                (!Base::config('settings.log') AND $this->response->statusCode !== 200)
+            )
+        ) {
 
             $this->action->middleware = implode(',', $this->action->middleware);
 
@@ -633,13 +766,13 @@ final class Factory
     /**
      *
      * View Page 
-     * @param string  file          view file name
+     * @param string|null  file          view file name
      * @param array   arguments     needed view variables 
      * @param string  layout        page structure indicator
      * @return this
      **/
 
-    public function view($file, $arguments = [], $layout = 'app') {
+    public function view($file = null, $arguments = [], $layout = 'app') {
 
 
         /**
@@ -649,39 +782,84 @@ final class Factory
 
         Base::http($this->response->statusCode);
 
+        if (is_null($file)) {
 
-        /**
-         * 
-         * Arguments are extracted and the title is defined.
-         **/
+            /**
+             * for API or Fetch/XHR output 
+             **/
 
-        $arguments['title'] = isset($arguments['title']) !== false ? 
-            str_replace(
-                ['[TITLE]', '[APP]'], 
-                [$arguments['title'], 
-                Base::config('settings.name')], Base::config('app.title_format')) 
-                : Base::config('settings.name');
+            if (isset($arguments['alerts']) === false AND count($this->response->alerts)) {
+                $arguments['alerts'] = Base::sessionStoredAlert($this->response->alerts);
+            }
+            Base::http('content_type', ['content' => 'json', 'write' => json_encode($arguments)]);
 
-        extract($arguments);
+        } else {
+
+            /**
+             * 
+             * Arguments are extracted and the title is defined.
+             **/
+            $view = true;
+            // View Cache Get
+            if (Base::config('settings.view_cache')) {
+
+                $cacheHash = md5($file.json_encode($arguments).$layout);
+                if (file_exists($cacheFile = Base::path('app/Storage/view_cache/' . $cacheHash . '.html')) AND 
+                    strtotime(date('Y-m-d H:i:s +10 minutes', filemtime($cacheFile))) < time()
+                ) {
+                    $view = false;
+                    echo file_get_contents($cacheFile);
+                }
+            }
+
+            if ($view) {
+
+                $arguments['title'] = isset($arguments['title']) !== false ? 
+                    str_replace(
+                        ['[TITLE]', '[APP]'], 
+                        [$arguments['title'], 
+                        Base::config('settings.name')], Base::config('app.title_format')) 
+                        : Base::config('settings.name');
+
+                extract($arguments);
+
+                if (isset($description) === false) {
+                    $description = @json_decode(Base::config('settings.description'), true);
+                    if (! $description) $description = Base::config('settings.description');
+                    else $description = $description[Base::lang('lang.code')];
+                }
 
 
-        /**
-         * 
-         * Prepare the page structure according to the format.
-         **/
+                /**
+                 * 
+                 * Prepare the page structure according to the format.
+                 **/
 
-        $layoutVars = Base::path('app/Resources/view/_layouts/_' . $layout . '.php');
-        $layout = file_exists($layoutVars) ? (require $layoutVars) : ['_'];
+                $layoutVars = Base::path('app/Resources/view/_layouts/_' . $layout . '.php');
+                $layout = file_exists($layoutVars) ? (require $layoutVars) : ['_'];
 
-        foreach ($layout as $part) {
+                foreach ($layout as $part) {
 
-            if ($part === '_')
-                $part = strpos($file, '.') !== false ? str_replace('.', '/', $file) : $file;
-            else
-                $part = '_parts/' . $part;
+                    if ($part === '_')
+                        $part = strpos($file, '.') !== false ? str_replace('.', '/', $file) : $file;
+                    else
+                        $part = '_parts/' . $part;
 
-            if (file_exists($req = Base::path('app/Resources/view/' . $part . '.php'))) {
-                require $req;
+                    if (file_exists($req = Base::path('app/Resources/view/' . $part . '.php'))) {
+                        require $req;
+                    }
+
+                }
+
+                // View Cache Set
+                if (Base::config('settings.view_cache')) {
+
+                    if (! is_dir($dir = Base::path('app/Storage/view_cache')))
+                        mkdir($dir);
+
+                    file_put_contents($cacheFile, ob_get_contents());
+
+                }
             }
 
         }
@@ -696,64 +874,17 @@ final class Factory
      **/
     public function authCheck() {
 
-        $authCode = Base::authCode();
-        $dbSession = (new Sessions)->select('id, user_id, update_session')->where('auth_code', $authCode)->get();
-        $session = Base::getSession('user');
+        $authCheck = (new Auth([
+            'response' => $this->response,
+            'request' => $this->request
+        ]))->check();
 
-        if (! empty($dbSession)) {
+        $this->auth = $authCheck['auth'];
+        if ($authCheck['redirect'])
+            $this->response->redirect = $authCheck['redirect'];
 
-            /**
-             * Sync updated data
-             **/
-            if (empty($session) OR $dbSession->update_session === 'true') {
-
-                $users = (new Users());
-                $getUser = $users->select('id, u_name, f_name, l_name, email, password, token, role_id, b_date, status')
-                    ->where('id', $dbSession->user_id)
-                    ->get();
-
-                $userRoles = new UserRoles();
-                $getUserRole = $userRoles->select('view_points, action_points, name')->where('id', $getUser->role_id)->get();
-
-                $getUser->role_name = $getUserRole->name;
-                $getUser->view_points = (object) explode(',', $getUserRole->view_points);
-                $getUser->action_points = (object) explode(',', $getUserRole->action_points);
-
-                $getUser = Base::privateDataCleaner($getUser);
-
-                Base::setSession($getUser, 'user');
-                $this->response->alerts[] = [
-                    'status' => 'success',
-                    'message' => Base::lang('base.login_information_updated'),
-                ];
-                $this->response->redirect = [$this->request->uri, 0];
-            }
-
-            /**
-             * Update check point 
-             **/
-            (new Sessions)->where('auth_code', $authCode)
-                ->update([
-                    'header' => Base::getHeader(),
-                    'ip' => Base::getIp(),
-                    'last_action_date' => time(),
-                    'update_session' => 'false',
-                    'last_action_point' => $this->request->uri
-                ]);
-
-            $this->auth = true;
-
-        } else {
-
-            /**
-             * Clear non-functional session data
-             **/
-            if (! empty($session)) {
-                Base::clearSession();
-            }
-
-            $this->auth = false;
-        }
+        if ($authCheck['alerts'])
+            $this->response->alerts[] = $authCheck['alerts'];
 
         return $this;
     }
@@ -787,5 +918,26 @@ final class Factory
             $return = ' ' . trim($class);
         }
         return $return;
+    }
+
+
+    /**
+     * Authority check for a endpoint
+     * @param string $endpoint  
+     * @return bool
+     */
+    public function authority($endpoint) {
+
+        $endpoint = trim($endpoint, '/');
+        $routes = Base::userData('routes');
+
+        if (! is_object($routes)) $routes = [];
+        else $routes = (array)$routes;
+
+        if (in_array($endpoint, $routes) !== false) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

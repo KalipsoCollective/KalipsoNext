@@ -30,6 +30,7 @@ class Model extends Pdox {
             'charset'   => Base::config('database.charset'),
             'collation' => Base::config('database.collation'),
             'prefix'    => Base::config('database.prefix'),
+            'cachedir'  => Base::path('app/Storage/db_cache/')
         ]);
 
         $this->table($this->table);
@@ -40,7 +41,7 @@ class Model extends Pdox {
         if ($this->created) {
 
             $data['created_at'] = isset($data['created_at']) === false ? time() : $data['created_at'];
-            $data['created_by'] = isset($data['created_at']) === false ? (Base::userData('id') ?? 0) : $data['created_at'];
+            $data['created_by'] = isset($data['created_by']) === false ? (Base::userData('id') ?? 0) : $data['created_by'];
 
         }
 
@@ -53,7 +54,7 @@ class Model extends Pdox {
         if ($this->updated) {
 
             $data['updated_at'] = isset($data['updated_at']) === false ? time() : $data['updated_at'];
-            $data['updated_by'] = isset($data['updated_at']) === false ? (Base::userData('id') ?? 0) : $data['updated_at'];
+            $data['updated_by'] = isset($data['updated_by']) === false ? (Base::userData('id') ?? 0) : $data['updated_by'];
 
         }
 
@@ -284,11 +285,23 @@ class Model extends Pdox {
             return $this->pdo->exec($sql);
 
         } catch(PDOException $e) {
-
             throw new Exception('DB Seed action is not completed. ' . $e->getMessage());
 
         }
 
+    }
+
+    /**
+     * @param $time
+     *
+     * @return $this
+     */
+    public function cache($time)
+    {
+        if (Base::config('settings.db_cache')) {
+            parent::cache($time);
+        }
+        return $this;
     }
 
 }

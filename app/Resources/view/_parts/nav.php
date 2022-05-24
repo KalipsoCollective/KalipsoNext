@@ -1,8 +1,9 @@
-        <?php echo \KN\Helpers\Base::sessionStoredAlert(); ?>
         <nav class="navbar navbar-expand-xl navbar-dark bg-black fixed-top shadow">
             <div class="container-fluid">
                 <a class="navbar-brand" href="<?php echo $this->url('/'); ?>"><?php echo KN\Helpers\Base::config('app.name'); ?></a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                data-bs-target="#navbarNav" aria-controls="navbarNav" 
+                aria-expanded="false" aria-label="<?php echo KN\Helpers\Base::lang('base.toggle_navigation'); ?>">
                     <span class="menu-btn"><span></span></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
@@ -29,19 +30,32 @@
                                 </a>
                             </li>
                         <?php 
-                        } else { ?>
+                        } else {
+                            if ($this->authority('/management')) {
+                                ?>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="<?php echo $this->url('/management'); ?>">
+                                        <?php echo KN\Helpers\Base::lang('base.management'); ?>
+                                    </a>
+                                </li>
+                            <?php
+                            }   ?>
                             <li class="nav-item">
                                 <a class="nav-link<?php echo $this->currentLink('/auth', 'active', false); ?>" href="<?php echo $this->url('/auth'); ?>">
                                     <?php echo KN\Helpers\Base::lang('base.account'); ?>
                                 </a>
                             </li>
-                            <div class="vr"></div>
-                            <li class="nav-item">
-                                <a class="nav-link" href="<?php echo $this->url('/auth/logout'); ?>">
-                                    <i class="mdi mdi-power"></i> <?php echo KN\Helpers\Base::lang('base.logout'); ?>
-                                </a>
-                            </li>
-                        <?php } ?>
+                            <?php
+                            if ($this->authority('auth/logout')) { ?>
+                                <div class="vr"></div>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="<?php echo $this->url('/auth/logout'); ?>">
+                                        <i class="mdi mdi-power"></i> <?php echo KN\Helpers\Base::lang('base.logout'); ?>
+                                    </a>
+                                </li>
+                        <?php
+                            }
+                        }   ?>
                     </ul>
                 </div>
             </div>

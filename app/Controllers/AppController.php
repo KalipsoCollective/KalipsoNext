@@ -12,6 +12,9 @@ namespace KN\Controllers;
 use KN\Core\Controller;
 use KN\Helpers\Base;
 use KN\Core\Model;
+use KN\Model\EmailLogs;
+use KN\Model\Sessions;
+use KN\Core\Notification;
 
 final class AppController extends Controller {
 
@@ -188,12 +191,48 @@ final class AppController extends Controller {
                     $title = $head . ' | ' . $title;
                     $description = Base::lang('base.db_seed_message');
 
+                    /* Fake User Insert
+                    function randomName() {
+
+                        $data = ["Adam", "Alex", "Aaron", "Ben", "Carl", "Dan", "David", "Edward", "Fred", "Frank", "George", "Hal", "Hank", "Ike", "John", "Jack", "Joe", "Larry", "Monte", "Matthew", "Mark", "Nathan", "Otto", "Paul", "Peter", "Roger", "Roger", "Steve", "Thomas", "Tim", "Ty", "Victor", "Walter"];
+
+                        return $data[array_rand($data)];
+                    }
+                    */
+
                     if (isset($_GET['start']) !== false) {
 
                         $output = '<p class="text-muted">'.Base::lang('base.seeding').'</p>';
+
+                        /* Fake User Insert
+                        for ($i=0; $i < 1000; $i++) { 
+                            
+                            $rand = rand(1, 100000);
+                            $fName = randomName();
+                            $lName = randomName();
+                            $userName = Base::slugGenerator($lName . ' ' . $fName) . '_' . $rand;
+                            $statusses = ['active', 'passive', 'deleted'];
+                            $roles = [0, 1];
+                            $mailExt = ['gmail', 'outlook', 'hotmail', 'yahoo', 'github'];
+
+                            $dbSchema['data']['users'][] = [
+                                'u_name'                => $userName,
+                                'f_name'                => $fName,
+                                'l_name'                => $lName,
+                                'email'                 => $userName.'@'.$mailExt[array_rand($mailExt)].'.com',
+                                'password'              => password_hash($userName, PASSWORD_DEFAULT),
+                                'token'                 => Base::tokenGenerator(80),
+                                'role_id'               => $roles[array_rand($roles)],
+                                'created_at'            => time(),
+                                'created_by'            => $i,
+                                'status'                => $statusses[array_rand($statusses)]
+                            ];
+
+                        }*/
+
                         $init = (new Model)->dbSeed($dbSchema);
 
-                        if ($init === 0) {
+                        if ($init !== false) {
                             $output .= '<p class="text-success">'.Base::lang('base.db_seed_success').'</p>';
                         } else {
                             $output .= '<p class="text-danger">'.str_replace('[ERROR]', $init, Base::lang('base.db_seed_problem')).'</p>';
@@ -387,14 +426,50 @@ final class AppController extends Controller {
         }
 
     }
-    /*
 
-    public function dynamicJS() {
+    public function cronJobs() {
 
-        Base::http('content_type', ['content' => 'js']);
-        require Base::path('app/resources/script.php');
+        $arguments = [];
+
+        // Clear old sessions
+        $timeLimit = strtotime('-30 days');
+        $arguments['sessions'] = (new Sessions())->where('last_action_date', '<', $timeLimit)->delete();
+
+        // Clear old cache files
+        $cacheFolder = glob(Base::path('app/Storage/*'));
+        $timeLimit = strtotime('-10 days');
+        $arguments['cache'] = 'Nothing found.';
+        if (is_array($cacheFolder)) {
+            foreach ($cacheFolder as $folder) {
+                if (is_dir($folder) AND strpos($folder, 'email') === false) {
+                    $folderName = explode('/', $folder);
+                    $folderName = array_pop($folderName);
+                    $cacheFiles = glob($folder . '/*');
+                    if (is_array($cacheFiles)) {
+                        foreach ($cacheFiles as $file) {
+                            if (filemtime($file) < $timeLimit) {
+                                if (unlink($file)) {
+                                    $fileName = explode('/', $file);
+                                    $fileName = array_pop($fileName);
+                                    $arguments['cache'][$folderName][] = $fileName;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Send pending emails
+        $arguments['email'] = (new Notification($this->get()))->mailQueue();
+
+        return [
+            'status' => true,
+            'statusCode' => 200,
+            'arguments' => $arguments,
+            'view' => null
+        ];
 
     }
-    */
 
 }

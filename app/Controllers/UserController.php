@@ -51,13 +51,12 @@ final class UserController extends Controller {
                         if (password_verify($password, $getUser->password)) {
 
                             $userRoles = new UserRoles();
-                            $getUserRole = $userRoles->select('view_points, action_points, name')->where('id', $getUser->role_id)->get();
+                            $getUserRole = $userRoles->select('routes, name')->where('id', $getUser->role_id)->get();
 
                             if (! empty($getUserRole)) {
 
                                 $getUser->role_name = $getUserRole->name;
-                                $getUser->view_points = (object) explode(',', $getUserRole->view_points);
-                                $getUser->action_points = (object) explode(',', $getUserRole->action_points);
+                                $getUser->routes = (object) explode(',', $getUserRole->routes);
 
                             }
                             $getUser = Base::privateDataCleaner($getUser);
@@ -156,14 +155,13 @@ final class UserController extends Controller {
 
         $action = '';
 
-        if (
-            isset($this->get('request')->attributes['action']) !== false AND 
-            in_array($this->get('request')->attributes['action'], array_keys($steps)))
+        if (isset($this->get('request')->attributes['action']) !== false)
             $action = $this->get('request')->attributes['action'];
 
         $title = Base::lang('base.account');
         $output = '';
         $alerts = [];
+        $statusCode = 200;
 
         switch ($action) {
             case 'profile':
@@ -184,26 +182,51 @@ final class UserController extends Controller {
 
                     if (! is_null($email) AND ! is_null($f_name) AND ! is_null($l_name) AND ! is_null($b_date)) {
 
-                        $update = [
-                            'f_name' => $f_name,
-                            'l_name' => $l_name,
-                            'b_date' => $b_date,
-                            'email' => $email
-                        ];
+                        $check = (new Users)->select('id')
+                            ->where('email', $email)
+                            ->notWhere('id', Base::userData('id'))
+                            ->get();
 
-                        if ($password)
-                            $update['password'] = $password;
+                        if (empty($check)) {
 
-                        $update = (new Users)->where('id', $output->id)->update($update);
+                            $newData = [
+                                'f_name' => $f_name,
+                                'l_name' => $l_name,
+                                'b_date' => $b_date
+                            ];
+
+                            if ($password)
+                                $newData['password'] = $password;
+
+                            if (Base::userData('email') !== $email) {
+                                $newData['email'] = $email;
+                                $newData['status'] = 'passive';
+                                $sendLink = true;
+                            }
+
+                            $update = (new Users)->where('id', $output->id)->update($newData);
+
+                        } else 
+                            $update = false;
 
                         if ($update) {
-
                             (new Sessions)->where('user_id', $output->id)->update(['update_session' => 'true']);
                             $alerts[] = [
                                 'status' => 'success',
                                 'message' => Base::lang('base.save_success')
                             ];
                             $redirect = '/auth/profile';
+
+                            if (isset($sendLink)) {
+
+                                $args = (array) Base::getSession('user');
+                                $args['changes'] = '
+                                <span style="color: red;">' . Base::userData('email') . '</span> → 
+                                <span style="color: green;">' . $email . '</span>';
+                                $args = array_merge($args, $newData);
+                                (new Notification($this->get()))->add('email_change', $args);
+
+                            }
 
                         } else {
 
@@ -272,16 +295,26 @@ final class UserController extends Controller {
 
                 break;
 
+            case '':
+                $head = Base::lang('base.account');
+                $description = Base::lang('base.account_message');
+                break;
             
             default:
                 $head = Base::lang('base.account');
                 $description = Base::lang('base.account_message');
+                $alerts[] = [
+                    'status' => 'warning',
+                    'message' => Base::lang('error.page_not_found')
+                ];
+                $redirect = '/auth';
+                $statusCode = 404;
                 break;
         }
 
         $return = [
             'status' => true,
-            'statusCode' => 200,
+            'statusCode' => $statusCode,
             'arguments' => [
                 'title' => $title,
                 'head'  => $head,
@@ -443,6 +476,158 @@ final class UserController extends Controller {
                 'view' => ['error', 'error']
             ];
         }
+
+    }
+
+    public function recovery() {
+
+        $alerts = [];
+        $step = 1;
+
+        if ($this->get('request')->method === 'POST') {
+
+            extract(Base::input([
+                'email' => 'nulled_email',
+                'password' => 'nulled_password',
+                'token' => 'nulled_text',
+            ], $this->get('request')->params));
+
+            if (! is_null($email) AND (is_null($password) AND is_null($token))) { // Step 1: Request 
+
+                $users = (new Users());
+                $getUser = $users->select('id, token, status, f_name, u_name, email')
+                    ->where('email', $email)
+                    ->notWhere('status', 'deleted')
+                    ->get();
+
+                if ( ! empty($getUser) ) {
+
+                    if ($getUser->status === 'active') {
+
+                        $sendLink = (new Notification($this->get()))->add('recovery_request', $getUser);
+                        if ($sendLink) {
+
+                            $alerts[] = [
+                                'status' => 'success',
+                                'message' => Base::lang('base.recovery_request_successful')
+                            ];
+                            $redirect = $this->get()->url('/auth/login');
+
+                        } else {
+
+                            $alerts[] = [
+                                'status' => 'warning',
+                                'message' => Base::lang('base.recovery_request_problem')
+                            ];
+
+                        }
+
+                    } else {
+
+                        $alerts[] = [
+                            'status' => 'warning',
+                            'message' => Base::lang('base.account_not_verified')
+                        ];
+
+                    }
+
+                } else {
+
+                    $alerts[] = [
+                        'status' => 'warning',
+                        'message' => Base::lang('base.account_not_found')
+                    ];
+
+                }
+
+            } elseif (is_null($email) AND (! is_null($password) AND ! is_null($token))) { // Step 3: Reset
+
+                $users = (new Users());
+                $getUser = $users->select('id, token, status, f_name, u_name, email')->where('token', $token)->where('status', 'active')->get();
+                if (! empty($getUser)) {
+
+                    $update = $users->where('id', $getUser->id)
+                        ->update([
+                            'password' => $password,
+                            'token' => Base::tokenGenerator(80)
+                        ]);
+
+                    if ($update) {
+
+                        (new Notification($this->get()))->add('account_recovered', $getUser);
+                        $alerts[] = [
+                            'status' => 'success',
+                            'message' => Base::lang('base.account_recovered')
+                        ];
+                        $redirect = $this->get()->url('/auth/login');
+
+                    } else {
+
+                        $alerts[] = [
+                            'status' => 'warning',
+                            'message' => Base::lang('base.account_not_recovered')
+                        ];
+                    }
+
+                } else {
+
+                    $alerts[] = [
+                        'status' => 'error',
+                        'message' => Base::lang('base.account_not_found')
+                    ];
+                    $redirect = $this->get()->url('/auth/recovery');
+                }
+
+            } else {
+
+                $alerts[] = [
+                    'status' => 'warning',
+                    'message' => Base::lang('base.form_cannot_empty')
+                ];
+
+            }
+            
+        } elseif (isset($this->get('request')->params['token']) !== false) { // Step 2: Verify
+
+            extract(Base::input([
+                'token' => 'nulled_text',
+            ], $this->get('request')->params));
+
+            $users = (new Users());
+            $getUser = $users->select('id')->where('token', $token)->where('status', 'active')->get();
+            if (! empty($getUser)) {
+
+                $step = 2;
+
+            } else {
+
+                $alerts[] = [
+                    'status' => 'error',
+                    'message' => Base::lang('base.account_not_found')
+                ];
+                $redirect = $this->get()->url('/auth/recovery');
+            }
+        }
+
+        $return = [
+            'status' => true,
+            'statusCode' => 200,
+            'arguments' => [
+                'title' => Base::lang('base.recovery_account'),
+                'description' => Base::lang('base.recovery_account_message'),
+                'step' => $step,
+            ],
+            'alerts' => $alerts,
+            'view' => 'user.recovery',
+        ];
+
+        if (isset($redirect))
+            $return['redirect'] = $redirect;
+
+        if (isset($token))
+            $return['arguments']['token'] = $token;
+
+        return $return;
 
     }
 

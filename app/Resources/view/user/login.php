@@ -8,7 +8,7 @@
 							</div>
 							<div class="card-body">
 								<?php echo \KN\Helpers\Base::alert($this->response->alerts); ?>
-								<form method="post" action="<?php echo \KN\Helpers\Base::base('auth/login'); ?>" data-vpjax>
+								<form method="post" action="<?php echo $this->url('auth/login'); ?>" data-vpjax>
 									<?php echo \KN\Helpers\Base::createCSRF(); ?>
 									<div class="form-floating mb-3">
 										<input type="text" name="username" class="form-control" id="username" placeholder="<?php echo \KN\Helpers\Base::lang('base.email_or_username'); ?>" required <?php echo \KN\Helpers\Base::inputValue('username', $this->request->params); ?>>
@@ -21,17 +21,16 @@
 									<div class="d-grid">
 										<button type="submit" class="btn btn-primary">
 											<?php echo \KN\Helpers\Base::lang('base.login'); ?> 
-											<span class="mdi mdi-arrow-right"></span>
 										</button>
 									</div>
 								</form>
 							</div>
 							<div class="card-footer d-flex justify-content-center align-items-center">
-								<a href="<?php echo \KN\Helpers\Base::base('auth/register'); ?>" class="btn btn-outline-primary btn-sm">
+								<a href="<?php echo $this->url('auth/register'); ?>" class="btn btn-outline-primary btn-sm">
 									<?php echo \KN\Helpers\Base::lang('base.register'); ?>
 								</a>
 								<small class="vr mx-2"></small>
-								<a href="<?php echo \KN\Helpers\Base::base('auth/recovery'); ?>" class="btn btn-outline-primary btn-sm">
+								<a href="<?php echo $this->url('auth/recovery'); ?>" class="btn btn-outline-primary btn-sm">
 									<?php echo \KN\Helpers\Base::lang('base.recovery_account'); ?>
 								</a>
 							</div>

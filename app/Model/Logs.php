@@ -12,7 +12,7 @@ namespace KN\Model;
 use KN\Core\Model;
 use KN\Helpers\Base;
 
-final class Log extends Model {
+final class Logs extends Model {
 
     function __construct () {
 

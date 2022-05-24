@@ -3,7 +3,7 @@
 /**
  * Basic constants
  **/
-define('KN_START', microtime(true));
+define('KN_START', microtime(true)); // We use it for the exec. time recorded in the log.
 define('KN_ROOT',  rtrim($_SERVER["DOCUMENT_ROOT"], '/').'/');
 define('KN_VERSION', '1.0.0');
 

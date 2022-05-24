@@ -125,7 +125,7 @@ class Base {
 
         }
         
-        return $return;
+        return is_string($return) ? html_entity_decode($return) : $return;
 
     }
 
@@ -221,11 +221,12 @@ class Base {
                             break;
 
                         case 'password': 
-                            $_value[$key] = password_hash(trim($value), PASSWORD_DEFAULT); 
+
+                            $_value[$key] = password_hash(trim((string)$value), PASSWORD_DEFAULT); 
                             break;
 
                         case 'nulled_password': 
-                            $_value[$key] = trim($value) != '' ? password_hash(trim($value), PASSWORD_DEFAULT) : null;
+                            $_value[$key] = trim((string)$value) != '' ? password_hash(trim((string)$value), PASSWORD_DEFAULT) : null;
                              break;
 
                         case 'date': 
@@ -233,15 +234,15 @@ class Base {
                             break;
 
                         case 'nulled_text': 
-                            $_value[$key] = trim(strip_tags($value)) == '' ? null : trim(strip_tags($value)); 
+                            $_value[$key] = trim(strip_tags((string)$value)) == '' ? null : htmlentities(strip_tags(trim((string)$value)), ENT_QUOTES); 
                             break;
 
                         case 'slug': 
-                            $_value[$key] = trim(strip_tags($value)) == '' ? null : self::slugGenerator(trim(strip_tags($value))); 
+                            $_value[$key] = trim(strip_tags((string)$value)) == '' ? null : self::slugGenerator(trim(strip_tags((string)$value))); 
                             break;
 
                         default: 
-                            $_value[$key] = trim(strip_tags($value));
+                            $_value[$key] = htmlentities(trim(strip_tags((string)$value)), ENT_QUOTES);
 
                     }
                 }
@@ -264,7 +265,7 @@ class Base {
                 case 'nulled_html': 
                     $data = htmlspecialchars(trim($data));
                     $data = $data == '' ? null : $data; 
-                    if ($data AND trim(strip_tags(htmlspecialchars_decode($data))) == '') {
+                    if ($data AND trim(strip_tags(htmlspecialchars_decode((string)$data))) == '') {
                         $data = null;
                     }
                     break;
@@ -282,7 +283,7 @@ class Base {
                     break;
 
                 case 'nulled_int': 
-                    $data  = (integer)$data  == 0 ? null : (integer)$data; 
+                    $data  = (integer)$data == 0 ? null : (integer)$data; 
                     break;
 
                 case 'float': 
@@ -290,11 +291,11 @@ class Base {
                     break;
 
                 case 'password': 
-                    $data = password_hash(trim($data), PASSWORD_DEFAULT); 
+                    $data = password_hash(trim((string)$data), PASSWORD_DEFAULT); 
                     break;
 
                 case 'nulled_password': 
-                    $data = trim($data) != '' ? password_hash(trim($data), PASSWORD_DEFAULT) : null; 
+                    $data = ! empty($data) ? password_hash(trim((string)$data), PASSWORD_DEFAULT) : null; 
                     break;
 
                 case 'date': 
@@ -302,20 +303,20 @@ class Base {
                     break;
 
                 case 'nulled_text': 
-                    $data = strip_tags(trim($data)) == '' ? null : strip_tags(trim($data)); 
+                    $data = empty($data) ? null : htmlentities(strip_tags(trim((string)$data)), ENT_QUOTES); 
                     break;
 
                 case 'nulled_email': 
-                    $data = strip_tags(trim($data)) == '' ? null : strip_tags(trim($data));
+                    $data = empty($data) ? null : strip_tags(trim((string)$data));
                     if ($data) $data = filter_var($data, FILTER_VALIDATE_EMAIL) ? $data : null; 
                     break;
 
                 case 'slug': 
-                    $data = strip_tags(trim($data)) == '' ? null : self::slugGenerator(strip_tags(trim($data))); 
+                    $data = empty($data) ? null : self::slugGenerator(strip_tags(trim((string)$data))); 
                     break;
 
                 default: 
-                    $data = strip_tags(trim($data));
+                    $data = htmlentities(trim(strip_tags((string)$data)), ENT_QUOTES);
             }
 
             if (strpos($parameter, 'nulled') !== false AND $data == '') {
@@ -353,7 +354,8 @@ class Base {
             403 => 'Forbidden',
             404 => 'Not Found',
             405 => 'Method Not Allowed',
-            500 => 'Internal Server Error'
+            500 => 'Internal Server Error',
+            503 => 'Service Unavailable'
         ];
 
         if (is_numeric($code) AND isset($httpCodes[(int)$code]) !== false) {
@@ -366,6 +368,10 @@ class Base {
 
                 case 'powered_by':
                     header('X-Powered-By: KalipsoNext/v' . KN_VERSION);
+                    break;
+
+                case 'retry_after':
+                    header('Retry-After: ' . (isset($parameters['second']) !== false ? $parameters['second'] : 5));
                     break;
 
                 case 'location':
@@ -456,10 +462,15 @@ class Base {
 
     /**
      * Stored User Alert Generator
+     * @param array externalAlerts  external alerts together session stored alerts
      * @return string    
      */
-    public static function sessionStoredAlert() {
+    public static function sessionStoredAlert($externalAlerts = []) {
 
+        $alerts = is_array($externalAlerts) ? $externalAlerts : [];
+        if (isset($_SESSION['alerts']) !== false AND is_array($_SESSION['alerts']) AND count($_SESSION['alerts'])) {
+            $alerts = array_merge($_SESSION['alerts'], $alerts);
+        }
         /**
          *   types:
          *   - default
@@ -468,12 +479,10 @@ class Base {
          *   - error
          **/
 
-        $alert = '';
-        if (isset($_SESSION['alerts']) !== false AND count($_SESSION['alerts'])) {
+        $alert = '<div class="kn-toast-alert">';
+        if (count($alerts)) {
 
-            $alert = '<div class="kn-toast-alert">';
-            foreach ($_SESSION['alerts'] as $k => $a) {
-
+            foreach ($alerts as $k => $a) {
                 switch ($a['status']) {
                     case 'error':
                         $a['status'] = 'danger';
@@ -483,15 +492,13 @@ class Base {
                         $a['status'] = 'dark';
                         break;
                 }
-
                 $alert .= '<div class="kn-alert kn-alert-' . $a['status'] . '">' . $a['message'] . '</div>';
 
-                unset($_SESSION['alerts'][$k]);
-
+                if (isset($_SESSION['alerts'][$k]) !== false) 
+                    unset($_SESSION['alerts'][$k]);
             }
-            $alert .= '</div>';
-
         }
+        $alert .= '</div>';
 
         return $alert;
 
@@ -766,7 +773,7 @@ class Base {
         if ($bytes >= 1073741824) $bytes = number_format($bytes / 1073741824, 2) . ' GB';
         elseif ($bytes >= 1048576) $bytes = number_format($bytes / 1048576, 2) . ' MB';
         elseif ($bytes >= 1024) $bytes = number_format($bytes / 1024, 2) . ' KB';
-        elseif ($bytes > 1) $bytes = $bytes . ' ' . self::lang('byte') . self::lang('plural_suffix');
+        elseif ($bytes > 1) $bytes = $bytes . ' ' . self::lang('byte') . self::lang('lang.plural_suffix');
         elseif ($bytes == 1) $bytes = $bytes . ' ' . self::lang('byte');
         else $bytes = '0 ' . self::lang('byte');
 

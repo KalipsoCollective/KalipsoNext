@@ -7,16 +7,21 @@
 								<i class="ti ti-user"></i>  <?php echo KN\Helpers\Base::lang('base.account'); ?>
 							</a>
 							<?php
-							foreach ($steps as $step => $details) {
+							if ($this->authority('auth/:action')) {
+								foreach ($steps as $step => $details) {
 
-								echo '
-								<a class="list-group-item list-group-item-action'.$this->currentLink('/auth/' . $step).'" href="'.$this->url('/auth/' . $step).'">
-									<i class="' . $details['icon'] . '"></i>  '.KN\Helpers\Base::lang($details['lang']).'
-								</a>';
+									echo '
+									<a class="list-group-item list-group-item-action'.$this->currentLink('/auth/' . $step).'" href="'.$this->url('/auth/' . $step).'">
+										<i class="' . $details['icon'] . '"></i>  '.KN\Helpers\Base::lang($details['lang']).'
+									</a>';
+								}
+							}
+							if ($this->authority('auth/logout')) {	?>
+								<a class="list-group-item list-group-item-action list-group-item-danger" href="<?php echo $this->url('/auth/logout'); ?>">
+									<i class="ti ti-power"></i>  <?php echo KN\Helpers\Base::lang('base.logout'); ?>
+								</a>
+							<?php
 							}	?>
-							<a class="list-group-item list-group-item-action list-group-item-danger" href="<?php echo $this->url('/auth/logout'); ?>">
-								<i class="ti ti-power"></i>  <?php echo KN\Helpers\Base::lang('base.logout'); ?>
-							</a>
 						</div>
 					</div>
 					<div class="col-12 col-lg-9">
@@ -63,7 +68,6 @@
 											</a>').'
 										</td>
 									</tr>';
-
 								}
 
 							echo '	</tbody>
@@ -72,7 +76,7 @@
 
 						} elseif ($action == 'profile') {
 							?>
-							<form method="post" class="row g-3 my-3" action="<?php echo \KN\Helpers\Base::base('auth/profile'); ?>" data-vpjax>
+							<form method="post" class="row g-3 my-3" action="<?php echo $this->url('auth/profile'); ?>" data-vpjax>
 								<?php echo \KN\Helpers\Base::createCSRF(); ?>
 								<div class="col-12 col-md-6">
 									<div class="form-floating">
@@ -106,8 +110,7 @@
 								</div>
 								<div class="col-12">
 									<button type="submit" class="btn btn-primary d-flex ms-auto">
-										<?php echo \KN\Helpers\Base::lang('base.update'); ?> 
-										<span class="mdi mdi-arrow-right"></span>
+										<?php echo \KN\Helpers\Base::lang('base.update'); ?>
 									</button>
 								</div>
 							</form>
