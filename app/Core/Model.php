@@ -291,4 +291,17 @@ class Model extends Pdox {
 
     }
 
+    /**
+     * @param $time
+     *
+     * @return $this
+     */
+    public function cache($time)
+    {
+        if (Base::config('settings.db_cache')) {
+            parent::cache($time);
+        }
+        return $this;
+    }
+
 }
