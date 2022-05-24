@@ -199,7 +199,9 @@ final class Factory
         /**
          *  Auth check 
          **/
-        $this->authCheck();
+
+        if (! Base::config('app.dev_mode') AND strpos($this->request->uri, '/sandbox') === false) 
+            $this->authCheck();
 
 
         /**
