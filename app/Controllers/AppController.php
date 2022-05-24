@@ -12,6 +12,9 @@ namespace KN\Controllers;
 use KN\Core\Controller;
 use KN\Helpers\Base;
 use KN\Core\Model;
+use KN\Model\EmailLogs;
+use KN\Model\Sessions;
+use KN\Core\Notification;
 
 final class AppController extends Controller {
 
@@ -421,6 +424,51 @@ final class AppController extends Controller {
                 'redirect' => '/',
             ];
         }
+
+    }
+
+    public function cronJobs() {
+
+        $arguments = [];
+
+        // Clear old sessions
+        $timeLimit = strtotime('-30 days');
+        $arguments['sessions'] = (new Sessions())->where('last_action_date', '<', $timeLimit)->delete();
+
+        // Clear old cache files
+        $cacheFolder = glob(Base::path('app/Storage/*'));
+        $timeLimit = strtotime('-10 days');
+        $arguments['cache'] = 'Nothing found.';
+        if (is_array($cacheFolder)) {
+            foreach ($cacheFolder as $folder) {
+                if (is_dir($folder) AND strpos($folder, 'email') === false) {
+                    $folderName = explode('/', $folder);
+                    $folderName = array_pop($folderName);
+                    $cacheFiles = glob($folder . '/*');
+                    if (is_array($cacheFiles)) {
+                        foreach ($cacheFiles as $file) {
+                            if (filemtime($file) < $timeLimit) {
+                                if (unlink($file)) {
+                                    $fileName = explode('/', $file);
+                                    $fileName = array_pop($fileName);
+                                    $arguments['cache'][$folderName][] = $fileName;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Send pending emails
+        $arguments['email'] = (new Notification($this->get()))->mailQueue();
+
+        return [
+            'status' => true,
+            'statusCode' => 200,
+            'arguments' => $arguments,
+            'view' => null
+        ];
 
     }
 

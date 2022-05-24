@@ -69,7 +69,7 @@ try {
     $app->route('GET', '/', 'AppController@index', ['Auth@verifyAccount']);
 
     // Do not remove this route for the KN script library.
-    $app->route('GET,POST', '/script', 'AppController@script');
+    $app->route('GET,POST', '/cron', 'AppController@cronJobs');
     $app->route('GET,POST', '/sandbox', 'AppController@sandbox');
     $app->route('GET,POST', '/sandbox/:action', 'AppController@sandbox');
 

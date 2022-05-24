@@ -193,4 +193,66 @@ class Notification {
 
     }
 
+
+    /**
+     * It sends the emails waiting in the queue based on the limit.
+     * @param int $limit        shooting lmit
+     * @return array $return    report
+     */
+    public function mailQueue(int $limit = 10) {
+
+        $return = [];
+        $model = new EmailModel;
+        $queue = $model->select('id, date, email, name, title, file, status')
+            ->where('status', 'pending')
+            ->orderBy('id', 'desc')
+            ->limit($limit)
+            ->getAll();
+
+        if (! empty($queue)) {
+
+            foreach ($queue as $mail) {
+
+                $move = false;
+
+                $file = Base::path('app/Storage/email/' . $mail->status . '/' . $mail->file);
+                if ($mail->date > strtotime('-3 days') AND file_exists($file)) {
+
+                    $content = file_get_contents($file);
+                    $send = $this->sendEmail($mail->email, $mail->name, $content, $mail->title);
+                    if ($send) {
+                        $move = 'completed';
+                    } else {
+                        $move = 'uncompleted';
+                    }
+
+                } else {
+                    $move = 'uncompleted';
+                }
+
+                $return[$mail->id] = '';
+
+                if ($move) {
+                    if (file_exists($file)) {
+
+                        if (! is_dir($newDir = Base::path('app/Storage/email/' . $move)))
+                            mkdir($newDir);
+
+                        if (rename($file, $newDir . '/' . $mail->file)) {
+                            $return[$mail->id] .= 'Moved to: ' . $move . '/' . $mail->file . PHP_EOL;
+                        }
+                    }
+
+                    if ($model->where('id', $mail->id)->update(['status' => $move])) {
+                        $return[$mail->id] .= 'Updated as: ' . $move;
+                    }
+
+                }
+
+            }
+        }
+
+        return $return;
+    }
+
 }
