@@ -716,7 +716,11 @@ final class Factory
             }
         }
         
-        if ($this->log AND Base::config('settings.log')) {
+        if ($this->log AND 
+            (Base::config('settings.log') OR 
+                (!Base::config('settings.log') AND $this->response->statusCode !== 200)
+            )
+        ) {
 
             $this->action->middleware = implode(',', $this->action->middleware);
 
