@@ -21,6 +21,6 @@ return [
 	'view_cache' => false,
 	'db_cache' => true,
 	'route_cache' => false,
-	'last_updated_at' => 1653384627,
+	'last_updated_at' => 1653387167,
 	'last_updated_by' => 1,
 ];

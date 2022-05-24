@@ -1,4 +1,8 @@
 		<script src="<?php echo KN\Helpers\Base::assets('libs/bootstrap/bootstrap.bundle.min.js'); ?>"></script>
+		<script src="<?php echo KN\Helpers\Base::assets('libs/nprogress/nprogress.js'); ?>"></script>
+		<script src="<?php echo KN\Helpers\Base::assets('libs/vpjax/vpjax.min.js'); ?>"></script>
+		<script src="<?php echo KN\Helpers\Base::assets('libs/kalipsotable/l10n/tr.js'); ?>"></script>
+		<script src="<?php echo KN\Helpers\Base::assets('libs/kalipsotable/kalipso.table.js'); ?>"></script>
 		<script>
 			function init() {
 
@@ -398,9 +402,6 @@
 
 			}
 		</script>
-		<script src="<?php echo KN\Helpers\Base::assets('libs/kalipsotable/l10n/tr.js'); ?>"></script>
-		<script src="<?php echo KN\Helpers\Base::assets('libs/kalipsotable/kalipso.table.js'); ?>"></script>
-		<script src="<?php echo KN\Helpers\Base::assets('js/kalipso.libs.js'); ?>"></script>
 		<script src="<?php echo KN\Helpers\Base::assets('js/kalipso.next.js'); ?>"></script>
 	</body>
 </html>
