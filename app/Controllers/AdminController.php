@@ -1199,13 +1199,8 @@ final class AdminController extends Controller {
 		$blockList = file_exists($file = Base::path('app/Storage/security/ip_blacklist.json')) ? json_decode(file_get_contents($file), true) : null;
 		if (is_null($blockList)) {
 
-			if (! is_dir($dir = Base::path('app/Storage'))) {
-				mkdir($dir);
-			}
-
-			if (! is_dir($dir .= '/security')) {
-				mkdir($dir);
-			}
+			if (! is_dir($dir = Base::path('app/Storage'))) mkdir($dir);
+			if (! is_dir($dir .= '/security')) mkdir($dir);
 
 			touch($file);
 			$blockList = [];

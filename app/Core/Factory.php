@@ -453,8 +453,8 @@ final class Factory
                 }
                 if (Base::config('settings.route_cache')) {
 
-                    if (! is_dir($dir = Base::path('app/Storage/route_cache')))
-                        mkdir($dir);
+                    if (! is_dir($dir = Base::path('app/Storage'))) mkdir($dir);
+                    if (! is_dir($dir = Base::path('app/Storage/route_cache'))) mkdir($dir);
 
                     $cacheContent['attributes'] = $this->request->attributes;
                     $cacheContent['endpoint'] = $this->endpoint;
@@ -859,8 +859,8 @@ final class Factory
                 // View Cache Set
                 if (Base::config('settings.view_cache')) {
 
-                    if (! is_dir($dir = Base::path('app/Storage/view_cache')))
-                        mkdir($dir);
+                    if (! is_dir($dir = Base::path('app/Storage'))) mkdir($dir);
+                    if (! is_dir($dir = Base::path('app/Storage/view_cache'))) mkdir($dir);
 
                     file_put_contents($cacheFile, ob_get_contents());
 

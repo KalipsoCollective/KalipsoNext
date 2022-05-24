@@ -323,6 +323,8 @@ final class AppController extends Controller {
                     $title = $head . ' | ' . $title;
                     $description = Base::lang('base.clear_storage_message');
 
+                    if (! is_dir($dir = Base::path('app/Storage'))) mkdir($dir);
+
                     $path = Base::path('app/Storage/*');
                     $deleteAction = (isset($_GET['delete']) !== false AND count($_GET['delete'])) ? $_GET['delete'] : null;
                     if ($deleteAction) {
@@ -435,6 +437,8 @@ final class AppController extends Controller {
         $timeLimit = strtotime('-30 days');
         $arguments['sessions'] = (new Sessions())->where('last_action_date', '<', $timeLimit)->delete();
 
+        if (! is_dir($dir = Base::path('app/Storage'))) mkdir($dir);
+        
         // Clear old cache files
         $cacheFolder = glob(Base::path('app/Storage/*'));
         $timeLimit = strtotime('-10 days');

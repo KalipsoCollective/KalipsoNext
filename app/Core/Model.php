@@ -299,6 +299,10 @@ class Model extends Pdox {
     public function cache($time)
     {
         if (Base::config('settings.db_cache')) {
+
+            if (! is_dir($dir = Base::path('app/Storage')))
+                mkdir($dir);
+
             parent::cache($time);
         }
         return $this;
