@@ -454,7 +454,7 @@ final class UserController extends Controller {
 
         if ($deleteSession !== false AND $deleteSession !== null) {
 
-            // Base::clearSession();
+            Base::clearSession();
             return [
                 'status' => true,
                 'alerts' => [[
