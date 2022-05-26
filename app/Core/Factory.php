@@ -389,6 +389,8 @@ final class Factory
             }
 
             if (! $fromCache) {
+
+                $detectedRoutes = [];
                 foreach ($this->routes as $path => $details) {
 
                     /**
@@ -426,7 +428,7 @@ final class Factory
                             $total = count($explodedPath);
                             foreach ($explodedPath as $pathIndex => $pathBody) {
 
-                                if ($pathBody == $explodedRequest[$pathIndex] || in_array($pathBody, $expMatches) !== false) { // direct directory check
+                                if ($pathBody === $explodedRequest[$pathIndex] || in_array($pathBody, $expMatches) !== false) { // direct directory check
 
                                     if (in_array($pathBody, $expMatches) !== false) {
                                         // extract as attribute
@@ -437,20 +439,42 @@ final class Factory
                                         $route = $details;
                                         $routePath = $path;
                                         $notFound = false;
+                                        $detectedRoutes[$path] = $details;
                                     }
                                     
                                 } else {
                                     break;
                                 }
                             }
-
-                            if (isset($routePath) !== false) {
-
-                                $this->endpoint = trim($routePath, '/');
-                            }
                         }
                     }
                 }
+
+                if (count($detectedRoutes) > 1) {
+
+                    $uri = $this->request->uri;
+                    $similarity = [];
+                    foreach ($detectedRoutes as $pKey => $pDetail) {
+
+                        $pKeyFormatted = preg_replace('@(:([a-zA-Z0-9_-]+))@m', '', $pKey);
+                        $pKeyFormatted = str_replace('//', '/', $pKeyFormatted);
+                        similar_text($pKeyFormatted, $this->request->uri, $perc);
+                        $similarity[$pKey] = $perc;
+
+                    }
+
+                    arsort($similarity, SORT_NUMERIC);
+                    $useRoute = array_key_first($similarity);
+
+                    $route = $detectedRoutes[$useRoute];
+                    $routePath = $useRoute;
+
+                }
+
+                if (isset($routePath) !== false) {
+                    $this->endpoint = trim($routePath, '/');
+                }
+
                 if (Base::config('settings.route_cache')) {
 
                     if (! is_dir($dir = Base::path('app/Storage'))) mkdir($dir);
