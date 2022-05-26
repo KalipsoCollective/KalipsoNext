@@ -81,7 +81,7 @@
                         <div class="vr"></div>
                         <li class="nav-item">
                             <a class="nav-link" href="<?php echo $this->url('/auth/logout'); ?>">
-                                <i class="mdi mdi-power"></i> <?php echo KN\Helpers\Base::lang('base.logout'); ?>
+                                <?php echo KN\Helpers\Base::lang('base.logout'); ?>
                             </a>
                         </li>
                     </ul>
