@@ -170,143 +170,62 @@ class Base {
          *     password         ->  trim + password_hash
          *     nulled_password  ->  trim + password_hash, assign null if empty string
          *     date             ->  strtotime ~ input 12.00(mid day)
-         *     nulled_text      ->  strip_tags + trim + if empty string, save as null
+         *     nulled_text      ->  strip_tags + trim + htmlentities + if empty string, save as null
          *     nulled_email     ->  strip_tags + trim + filter_var@FILTER_VALIDATE_EMAIL + if empty string, save as null
          *     slug             ->  strip_tags + trim + slugGenerator
-         *     text (default)   ->  strip_tags + trim
+         *     text (default)   ->  strip_tags + trim + htmlentities
+         *     script           ->  preg_replace for script tags
          **/
-
         if (is_array($data)) {
-
-            $_value = [];
-
+            $_data = [];
             foreach ($data as $key => $value) {
-
-                if (is_array($value)) {
-                    $_value[$key] = self::filter($value, $parameter);
-                } else {
-
-                    switch ($parameter) {
-
-                        case 'html': 
-                            $_value[$key] = htmlspecialchars(trim($value)); 
-                            break;
-
-                        case 'nulled_html': 
-                            $_value[$key] = htmlspecialchars(trim($value)); 
-                            $_value[$key] = $_value[$key] == '' ? null : $_value[$key]; 
-                            if (trim(strip_tags($value)) == '') {
-                                $_value[$key] = null;
-                            }
-                            break;
-
-                        case 'check': 
-                            $_value[$key] = ! is_null($value) ? 'on' : 'off'; 
-                            break;
-
-                        case 'check_as_boolean': 
-                            $_value[$key] = ! is_null($value) ? true : false; 
-                            break;
-
-                        case 'int': 
-                            $_value[$key] = (integer)$value; 
-                            break;
-
-                        case 'nulled_int': 
-                            $_value[$key] = (integer)$value == 0 ? null : (integer)$value; 
-                            break;
-
-                        case 'float': 
-                            $_value[$key] = floatval($value); 
-                            break;
-
-                        case 'password': 
-
-                            $_value[$key] = password_hash(trim((string)$value), PASSWORD_DEFAULT); 
-                            break;
-
-                        case 'nulled_password': 
-                            $_value[$key] = trim((string)$value) != '' ? password_hash(trim((string)$value), PASSWORD_DEFAULT) : null;
-                             break;
-
-                        case 'date': 
-                            $_value[$key] = strtotime($value. ' 12:00'); 
-                            break;
-
-                        case 'nulled_text': 
-                            $_value[$key] = trim(strip_tags((string)$value)) == '' ? null : htmlentities(strip_tags(trim((string)$value)), ENT_QUOTES); 
-                            break;
-
-                        case 'slug': 
-                            $_value[$key] = trim(strip_tags((string)$value)) == '' ? null : self::slugGenerator(trim(strip_tags((string)$value))); 
-                            break;
-
-                        default: 
-                            $_value[$key] = htmlentities(trim(strip_tags((string)$value)), ENT_QUOTES);
-
-                    }
-                }
-                
-                if (strpos($parameter, 'nulled') !== false AND $_value[$key] == '') {
-                    $_value[$key] = null;
-                }
+                $_data[$key] = self::filter($value, $parameter);
             }
-
-            $data = $_value;
-
+            $data = $_data;
         } else {
 
             switch ($parameter) {
 
                 case 'html': 
-                    $data = htmlspecialchars(trim($data)); 
-                    break;
-
-                case 'nulled_html': 
-                    $data = htmlspecialchars(trim($data));
-                    $data = $data == '' ? null : $data; 
-                    if ($data AND trim(strip_tags(htmlspecialchars_decode((string)$data))) == '') {
+                case 'nulled_html':
+                    $data = htmlspecialchars(trim((string)$data)); 
+                    if ($parameter === 'nulled_html' AND trim(strip_tags(htmlspecialchars_decode((string)$data))) === '') {
                         $data = null;
                     }
                     break;
 
-                case 'check': 
+                case 'check':
+                case 'check_as_boolean':
                     $data = ! is_null($data) ? 'on' : 'off'; 
+                    if ($parameter === 'check_as_boolean')
+                        $data = $data === 'on' ? true : false;
                     break;
 
-                case 'check_as_boolean': 
-                    $data = ! is_null($data) ? true : false; 
-                    break;
-
-                case 'int': 
-                    $data = (integer)$data; 
-                    break;
-
+                case 'int':
                 case 'nulled_int': 
-                    $data  = (integer)$data == 0 ? null : (integer)$data; 
+                    $data = (integer)$data; 
+                    if ($parameter === 'nulled_int')
+                        $data = empty($data) ? null : $data;
                     break;
 
                 case 'float': 
                     $data = (float)$data; 
                     break;
 
-                case 'password': 
-                    $data = password_hash(trim((string)$data), PASSWORD_DEFAULT); 
-                    break;
-
+                case 'password':
                 case 'nulled_password': 
-                    $data = ! empty($data) ? password_hash(trim((string)$data), PASSWORD_DEFAULT) : null; 
+                    $data = password_hash(trim((string)$data), PASSWORD_DEFAULT); 
+                    if ($parameter === 'password')
+                        $data = empty($data) ? null : $data;
+                    else 
+                        $data = ! empty($data) ? password_hash(trim((string)$data), PASSWORD_DEFAULT) : null; 
                     break;
 
                 case 'date': 
-                    $data = strtotime($data. ' 12:00'); 
+                    $data = strtotime($data . ' 12:00'); 
                     break;
 
-                case 'nulled_text': 
-                    $data = empty($data) ? null : htmlentities(strip_tags(trim((string)$data)), ENT_QUOTES); 
-                    break;
-
-                case 'nulled_email': 
+                case 'nulled_email':
                     $data = empty($data) ? null : strip_tags(trim((string)$data));
                     if ($data) $data = filter_var($data, FILTER_VALIDATE_EMAIL) ? $data : null; 
                     break;
@@ -315,12 +234,14 @@ class Base {
                     $data = empty($data) ? null : self::slugGenerator(strip_tags(trim((string)$data))); 
                     break;
 
+                case 'script': 
+                    $data = preg_replace('@<(script|style)[^>]*?>.*?</\\1>@si', '-', $data); 
+                    break;
+
                 default: 
                     $data = htmlentities(trim(strip_tags((string)$data)), ENT_QUOTES);
-            }
-
-            if (strpos($parameter, 'nulled') !== false AND $data == '') {
-                $data = null;
+                    if ($parameter === 'nulled_text')
+                        $data = empty($data) ? null : $data;
             }
         }
 

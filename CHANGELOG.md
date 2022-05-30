@@ -9,3 +9,6 @@
 
 ## 27.05.2022 - **v1.0.0.3**
 - Fixed routing mechanism for accurate result between similar routing structures.
+
+## 31.05.2022 - **v1.0.0.4**
+- Incoming requests filtering method has been updated, and corrections have been made to the filtering method algorithm.
