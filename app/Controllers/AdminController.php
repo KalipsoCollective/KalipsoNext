@@ -306,7 +306,7 @@ final class AdminController extends Controller {
 		$getUser = $model->select('id, u_name')->where('id', $id)->get();
 		if (! empty($getUser)) {
 
-			if ($id !== Base::userData('id')) {
+			if ($id !== (int)Base::userData('id')) {
 
 				$update = $model->where('id', $id)->update([
 					'status' => 'deleted'
