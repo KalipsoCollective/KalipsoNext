@@ -113,7 +113,7 @@ final class Factory
         if (isset($_GET) !== false AND count($_GET)) {
 
             foreach ($_GET as $key => $value) {
-                $this->request->params[$key] = Base::filter($value);
+                $this->request->params[$key] = Base::filter($value, 'script');
 
                 if ($key === 'lang' AND in_array($value, Base::config('app.available_languages'))) {
                     $this->lang = $value;
@@ -129,7 +129,7 @@ final class Factory
 
         if (isset($_POST) !== false AND count($_POST)) {
             foreach ($_POST as $key => $value) {
-                $this->request->params[$key] = Base::filter($value);
+                $this->request->params[$key] = Base::filter($value, 'script');
             }
         }
 
