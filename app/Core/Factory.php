@@ -141,6 +141,9 @@ final class Factory
             $files = [];
             foreach ($_FILES as $name => $data) {
 
+                if ($data['error'] === 4)
+                    continue;
+
                 if (is_array($data['name'])) { // multiple upload
                     $files[$name] = [];
                     foreach ($data as $k => $l) {
