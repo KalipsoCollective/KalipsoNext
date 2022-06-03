@@ -348,7 +348,7 @@ final class Factory
             $module = require $moduleFile;
             if ($module AND is_array($module)) {
                 foreach ($module as $moduleKey => $moduleDetail) {
-                    
+
                     // listing route
                     if (isset($moduleDetail['routes']['listing'][$this->lang]) !== false) {
                         $this->route(...$moduleDetail['routes']['listing'][$this->lang]);
@@ -356,7 +356,7 @@ final class Factory
 
                     // detail route
                     if (isset($moduleDetail['routes']['detail'][$this->lang]) !== false) {
-                        $this->route(...$moduleDetail['routes']['listing'][$this->lang]);
+                        $this->route(...$moduleDetail['routes']['detail'][$this->lang]);
                     }
                     
                 }
