@@ -1,5 +1,8 @@
 # KalipsoNext - Changelog
 
+## 03.06.2022 - **v1.0.0.6**
+- Module routes are also added to the automatic route list.
+
 ## 02.06.2022 - **v1.0.0.5**
 - The problem of taking the empty input values based on the part that captures the uploaded files has been fixed.
 

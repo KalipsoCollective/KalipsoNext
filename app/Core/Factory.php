@@ -141,7 +141,7 @@ final class Factory
             $files = [];
             foreach ($_FILES as $name => $data) {
 
-                if ($data['error'] === 4)
+                if ($data['error'] === 4) // not uploaded
                     continue;
 
                 if (is_array($data['name'])) { // multiple upload
@@ -342,6 +342,27 @@ final class Factory
      **/
     public function run() {
 
+        // Include module routes
+        if (file_exists($moduleFile = Base::path('app/Resources/modules.php'))) {
+
+            $module = require $moduleFile;
+            if ($module AND is_array($module)) {
+                foreach ($module as $moduleKey => $moduleDetail) {
+                    
+                    // listing route
+                    if (isset($moduleDetail['routes']['listing'][$this->lang]) !== false) {
+                        $this->route(...$moduleDetail['routes']['listing'][$this->lang]);
+                    }
+
+                    // detail route
+                    if (isset($moduleDetail['routes']['detail'][$this->lang]) !== false) {
+                        $this->route(...$moduleDetail['routes']['listing'][$this->lang]);
+                    }
+                    
+                }
+            }
+        }
+        
         // IP Block
         $blockList = file_exists($file = Base::path('app/Storage/security/ip_blacklist.json')) ? json_decode(file_get_contents($file), true) : [];
         if (isset($blockList[Base::getIp()]) !== false) {
