@@ -903,6 +903,7 @@ class Base {
      */
     public static function slugGenerator($str, $options=[]): string {
 
+        $str = str_replace(['\'', '"'], '', html_entity_decode($str));
         $str = mb_convert_encoding((string)$str, 'UTF-8', mb_list_encodings());
         $defaults = [
             'delimiter' => '-',

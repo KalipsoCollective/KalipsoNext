@@ -1,5 +1,8 @@
 # KalipsoNext - Changelog
 
+## 04.06.2022 - **v1.0.0.7**
+- Added exceptions in filtering option for short names.
+
 ## 03.06.2022 - **v1.0.0.6**
 - Module routes are also added to the automatic route list.
 
