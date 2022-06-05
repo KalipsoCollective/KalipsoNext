@@ -362,6 +362,24 @@ final class Factory
                 }
             }
         }
+
+        // Route slug converter
+        foreach ($this->routes as $route => $routeDetail) {
+
+            if (strpos($route, '{') !== false AND strpos($route, '}') !== false) {
+
+                preg_match_all('/\{(.*?)\}/miu', $route, $matches, PREG_SET_ORDER, 0);
+                if (count($matches)) {
+                    unset($this->routes[$route]);
+                    foreach ($matches as $match) {
+                        $route = str_replace($match[0], Base::lang($match[1]), $route);
+                    }
+
+                }
+
+            }
+            $this->routes[$route] = $routeDetail;
+        }
         
         // IP Block
         $blockList = file_exists($file = Base::path('app/Storage/security/ip_blacklist.json')) ? json_decode(file_get_contents($file), true) : [];

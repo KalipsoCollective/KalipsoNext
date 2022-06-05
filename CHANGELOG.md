@@ -1,7 +1,9 @@
 # KalipsoNext - Changelog
 
-## 05.06.2022 - **v1.0.0.8**
+## 05.06.2022 - **v1.0.0.9**
 - **dynamicUrl()** method added.
+- Added feature for route structures that can change according to language.
+
 
 ## 04.06.2022 - **v1.0.0.7**
 - Added exceptions in filtering option for short names.
