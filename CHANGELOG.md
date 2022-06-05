@@ -1,5 +1,8 @@
 # KalipsoNext - Changelog
 
+## 05.06.2022 - **v1.0.0.8**
+- **dynamicUrl()** method added.
+
 ## 04.06.2022 - **v1.0.0.7**
 - Added exceptions in filtering option for short names.
 
