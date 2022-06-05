@@ -1,8 +1,9 @@
 # KalipsoNext - Changelog
 
-## 05.06.2022 - **v1.0.0.9**
+## 05.06.2022 - **v1.0.1.0**
 - **dynamicUrl()** method added.
 - Added feature for route structures that can change according to language.
+- The problem of not sending the view parameter in the **appController@sandbox** method has been fixed.
 
 
 ## 04.06.2022 - **v1.0.0.7**

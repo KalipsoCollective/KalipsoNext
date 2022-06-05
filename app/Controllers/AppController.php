@@ -424,6 +424,7 @@ final class AppController extends Controller {
                 'status' => false,
                 'statusCode' => 302,
                 'redirect' => '/',
+                'view' => null
             ];
         }
 
