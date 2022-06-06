@@ -175,6 +175,7 @@ class Base {
          *     slug             ->  strip_tags + trim + slugGenerator
          *     text (default)   ->  strip_tags + trim + htmlentities
          *     script           ->  preg_replace for script tags
+         *     color            ->  regex HEX
          **/
         if (is_array($data)) {
             $_data = [];
@@ -236,6 +237,12 @@ class Base {
 
                 case 'script': 
                     $data = preg_replace('@<(script|style)[^>]*?>.*?</\\1>@si', '-', $data); 
+                    break;
+
+                case 'color': 
+                    if( ! preg_match('/^#[a-f0-9]{6}$/i', $data) ) {
+                        $data = '#000000';
+                    }
                     break;
 
                 default: 
