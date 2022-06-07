@@ -106,6 +106,11 @@ class Model extends Pdox {
                         $type = 'int(' . $attributes['type_values'] . ')';
                         break;
 
+                    case 'bigint':
+                        if (isset($attributes['type_values']) === false) $attributes['type_values'] = 11;
+                        $type = 'bigint(' . $attributes['type_values'] . ')';
+                        break;
+
                     case 'float':
                     case 'decimal':
                         if (isset($attributes['type_values']) !== false) $attributes['type_values'] = '('.$attributes['type_values'].')';

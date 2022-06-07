@@ -1,10 +1,11 @@
 # KalipsoNext - Changelog
 
-## 07.06.2022 - **v1.0.1.1**
+## 07.06.2022 - **v1.0.1.2**
 - **dynamicUrl()** method added.
 - Added feature for route structures that can change according to language.
 - The problem of not sending the view parameter in the **appController@sandbox** method has been fixed.
 - Added HEX color control feature to **Base@filter()** method.
+- Added support for the BIGINT type to the **Model@dbInit()** method.
 
 ## 05.06.2022 - **v1.0.1.0**
 - **dynamicUrl()** method added.
