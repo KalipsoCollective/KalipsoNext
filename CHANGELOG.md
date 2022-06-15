@@ -1,5 +1,8 @@
 # KalipsoNext - Changelog
 
+## 15.06.2022 - **v1.0.1.3**
+- View caching is blocked from working on session and administration pages.
+
 ## 07.06.2022 - **v1.0.1.2**
 - **dynamicUrl()** method added.
 - Added feature for route structures that can change according to language.

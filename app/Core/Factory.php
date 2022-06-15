@@ -872,7 +872,9 @@ final class Factory
              **/
             $view = true;
             // View Cache Get
-            if (Base::config('settings.view_cache')) {
+            if (
+                (strpos($this->request->uri, '/management') === false AND strpos($this->request->uri, '/auth') === false) AND 
+                Base::config('settings.view_cache')) {
 
                 $cacheHash = md5($file.json_encode($arguments).$layout);
                 if (file_exists($cacheFile = Base::path('app/Storage/view_cache/' . $cacheHash . '.html')) AND 
@@ -923,7 +925,9 @@ final class Factory
                 }
 
                 // View Cache Set
-                if (Base::config('settings.view_cache')) {
+                if (
+                (strpos($this->request->uri, '/management') === false AND strpos($this->request->uri, '/auth') === false) AND 
+                Base::config('settings.view_cache')) {
 
                     if (! is_dir($dir = Base::path('app/Storage'))) mkdir($dir);
                     if (! is_dir($dir = Base::path('app/Storage/view_cache'))) mkdir($dir);
