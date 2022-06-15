@@ -378,6 +378,12 @@
 								"orderable": true,
 								"title": "<?php echo \KN\Helpers\Base::lang('base.last_action_point'); ?>",
 								"key": "last_action_point"
+							},
+							{
+								"searchable": false,
+								"orderable": false,
+								"title": "<?php echo \KN\Helpers\Base::lang('base.action'); ?>",
+								"key": "action"
 							}
 						],
 						customize: {

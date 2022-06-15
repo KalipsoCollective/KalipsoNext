@@ -62,6 +62,7 @@ return [
         'management_roles_delete' => 'Yönetim - Roller - Sil',
         'management_sessions' => 'Yönetim - Oturumlar',
         'management_sessions_list' => 'Yönetim - Oturumlar - Liste',
+        'management_sessions_delete' => 'Yönetim - Oturumlar - Sil',
         'management_logs' => 'Yönetim - Kayıtlar',
         'management_logs_list' => 'Yönetim - Kayıtlar - Liste',
         'management_logs_ip_block' => 'Yönetim - Kayıtlar - IP Bloklama',
@@ -287,6 +288,7 @@ return [
         'settings_updated' => 'Ayarlar güncellendi.',
         'maintenance_mode' => 'Bakım Modu',
         'maintenance_mode_desc' => 'Maalesef bakımda olduğumuz için şu an hizmet veremiyoruz, daha sonra tekrar deneyebilirsiniz.',
+        'remove' => 'Kaldır',
     ],
     'app' => [
         

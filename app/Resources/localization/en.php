@@ -62,6 +62,7 @@ return [
         'management_roles_delete' => 'Management - Roller - Delete',
         'management_sessions' => 'Management - Sessions',
         'management_sessions_list' => 'Management - Sessions - List',
+        'management_sessions_delete' => 'Management - Sessions - Delete',
         'management_logs' => 'Management - Logs',
         'management_logs_list' => 'Management - Logs - List',
         'management_logs_ip_block' => 'Management - Logs - IP Block',
@@ -287,6 +288,7 @@ return [
         'settings_updated' => 'Settings updated.',
         'maintenance_mode' => 'Maintenance Mode',
         'maintenance_mode_desc' => 'Unfortunately, we are currently under maintenance, so we are unable to provide service, you can try again later.',
+        'remove' => 'Remove',
     ],
     'app' => [
         

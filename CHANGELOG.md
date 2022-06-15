@@ -1,7 +1,8 @@
 # KalipsoNext - Changelog
 
-## 15.06.2022 - **v1.0.1.3**
+## 15.06.2022 - **v1.0.1.4**
 - View caching is blocked from working on session and administration pages.
+- Added the ability to terminate sessions on the session management page.
 
 ## 07.06.2022 - **v1.0.1.2**
 - **dynamicUrl()** method added.

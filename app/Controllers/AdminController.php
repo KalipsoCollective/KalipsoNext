@@ -1060,6 +1060,27 @@ final class AdminController extends Controller {
 					}
 				],
 				'last_action_point' => [],
+				'action' => [
+					'exclude' => true,
+					'formatter' => function($row) use ($container) {
+
+						$buttons = '';
+						if ($container->authority('management/sessions/:id/delete')) {
+
+							$buttons .= '
+							<button type="button" class="btn btn-danger' . (Base::authCode() === $row->auth_code ? ' disabled' : '') . '" 
+								data-kn-again="'.Base::lang('base.are_you_sure').'"
+								data-kn-action="'.$this->get()->url('/management/sessions/' . $row->id . '/delete').'">
+								' . Base::lang('base.remove') . '
+							</button>';
+						}
+
+						return '
+						<div class="btn-group btn-group-sm" role="group" aria-label="'.Base::lang('base.action').'">
+							'.$buttons.'
+						</div>';
+					}
+				],
 			])
 			->output();
 
@@ -1543,5 +1564,50 @@ final class AdminController extends Controller {
 
 	}
 
+	public function sessionDelete() {
 
+		$id = (int)$this->get('request')->attributes['id'];
+
+		$blockList = file_exists($file = Base::path('app/Storage/security/ip_blacklist.json')) ? json_decode(file_get_contents($file), true) : null;
+		if (is_null($blockList)) {
+
+			if (! is_dir($dir = Base::path('app/Storage'))) mkdir($dir);
+			if (! is_dir($dir .= '/security')) mkdir($dir);
+
+			touch($file);
+			$blockList = [];
+
+		} 
+
+		$alerts = [];
+		$arguments = [];
+
+		$delete = (new Sessions)->where('id', $id)->delete();
+
+		if ($delete) {
+
+			$alerts[] = [
+				'status' => 'success',
+				'message' => Base::lang('base.session_terminated')
+			];
+			$arguments['table_reset'] = 'sessionsTable';
+
+		} else {
+
+			$alerts[] = [
+				'status' => 'warning',
+				'message' => Base::lang('base.session_not_terminated')
+			];
+		}
+
+		return [
+			'status' => true,
+			'statusCode' => 200,
+			'arguments' => $arguments,
+			'alerts' => $alerts,
+			'view' => null
+		];
+
+	}
+	
 }
