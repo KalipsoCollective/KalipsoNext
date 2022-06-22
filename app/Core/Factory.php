@@ -700,8 +700,10 @@ final class Factory
                          **/
                         $this->response->status = $controller['status'];
 
-                        if (isset($controller['view']) !== false OR (isset($controller['view']) !== false AND is_null($controller['view'])) )
+                        if (isset($controller['view']) !== false )
                             $this->response->view = $controller['view'];
+                        else
+                            $this->response->view = null;
 
                     } else {
 
