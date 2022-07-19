@@ -134,31 +134,54 @@ final class Factory
         }
 
         /**
-         * Clean FILES parameters
+         * Clean FILES parameters with multilanguage support
          **/ 
 
         if (isset($_FILES) !== false AND count($_FILES)) {
             $files = [];
             foreach ($_FILES as $name => $data) {
 
-                if ($data['error'] === 4) // not uploaded
-                    continue;
-
                 if (is_array($data['name'])) { // multiple upload
+
                     $files[$name] = [];
                     foreach ($data as $k => $l) {
+
+                        /*
+                        if ($data['error'] === 4) // not uploaded
+                        continue; */
+
                         foreach ($l as $i => $v) {
-                            if (!array_key_exists($i, $files[$name]))
-                                $files[$name][$i] = [];
-                            $files[$name][$i][$k] = $v;
+
+                            if (is_string($i)) {
+
+                                foreach ($v as $i2 => $v2) { // multilanguage support
+
+                                    if (!array_key_exists($i, $files[$name]))
+                                        $files[$name][$i] = [];
+
+                                    if (!array_key_exists($i2, $files[$name][$i]))
+                                        $files[$name][$i][$i2] = [];
+
+                                    $files[$name][$i][$i2][$k] = $v2;
+
+                                }
+
+                            } else {
+
+                                if (!array_key_exists($i, $files[$name]))
+                                    $files[$name][$i] = [];
+
+                                $files[$name][$i][$k] = $v;
+                            }
                         }
                     }
                 } else { // single upload
+
                     $files[$name][] = $data;
                 }
             }
 
-            $this->request->files = $files;
+            $this->request->files = $this->filterUploadedFiles($files);
         }
 
         /**
@@ -363,6 +386,27 @@ final class Factory
             }
         }
 
+        // Include form routes
+        if (file_exists($formFile = Base::path('app/Resources/forms.php'))) {
+
+            $form = require $formFile;
+            if ($form AND is_array($form)) {
+                foreach ($form as $formKey => $formDetail) {
+
+                    // listing route
+                    if (isset($formDetail['routes']['listing'][$this->lang]) !== false) {
+                        $this->route(...$formDetail['routes']['listing'][$this->lang]);
+                    }
+
+                    // detail route
+                    if (isset($formDetail['routes']['detail'][$this->lang]) !== false) {
+                        $this->route(...$formDetail['routes']['detail'][$this->lang]);
+                    }
+                }
+                $this->route('POST', '/form/:form/add', 'FormController@formAdd', []);
+            }
+        }
+
         // Route slug converter
         foreach ($this->routes as $route => $routeDetail) {
 
@@ -380,7 +424,7 @@ final class Factory
             }
             $this->routes[$route] = $routeDetail;
         }
-        
+
         // IP Block
         $blockList = file_exists($file = Base::path('app/Storage/security/ip_blacklist.json')) ? json_decode(file_get_contents($file), true) : [];
         if (isset($blockList[Base::getIp()]) !== false) {
@@ -847,7 +891,6 @@ final class Factory
 
     public function view($file = null, $arguments = [], $layout = 'app') {
 
-
         /**
          * 
          * Send HTTP status code.
@@ -978,6 +1021,40 @@ final class Factory
 
     }
 
+    /**
+     *  Clear Empty Files
+     *  @param array $files
+     *  @return array $files
+     **/
+    public function filterUploadedFiles($files) {
+
+        
+        foreach ($files as $name => $val) {
+            
+            if (isset($val['error']) !== false) {
+
+                if ($val['error'] === 4) {
+                    unset($files[$name]);
+                }
+
+
+            } else {
+
+                $files[$name] = $this->filterUploadedFiles($files[$name]);
+                if (is_null($files[$name]))
+                    unset($files[$name]);
+
+            }
+
+        }
+
+        if (!count($files)) {
+            $files = null;
+        }
+
+        return $files;
+
+    }
 
     /**
      *  Dynamic URL Generator
@@ -987,11 +1064,7 @@ final class Factory
      **/
     public function dynamicUrl($route, $param = []) {
 
-        foreach ($param as $attr => $value) {
-            $route = str_replace(':' . $attr, $value, $route);
-        }
-        return $this->url($route);
-
+        return Base::base(Base::dynamicURL($route, $param));
     }
 
 
