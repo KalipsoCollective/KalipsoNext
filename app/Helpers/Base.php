@@ -75,6 +75,39 @@ class Base {
 
 
     /**
+     * Generate URL
+     * @param  string|null $body
+     * @return string $return
+     */
+    public static function generateURL($module, $parameter = null) {
+
+        $body = '';
+        if (strpos($module, '_') !== false) {
+
+            $menuController = (new \KN\Controllers\MenuController((object)['request'=>'']));
+            $module = explode('_', $module, 2);
+            $body = $menuController->urlGenerator($module[0], $module[1], $parameter);
+        }
+
+        return self::base($body);
+    }
+
+    /**
+     *  Dynamic URL Generator
+     *  @param string $route
+     *  @param array $attributes
+     *  @return string $url
+     **/
+    public static function dynamicURL($route, $param = []) {
+
+        foreach ($param as $attr => $value) {
+            $route = str_replace(':' . $attr, $value, $route);
+        }
+        return $route;
+    }
+
+
+    /**
      * Configuration Parameters
      * @param  string $setting setting value name
      * @return string|null|array|object $return  setting value
@@ -140,8 +173,8 @@ class Base {
         if (is_array($extract) AND is_array($from))
         {
             foreach ($extract as $key => $value)
-            {
-                if (isset($from[$key])) $return[$key] = self::filter($from[$key], $value);
+            {  
+                if (isset($from[$key]) !== false) $return[$key] = self::filter($from[$key], $value);
                 else $return[$key] = self::filter(null, $value);
             }
         }
@@ -175,7 +208,7 @@ class Base {
          *     slug             ->  strip_tags + trim + slugGenerator
          *     text (default)   ->  strip_tags + trim + htmlentities
          *     script           ->  preg_replace for script tags
-         *     color            ->  regex HEX
+         *     color            ->  regex hex
          **/
         if (is_array($data)) {
             $_data = [];
@@ -197,9 +230,11 @@ class Base {
 
                 case 'check':
                 case 'check_as_boolean':
-                    $data = ! is_null($data) ? 'on' : 'off'; 
+
+                    $data = ($data) ? 'on' : 'off'; 
                     if ($parameter === 'check_as_boolean')
                         $data = $data === 'on' ? true : false;
+
                     break;
 
                 case 'int':
@@ -214,12 +249,11 @@ class Base {
                     break;
 
                 case 'password':
-                case 'nulled_password': 
+                case 'nulled_password':
                     $data = password_hash(trim((string)$data), PASSWORD_DEFAULT); 
-                    if ($parameter === 'password')
+                    if ($parameter === 'nulled_password') {
                         $data = empty($data) ? null : $data;
-                    else 
-                        $data = ! empty($data) ? password_hash(trim((string)$data), PASSWORD_DEFAULT) : null; 
+                    }
                     break;
 
                 case 'date': 
@@ -701,9 +735,9 @@ class Base {
         if ($bytes >= 1073741824) $bytes = number_format($bytes / 1073741824, 2) . ' GB';
         elseif ($bytes >= 1048576) $bytes = number_format($bytes / 1048576, 2) . ' MB';
         elseif ($bytes >= 1024) $bytes = number_format($bytes / 1024, 2) . ' KB';
-        elseif ($bytes > 1) $bytes = $bytes . ' ' . self::lang('byte') . self::lang('lang.plural_suffix');
-        elseif ($bytes == 1) $bytes = $bytes . ' ' . self::lang('byte');
-        else $bytes = '0 ' . self::lang('byte');
+        elseif ($bytes > 1) $bytes = $bytes . ' ' . self::lang('base.byte') . self::lang('lang.plural_suffix');
+        elseif ($bytes == 1) $bytes = $bytes . ' ' . self::lang('base.byte');
+        else $bytes = '0 ' . self::lang('base.byte');
 
         return $bytes;
 
@@ -1001,12 +1035,12 @@ class Base {
 
             case 'uppercasewords':
             case 'ucw':
-                $data = Transliterator::create("Any-Title")->transliterate($data);
+                $data = \Transliterator::create("Any-Title")->transliterate($data);
                 break;
 
             case 'uppercasefirst':
             case 'ucf':
-                $data = Transliterator::create("Any-Title")->transliterate($data);
+                $data = \Transliterator::create("Any-Title")->transliterate($data);
                 $data = explode(' ', $data);
                 if (count($data)>1) {
 
@@ -1027,12 +1061,12 @@ class Base {
 
             case 'lowercase':
             case 'l':
-                $data = Transliterator::create("Any-Lower")->transliterate($data);
+                $data = \Transliterator::create("Any-Lower")->transliterate($data);
                 break;
 
             case 'uppercase':
             case 'u':
-                $data = Transliterator::create("Any-Upper")->transliterate($data);
+                $data = \Transliterator::create("Any-Upper")->transliterate($data);
                 break;
         }
 
@@ -1206,6 +1240,11 @@ class Base {
 
     }
 
+
+    /**
+     * UUID generator.
+     * @return string
+     */
     public static function generateUUID() {
         return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             // 32 bits for "time_low"
@@ -1228,4 +1267,27 @@ class Base {
         );
     }
 
+
+    /**
+     * String shortener.
+     * @param string text           long text
+     * @param integer length        string length 
+     * @param boolean withDots      export with 3 dots
+     * @return string
+     */
+    public static function stringShortener($text, $length=20, $withDots=true) {
+
+        if (strlen($text) > $length) {
+            if ($withDots) {
+                $withDots = '...';
+                $length = $length - 3;
+            } else $withDots = '';
+
+            if (function_exists("mb_substr")) $text = trim(mb_substr($text, 0, $length, "UTF-8")).$withDots;
+            else $text = trim(substr($text, 0, $length)).$withDots;
+        }
+
+        return $text;
+
+    }
 }

@@ -1,5 +1,15 @@
 # KalipsoNext - Changelog
 
+## 22.07.2022 - **v1.0.1.8**
+- The multilingual file upload feature is complete.
+- Base helper class synchronized with KalipsoCMS version.
+
+## 19.07.2022 - **v1.0.1.6**
+- The multilingual file upload feature is complete.
+
+## 22.06.2022 - **v1.0.1.5**
+- Factory -> Controller's view parameter check lines is are fixed.
+
 ## 15.06.2022 - **v1.0.1.4**
 - View caching is blocked from working on session and administration pages.
 - Added the ability to terminate sessions on the session management page.
