@@ -1,6 +1,6 @@
 /*!
  * Kalipso Next Basic Scripts
- * Version: v1.0.0
+ * Version: v1.0.1.9
  * Copyright 2022, Kalipso Collective
  * Released under the MIT License
  */
