@@ -66,10 +66,43 @@ function kalipsoInit(firstLoad = false) {
 		forms[i].addEventListener("submit", async function(e) {
 			e = e || window.event;
 			e.preventDefault();
+			e.stopPropagation();
+			const dom = e.target;
+
+			// Again Check
+			let submitBtn = dom.querySelector('[type="submit"]');
+			if (submitBtn === null) {
+				dom.getAttribute('id');
+				submitBtn = document.querySelector('[form="'+dom.getAttribute('id')+'"]');
+			}
+
+			if (submitBtn !== null) {
+				let keep = true;
+				if (submitBtn.getAttribute('data-kn-again')) {
+
+					if (submitBtn.getAttribute('data-kn-again-check')) {
+						keep = false;
+					} else {
+						let text = submitBtn.innerHTML;
+						submitBtn.innerHTML = sanitizeHTML(submitBtn.getAttribute('data-kn-again'));
+						submitBtn.setAttribute('data-kn-again-check', true);
+						setTimeout(() => {
+							submitBtn.innerHTML = text;
+							submitBtn.removeAttribute('data-kn-again-check');
+						}, 3000);
+					}
+
+				} else {
+					keep = false;
+				}
+
+				if (keep)
+					return;
+			}
+
 			NProgress.start();
 
 			// Form Reset, Init
-			const dom = e.target;
 			dom.classList.add('sending');
 			dom.querySelectorAll('[name]').forEach((el) => {
 				el.classList.remove('is-valid');
