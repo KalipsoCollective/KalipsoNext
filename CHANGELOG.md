@@ -1,7 +1,8 @@
 # KalipsoNext - Changelog
 
-## 26.07.2022 - **v1.0.2.0**
+## 26.07.2022 - **v1.0.2.1**
 - KalipsoTable updated to v0.8.5
+- Tabler Icons package updated to v1.78.1
 
 ## 25.07.2022 - **v1.0.1.9**
 - For the forms that are requested to be submitted for approval again while submitting the form, this control has been ensured since there is a data-kn-again parameter.
