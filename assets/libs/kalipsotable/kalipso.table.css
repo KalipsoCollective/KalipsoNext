@@ -68,6 +68,10 @@ table.kalipso-table {
     color: #727272;
 }
 
+table.kalipso-table thead, table.kalipso-table tfoot {
+    background: #f5f5f5;
+}
+
 table.kalipso-table thead th.sort {
     position: relative;
     cursor: pointer;

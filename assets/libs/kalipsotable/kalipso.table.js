@@ -15,7 +15,7 @@ class KalipsoTable {
    */
   constructor(options) {
 
-    this.version = '0.8.3';
+    this.version = '0.8.5';
     this.loading = false;
     this.result = [];
     this.server = false;
@@ -755,7 +755,7 @@ class KalipsoTable {
 
     }
 
-    let thAreas = document.querySelectorAll(this.options.selector + ' thead th.sort')
+    let thAreas = document.querySelectorAll(this.options.selector + ' thead th')
     if (thAreas.length) {
       for (let thIndex = 0; thIndex < thAreas.length; thIndex++) {
         if (thIndex !== index) thAreas[thIndex].classList.remove("asc", "desc")
