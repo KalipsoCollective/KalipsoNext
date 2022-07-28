@@ -1085,8 +1085,8 @@ class Base {
         $ciphering = "AES-128-CTR";
         $encryptionIv = '1234567891011121';
         $encryptionKey = md5(self::config('app.name'));
-        return openssl_encrypt($text, $ciphering,
-            $encryptionKey, 0, $encryptionIv);
+        $text = openssl_encrypt($text, $ciphering, $encryptionKey, 0, $encryptionIv);
+        return bin2hex($text);
 
     }
 
@@ -1100,10 +1100,8 @@ class Base {
 
         $ciphering = "AES-128-CTR";
         $decryptionIv = '1234567891011121';
-        $options = 0;
         $decryptionKey = md5(self::config('app.name'));
-        return openssl_decrypt ($encryptedString, $ciphering,
-            $decryptionKey, 0, $decryptionIv);
+        return openssl_decrypt(hex2bin($encryptedString), $ciphering, $decryptionKey, 0, $decryptionIv);
 
     }
 

@@ -1,5 +1,8 @@
 # KalipsoNext - Changelog
 
+## 28.07.2022 - **v1.0.2.2**
+- Edited for the corruption that occurs in the case of porting with URL in the helper method that generates and decrypts the password.
+
 ## 26.07.2022 - **v1.0.2.1**
 - KalipsoTable updated to v0.8.5
 - Tabler Icons package updated to v1.78.1
