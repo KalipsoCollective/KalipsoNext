@@ -1085,7 +1085,7 @@ class Base {
         $ciphering = "AES-128-CTR";
         $encryptionIv = '1234567891011121';
         $encryptionKey = md5(self::config('app.name'));
-        $text = openssl_encrypt($text, $ciphering, $encryptionKey, 0, $encryptionIv);
+        $text = openssl_encrypt((string)$text, $ciphering, $encryptionKey, 0, $encryptionIv);
         return bin2hex($text);
 
     }
