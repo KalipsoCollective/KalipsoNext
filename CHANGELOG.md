@@ -1,7 +1,8 @@
 # KalipsoNext - Changelog
 
-## 03.08.2022 - **v1.0.2.3**
+## 03.08.2022 - **v1.0.2.4**
 - In the encryption method, the data entered into the function is made to be in string type.
+- Manrope fonts updated to v13.
 
 ## 28.07.2022 - **v1.0.2.2**
 - Edited for the corruption that occurs in the case of porting with URL in the helper method that generates and decrypts the password.
