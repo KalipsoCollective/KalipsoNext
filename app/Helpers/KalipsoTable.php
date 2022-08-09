@@ -169,9 +169,13 @@ class KalipsoTable {
             $this->data['record_count'] = $total;
         }
 
+        if (strpos($order[0], 'id') !== false OR $order[0], '_order') !== false) {
+            $order[0] = 'CAST('.$order[0].' AS INTEGER)';
+        }
+
         // Get results
         $resultSql = 'SELECT * FROM ' . $this->from . 
-            $whereString . ' ORDER BY ' . $order[0] . ' ' . $order[1] . ' 
+            $whereString . ' ORDER BY ' .  $order[0] . ' ' . $order[1] . ' 
             LIMIT ' . $perPage . ' OFFSET ' . (($page > 0 ? $page : 1) - 1) * $perPage;
         $result = $this->db->query($resultSql);
 
@@ -182,6 +186,7 @@ class KalipsoTable {
             // $total->setFetchMode(\PDO::FETCH_OBJ);
             $result = $result->fetchAll();
         }
+
 
         foreach ($result as $index => $data) {
             
