@@ -169,8 +169,8 @@ class KalipsoTable {
             $this->data['record_count'] = $total;
         }
 
-        if (strpos($order[0], 'id') !== false OR $order[0], '_order') !== false) {
-            $order[0] = 'CAST('.$order[0].' AS INTEGER)';
+        if (strpos($order[0], 'id') !== false OR strpos($order[0], '_order') !== false) {
+            $order[0] = 'CAST('.$order[0].' AS unsigned)';
         }
 
         // Get results

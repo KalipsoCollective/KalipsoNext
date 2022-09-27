@@ -13,6 +13,6 @@ return [
 	'dev_mode'	=> true,
 	'session'	=> 'kn',
 	'charset'	=> 'utf-8',
-	'title_format' => '[TITLE] — [APP]',
+	'title_format' => '[TITLE] [SEPERATOR] [APP]',
 	'available_languages' => ['en', 'tr'],
 ];

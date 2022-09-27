@@ -4,7 +4,7 @@ return [
 	'name' => 'Kalipso Next',
 	'description' => '{"en":"It&amp;#039;s a site description.dfdsf","tr":"Bu bir site a&amp;ccedil;\u0131klamas\u0131."}',
 	'contact_email' => 'halillusion@gmail.com',
-	'separator' => '-',
+	'separator' => '—',
 	'language' => 'tr',
 	'default_user_role' => 1,
 	'ssl' => false,

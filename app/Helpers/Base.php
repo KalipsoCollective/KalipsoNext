@@ -678,12 +678,14 @@ class Base {
     /**
      * Clear Session
      * Clear session data
+     * @param string $key  session key
      * @return void
      */
-    public static function clearSession() {
+    public static function clearSession($key = null) {
 
-        if (isset($_SESSION['user']) !== false) {
-            unset($_SESSION['user']);
+        $key = is_null($key) ? 'user' : $key;
+        if (isset($_SESSION[$key]) !== false) {
+            unset($_SESSION[$key]);
         }
 
     }
@@ -1049,7 +1051,7 @@ class Base {
 
                         if ($index) {
 
-                            $_data[$index] = stringTransform('l', $text);
+                            $_data[$index] = self::stringTransform('l', $text);
 
                         }
                     }

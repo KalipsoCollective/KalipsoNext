@@ -1,5 +1,9 @@
 # KalipsoNext - Changelog
 
+## 27.09.2022 - **v1.0.2.6**
+- Tabler Icons upgraded to 1.101.0 and Manrope font files added the repository.
+- KalipsoTable upgraded.
+
 ## 03.08.2022 - **v1.0.2.4**
 - In the encryption method, the data entered into the function is made to be in string type.
 - Manrope fonts updated to v13.
