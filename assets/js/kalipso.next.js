@@ -678,8 +678,11 @@ function responseFormatter(response, dom = null) {
 					}
 					let clone = document.createElement('div');
 					clone.innerHTML = data.html_append;
-					clone = clone.children[0];
-					dom.querySelector(selector).appendChild(clone);
+					if (clone.children.length) {
+						for (let item of Array.from(clone.children)) {
+						    dom.querySelector(selector).appendChild(item)
+						}
+					}
 				}
 			}
 		}
