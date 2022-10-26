@@ -1,5 +1,8 @@
 # KalipsoNext - Changelog
 
+## 27.10.2022 - **v1.0.2.7**
+- Multiple html append fix for DOM manipulator.
+
 ## 27.09.2022 - **v1.0.2.6**
 - Tabler Icons upgraded to 1.101.0 and Manrope font files added the repository.
 - KalipsoTable upgraded.
